@@ -31,6 +31,21 @@
   body.edit-mode header { border-bottom-color: var(--edit-accent); }
   body.edit-mode .logo { color: var(--edit-accent); text-shadow: 0 0 8px var(--edit-accent); }
 
+  /* ── AUTH OVERLAY ── */
+  #auth-overlay { position:fixed; inset:0; background:rgba(10,10,10,0.97); z-index:500; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:20px; padding:24px; }
+  #auth-overlay.hidden { display:none; }
+  .auth-box { width:100%; max-width:360px; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:28px 24px; display:flex; flex-direction:column; gap:14px; }
+  .auth-logo { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:4px; color:var(--neon); text-shadow:var(--neon-glow); text-align:center; }
+  .auth-sub { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; text-align:center; }
+  .auth-input { width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:7px; padding:12px 14px; font-family:'DM Mono',monospace; font-size:13px; color:var(--text); outline:none; }
+  .auth-input:focus { border-color:var(--neon); }
+  .auth-btn { width:100%; padding:12px; background:var(--neon-dim); border:1px solid rgba(57,255,20,0.4); color:var(--neon); font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; border-radius:7px; cursor:pointer; transition:all 0.2s; }
+  .auth-btn:active { background:rgba(57,255,20,0.25); }
+  .auth-btn:disabled { opacity:0.4; cursor:default; }
+  .auth-msg { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); text-align:center; letter-spacing:0.5px; line-height:1.6; min-height:18px; }
+  .auth-msg.success { color:var(--neon); }
+  .auth-msg.error { color:#ff6b6b; }
+
   /* ── HEADER ── */
   header { position:sticky; top:0; z-index:100; background:rgba(10,10,10,0.96); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:10px 16px; transition:border-color 0.3s; }
   .header-inner { display:flex; align-items:center; justify-content:space-between; max-width:480px; margin:0 auto; gap:10px; }
@@ -45,6 +60,10 @@
   .edit-toggle-btn { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:5px 10px; border-radius:5px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); transition:all 0.2s; white-space:nowrap; }
   .edit-toggle-btn:active { opacity:0.7; }
   .edit-toggle-btn.active { border-color:var(--edit-accent); color:var(--edit-accent); background:var(--edit-dim); }
+
+  /* SIGN OUT BUTTON */
+  .signout-btn { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase; padding:4px 8px; border-radius:4px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); transition:all 0.2s; white-space:nowrap; }
+  .signout-btn:active { color:var(--text); border-color:var(--muted); }
 
   /* EDIT MODE BANNER */
   .edit-banner { display:none; max-width:480px; margin:0 auto; padding:10px 16px 0; position:relative; z-index:1; }
@@ -96,7 +115,6 @@
   .exercise-card.cardio-card.done .check-circle { background:var(--cardio-accent); border-color:var(--cardio-accent); box-shadow:0 0 8px rgba(255,107,53,0.6); color:#000; }
   body.edit-mode .check-circle { display:none; }
 
-  /* drag handle */
   .drag-handle { display:none; width:20px; flex-shrink:0; color:var(--edit-accent); font-size:16px; cursor:grab; opacity:0.5; align-items:center; justify-content:center; }
   body.edit-mode .drag-handle { display:flex; }
 
@@ -106,7 +124,6 @@
   .type-lift { color:rgba(57,255,20,0.5); }
   .type-cardio { color:rgba(255,107,53,0.6); }
 
-  /* type toggle in edit mode */
   .type-toggle { display:none; font-family:'DM Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:1px; padding:2px 7px; border-radius:3px; cursor:pointer; border:1px solid var(--edit-border); color:var(--edit-accent); background:var(--edit-dim); }
   body.edit-mode .type-toggle { display:inline-block; }
   body.edit-mode .card-type { display:none; }
@@ -125,7 +142,6 @@
   .card-chevron { color:var(--muted); font-size:11px; flex-shrink:0; }
   body.edit-mode .card-chevron { display:none; }
 
-  /* delete button (edit mode) */
   .delete-card-btn { display:none; width:28px; height:28px; border-radius:50%; border:1px solid rgba(255,60,60,0.3); background:transparent; color:rgba(255,60,60,0.6); font-size:16px; cursor:pointer; flex-shrink:0; align-items:center; justify-content:center; transition:all 0.2s; }
   body.edit-mode .delete-card-btn { display:flex; }
   .delete-card-btn:active { background:rgba(255,60,60,0.15); color:#ff4444; }
@@ -136,7 +152,7 @@
   body.edit-mode .card-details { display:block !important; border-top-color: var(--edit-border); }
   .details-inner { padding:13px 14px; }
 
-  /* ── EDIT FIELDS IN DETAILS ── */
+  /* ── EDIT FIELDS ── */
   .edit-fields { display:none; margin-bottom:12px; }
   body.edit-mode .edit-fields { display:block; }
   body.edit-mode .stat-row { display:none; }
@@ -236,7 +252,6 @@
   .chart-panel { display:none; }
   .chart-panel.active { display:block; animation:fadeUp 0.25s ease; }
 
-  /* export/import row */
   .data-actions { display:flex; gap:8px; margin-bottom:14px; }
   .data-btn { flex:1; padding:9px; background:var(--surface); border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; border-radius:6px; cursor:pointer; text-align:center; transition:all 0.2s; }
   .data-btn:hover { border-color:var(--neon); color:var(--neon); }
@@ -302,6 +317,17 @@
 </head>
 <body>
 
+<!-- AUTH OVERLAY -->
+<div id="auth-overlay">
+  <div class="auth-box">
+    <div class="auth-logo">THE BABENING</div>
+    <div class="auth-sub" id="auth-sub">Sign in to sync your data</div>
+    <input class="auth-input" id="auth-email" type="email" placeholder="your@email.com" autocomplete="email">
+    <button class="auth-btn" id="auth-btn" onclick="handleAuth()">Send Magic Link</button>
+    <div class="auth-msg" id="auth-msg"></div>
+  </div>
+</div>
+
 <!-- REST TIMER OVERLAY -->
 <div class="timer-overlay" id="timerOverlay">
   <div class="timer-label">REST TIMER</div>
@@ -333,6 +359,7 @@
         <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar"></div></div>
       </div>
       <button class="edit-toggle-btn" id="editToggleBtn" onclick="toggleEditMode()">✏ Edit</button>
+      <button class="signout-btn" onclick="handleSignOut()" title="Sign out">↩</button>
     </div>
   </div>
 </header>
@@ -394,14 +421,11 @@
     <div class="section-header" style="color:rgba(57,255,20,0.8)">WORKOUT LOG</div>
     <div class="section-sub">Sessions, PRs &amp; Volume Charts</div>
   </div>
-
-  <!-- Export / Import -->
   <div class="data-actions">
     <button class="data-btn" onclick="exportData()">⬇ Export Backup</button>
     <button class="data-btn import-btn" onclick="document.getElementById('importFile').click()">⬆ Import Backup</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
   </div>
-
   <div class="chart-tabs">
     <button class="chart-tab active" onclick="switchHistoryTab('sessions')" id="htab-sessions">Sessions</button>
     <button class="chart-tab" onclick="switchHistoryTab('prs')" id="htab-prs">🏆 PRs</button>
@@ -416,14 +440,69 @@
 
 <div style="height:40px"></div>
 
+<!-- Supabase client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 // ============================================================
-//  SCHEMA VERSION — bump this whenever stored data structure changes
+//  SUPABASE CONFIG
+// ============================================================
+const SUPABASE_URL  = 'https://ythpyyijhwehzvvduukh.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0aHB5eWlqaHdlaHp2dmR1dWtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMjY2OTMsImV4cCI6MjA4ODYwMjY5M30.6aOBb6DGp18_KfWnvTFxuplky-2WaMZHiM22zbqF_yQ';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+let currentUser = null;
+
+// ============================================================
+//  AUTH
+// ============================================================
+async function handleAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  if (!email || !email.includes('@')) {
+    setAuthMsg('Please enter a valid email address.', 'error');
+    return;
+  }
+  const btn = document.getElementById('auth-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  const { error } = await sb.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: window.location.href }
+  });
+  if (error) {
+    setAuthMsg('Error: ' + error.message, 'error');
+    btn.disabled = false;
+    btn.textContent = 'Send Magic Link';
+  } else {
+    setAuthMsg('✓ Magic link sent! Check your email and tap the link.', 'success');
+    document.getElementById('auth-sub').textContent = 'Check your inbox';
+    btn.textContent = 'Link Sent';
+  }
+}
+
+function setAuthMsg(msg, type='') {
+  const el = document.getElementById('auth-msg');
+  el.textContent = msg;
+  el.className = 'auth-msg' + (type ? ' ' + type : '');
+}
+
+async function handleSignOut() {
+  if (!confirm('Sign out?')) return;
+  await sb.auth.signOut();
+  currentUser = null;
+  document.getElementById('auth-overlay').classList.remove('hidden');
+  document.getElementById('auth-btn').disabled = false;
+  document.getElementById('auth-btn').textContent = 'Send Magic Link';
+  setAuthMsg('');
+}
+
+// ============================================================
+//  SCHEMA VERSION
 // ============================================================
 const SCHEMA_VERSION = 2;
 
 // ============================================================
-//  DEFAULT PLAN — used only when no saved plan exists in storage
+//  DEFAULT PLAN
 // ============================================================
 const DEFAULT_PLAN = {
   dayNames: { chest:'CHEST DAY', legs:'LEG DAY', arms:'ARMS & SHOULDERS' },
@@ -469,9 +548,9 @@ const DEFAULT_PLAN = {
 // ============================================================
 //  STATE
 // ============================================================
-let plan      = null;   // { dayNames, exercises } — loaded from storage or DEFAULT_PLAN
-let weights   = {};     // { 'day-idx-key': number }
-let doneState = {};     // { 'ex-day-idx': bool }
+let plan      = null;
+let weights   = {};
+let doneState = {};
 let openState = {};
 let history   = [];
 let prs       = {};
@@ -481,52 +560,71 @@ let timerDuration = 60, timerRemaining = 0, timerInterval = null;
 const CIRC = 502.65;
 
 // ============================================================
-//  STORAGE KEYS
+//  SUPABASE DATA LAYER
+//  All data stored as key/value rows in a single 'userdata' table:
+//    user_id (uuid), key (text), value (jsonb)
 // ============================================================
-const KEYS = {
-  plan:     'babening-plan-v2',
-  weights:  'babening-weights-v2',
-  history:  'babening-history-v2',
-  prs:      'babening-prs-v2',
-};
-
-// ============================================================
-//  STORAGE HELPERS
-// ============================================================
-async function storageSave(key, val) {
-  try { await window.storage.set(key, JSON.stringify(val)); } catch(e){}
-}
-async function storageLoad(key) {
-  try { const r = await window.storage.get(key); return r ? JSON.parse(r.value) : null; } catch(e){ return null; }
+async function dbGet(key) {
+  const { data, error } = await sb
+    .from('userdata')
+    .select('value')
+    .eq('user_id', currentUser.id)
+    .eq('key', key)
+    .maybeSingle();
+  if (error || !data) return null;
+  return data.value;
 }
 
-// ============================================================
-//  MIGRATION — reads old v1 data and upgrades it
-// ============================================================
-async function migrateFromV1() {
-  // Try loading old-format keys (no -v2 suffix)
-  let old = {};
-  try {
-    const rh = await window.storage.get('babening-history');
-    if (rh) old.history = JSON.parse(rh.value);
-    const rp = await window.storage.get('babening-prs');
-    if (rp) old.prs = JSON.parse(rp.value);
-    const rw = await window.storage.get('babening-weights');
-    if (rw) old.weights = JSON.parse(rw.value);
-  } catch(e){}
+async function dbSet(key, val) {
+  const { error } = await sb
+    .from('userdata')
+    .upsert({ user_id: currentUser.id, key, value: val }, { onConflict: 'user_id,key' });
+  if (error) console.error('dbSet error', key, error);
+}
 
-  if (old.history && old.history.length) {
-    history = old.history;
-    await storageSave(KEYS.history, history);
-    showToast('✓ Previous history migrated successfully', 'success');
+async function dbDelete(key) {
+  await sb.from('userdata').delete().eq('user_id', currentUser.id).eq('key', key);
+}
+
+// ============================================================
+//  MIGRATION — import existing localStorage data on first login
+// ============================================================
+async function migrateFromLocalStorage() {
+  // Check if we already have data in Supabase
+  const existing = await dbGet('plan');
+  if (existing) return; // Already migrated or has data, skip
+
+  let migrated = false;
+
+  // Try old localStorage keys (v2 then v1)
+  const lsKeys = [
+    { ls:'babening-plan-v2',    db:'plan' },
+    { ls:'babening-weights-v2', db:'weights' },
+    { ls:'babening-history-v2', db:'history' },
+    { ls:'babening-prs-v2',     db:'prs' },
+    // v1 fallbacks
+    { ls:'babening-history',    db:'history' },
+    { ls:'babening-prs',        db:'prs' },
+    { ls:'babening-weights',    db:'weights' },
+  ];
+
+  for (const { ls, db } of lsKeys) {
+    try {
+      const raw = localStorage.getItem(ls);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // Don't overwrite if we already set this key from a newer source
+        const already = await dbGet(db);
+        if (!already) {
+          await dbSet(db, parsed);
+          migrated = true;
+        }
+      }
+    } catch(e) {}
   }
-  if (old.prs && Object.keys(old.prs).length) {
-    prs = old.prs;
-    await storageSave(KEYS.prs, prs);
-  }
-  if (old.weights && Object.keys(old.weights).length) {
-    weights = old.weights;
-    await storageSave(KEYS.weights, weights);
+
+  if (migrated) {
+    showToast('✓ Local data migrated to cloud', 'success');
   }
 }
 
@@ -534,32 +632,26 @@ async function migrateFromV1() {
 //  LOAD / SAVE
 // ============================================================
 async function loadAll() {
-  const savedPlan    = await storageLoad(KEYS.plan);
-  const savedWeights = await storageLoad(KEYS.weights);
-  const savedHistory = await storageLoad(KEYS.history);
-  const savedPRs     = await storageLoad(KEYS.prs);
+  const [savedPlan, savedWeights, savedHistory, savedPRs] = await Promise.all([
+    dbGet('plan'),
+    dbGet('weights'),
+    dbGet('history'),
+    dbGet('prs'),
+  ]);
 
-  // Use saved plan or fall back to defaults
-  plan = savedPlan || JSON.parse(JSON.stringify(DEFAULT_PLAN));
-
+  plan    = savedPlan    || JSON.parse(JSON.stringify(DEFAULT_PLAN));
   weights = savedWeights || {};
   prs     = savedPRs     || {};
-
-  if (savedHistory) {
-    history = savedHistory;
-  } else {
-    // First load — try migrating from v1
-    await migrateFromV1();
-  }
+  history = savedHistory || [];
 }
 
-async function savePlan()    { await storageSave(KEYS.plan,    plan); }
-async function saveWeights() { await storageSave(KEYS.weights, weights); }
-async function saveHistory() { await storageSave(KEYS.history, history); }
-async function savePRs()     { await storageSave(KEYS.prs,     prs); }
+async function savePlan()    { await dbSet('plan',    plan); }
+async function saveWeights() { await dbSet('weights', weights); }
+async function saveHistory() { await dbSet('history', history); }
+async function savePRs()     { await dbSet('prs',     prs); }
 
 // ============================================================
-//  EXPORT / IMPORT
+//  EXPORT / IMPORT (keep as local backup option)
 // ============================================================
 function exportData() {
   const blob = new Blob([JSON.stringify({
@@ -583,28 +675,23 @@ function importData(event) {
       const data = JSON.parse(e.target.result);
       if (!data.history && !data.plan) throw new Error('Invalid file');
 
-      if (!confirm(`Import backup from ${data.exportDate ? data.exportDate.slice(0,10) : 'unknown date'}?\n\nThis will MERGE imported history with your current data (existing entries are kept). Your current plan and weights will be replaced.`)) return;
+      if (!confirm(`Import backup from ${data.exportDate ? data.exportDate.slice(0,10) : 'unknown date'}?\n\nThis will MERGE imported history with your current data. Your current plan and weights will be replaced.`)) return;
 
-      // Merge history — deduplicate by date+day
       if (data.history) {
         const existingKeys = new Set(history.map(h => `${h.date}-${h.day}`));
         const newEntries = data.history.filter(h => !existingKeys.has(`${h.date}-${h.day}`));
         history = [...history, ...newEntries].sort((a,b) => new Date(b.date)-new Date(a.date));
         await saveHistory();
       }
-      // Replace plan
-      if (data.plan) { plan = data.plan; await savePlan(); }
-      // Merge PRs (keep highest)
+      if (data.plan)    { plan = data.plan; await savePlan(); }
       if (data.prs) {
         for (const [name, pr] of Object.entries(data.prs)) {
           if (!prs[name] || pr.weight > prs[name].weight) prs[name] = pr;
         }
         await savePRs();
       }
-      // Replace weights
       if (data.weights) { weights = data.weights; await saveWeights(); }
 
-      // Re-render
       rebuildAllCards();
       updateProgress();
       document.getElementById('check-history').textContent = `${history.length} sessions`;
@@ -697,10 +784,7 @@ function rebuildAllCards() {
     const container = document.getElementById('cards-' + day);
     container.innerHTML = '';
     doneState = {}; openState = {};
-    plan.exercises[day].forEach((ex, i) => {
-      container.appendChild(createCard(day, i, ex));
-    });
-    // Update day name inputs
+    plan.exercises[day].forEach((ex, i) => container.appendChild(createCard(day, i, ex)));
     document.getElementById('dayname-display-' + day).textContent = plan.dayNames[day] || day.toUpperCase();
     document.getElementById('dayname-input-' + day).value = plan.dayNames[day] || day.toUpperCase();
     updateSubtitle(day);
@@ -710,9 +794,7 @@ function rebuildAllCards() {
 function buildCards() {
   ['chest','legs','arms'].forEach(day => {
     const container = document.getElementById('cards-' + day);
-    plan.exercises[day].forEach((ex, i) => {
-      container.appendChild(createCard(day, i, ex));
-    });
+    plan.exercises[day].forEach((ex, i) => container.appendChild(createCard(day, i, ex)));
     document.getElementById('dayname-display-' + day).textContent = plan.dayNames[day] || day.toUpperCase();
     document.getElementById('dayname-input-' + day).value = plan.dayNames[day] || day.toUpperCase();
     updateSubtitle(day);
@@ -731,8 +813,6 @@ function createCard(day, i, ex) {
   div.className = `exercise-card${ex.type==='cardio' ? ' cardio-card' : ''}`;
   div.id = id;
   div.innerHTML = buildCardHTML(day, i, ex, id);
-
-  // Apply PR border
   const wStat = ex.stats.find(s => s.editable);
   if (wStat) {
     const cur = getWeight(day, i, wStat.k, wStat.v);
@@ -747,7 +827,6 @@ function buildCardHTML(day, i, ex, id) {
   const curW   = wStat ? getWeight(day, i, wStat.k, wStat.v) : null;
   const isCurPR = curW ? isCurrentPR(ex.name, curW) : false;
 
-  // Header meta pills
   const metaPills = ex.stats.map(s => {
     const v = s.editable ? getWeight(day, i, s.k, s.v) : s.v;
     return `<div class="meta-pill"><span class="pill-label">${s.k}</span> ${v}</div>`;
@@ -755,7 +834,6 @@ function buildCardHTML(day, i, ex, id) {
   const volBadge = getVolumeBadge(day, i, ex);
   const prBadge  = isCurPR && !isCardio && wStat ? `<span class="pr-badge">🏆 PR</span>` : '';
 
-  // Normal view: stat chips + weight adjusters
   const nonEditChips = ex.stats.filter(s => !s.editable).map(s =>
     `<div class="stat-chip"><span class="chip-label">${s.k}</span><span class="chip-val">${s.v}</span></div>`
   ).join('');
@@ -787,16 +865,12 @@ function buildCardHTML(day, i, ex, id) {
     ? `<a href="${ex.link}" target="_blank" class="how-to-link">📖 How-To Guide ↗</a>`
     : ex.note ? `<span class="no-link">${ex.note}</span>` : '';
 
-  // EDIT MODE fields — stat editor
   const editStatRows = ex.stats.map((s,si) => `
     <div class="edit-stat-row" id="statrow-${id}-${si}">
       <input value="${escHtml(s.k)}" placeholder="Label" oninput="updateStatKey('${day}',${i},${si},this.value)">
       <input value="${escHtml(s.v)}" placeholder="Value" oninput="updateStatVal('${day}',${i},${si},this.value)">
       <button class="edit-stat-del" onclick="deleteStat('${day}',${i},${si},'${id}')" title="Remove field">×</button>
     </div>`).join('');
-
-  const editIsWeightable = wStat ? 'on' : '';
-  const editWeightIdx = wStat ? ex.stats.indexOf(wStat) : -1;
 
   return `
     <div class="card-tap" onclick="onCardTap('${id}','${day}',${i})">
@@ -816,7 +890,6 @@ function buildCardHTML(day, i, ex, id) {
     </div>
     <div class="card-details" id="details-${id}">
       <div class="details-inner">
-        <!-- EDIT FIELDS -->
         <div class="edit-fields" id="editfields-${id}">
           <div class="edit-field-group">
             <span class="edit-field-label">Exercise Name</span>
@@ -834,7 +907,6 @@ function buildCardHTML(day, i, ex, id) {
             <textarea class="edit-note-input" placeholder="E.g. Cardio — keep moving!" oninput="updateExNote('${day}',${i},this.value)">${escHtml(ex.note||'')}</textarea>
           </div>
         </div>
-        <!-- NORMAL VIEW -->
         ${hintHTML}
         <div class="stat-row">${nonEditChips}${adjusters}</div>
         ${volRow}
@@ -847,9 +919,7 @@ function buildCardHTML(day, i, ex, id) {
 function escHtml(str) {
   return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
 function getStep(val) { return val < 5 ? 0.5 : val < 20 ? 1 : 2.5; }
-
 function calcVolume(day, i, ex) {
   const wStat = ex.stats.find(s => s.editable);
   const rStat = ex.stats.find(s => s.k === 'Reps');
@@ -883,19 +953,15 @@ function toggleEditMode() {
   }
 }
 
-// Rebuild cards after exiting edit mode to refresh display values
 function rebuildAllCardsKeepState() {
   const savedDone = { ...doneState };
   ['chest','legs','arms'].forEach(day => {
     const container = document.getElementById('cards-' + day);
     container.innerHTML = '';
     openState = {};
-    plan.exercises[day].forEach((ex, i) => {
-      container.appendChild(createCard(day, i, ex));
-    });
+    plan.exercises[day].forEach((ex, i) => container.appendChild(createCard(day, i, ex)));
     updateSubtitle(day);
   });
-  // Re-apply done states
   doneState = savedDone;
   Object.entries(doneState).forEach(([id, done]) => {
     if (done) document.getElementById(id)?.classList.add('done');
@@ -908,36 +974,23 @@ function rebuildAllCardsKeepState() {
 // ============================================================
 function updateExName(day, idx, val, cardId) {
   plan.exercises[day][idx].name = val;
-  // Update card-main and card-name-input in sync
   const cardMain = document.querySelector(`#${cardId} .card-main`);
   if (cardMain) cardMain.textContent = val;
   savePlan();
 }
-
 function toggleType(day, idx, cardId) {
   const ex = plan.exercises[day][idx];
   ex.type = ex.type === 'lift' ? 'cardio' : 'lift';
   savePlan();
-  // Refresh this card
   const card = document.getElementById(cardId);
-  const isCardio = ex.type === 'cardio';
-  card.classList.toggle('cardio-card', isCardio);
+  card.classList.toggle('cardio-card', ex.type === 'cardio');
   card.innerHTML = buildCardHTML(day, idx, ex, cardId);
 }
-
-function updateStatKey(day, idx, si, val) {
-  plan.exercises[day][idx].stats[si].k = val;
-  savePlan();
-}
-function updateStatVal(day, idx, si, val) {
-  plan.exercises[day][idx].stats[si].v = val;
-  savePlan();
-}
-
+function updateStatKey(day, idx, si, val) { plan.exercises[day][idx].stats[si].k = val; savePlan(); }
+function updateStatVal(day, idx, si, val) { plan.exercises[day][idx].stats[si].v = val; savePlan(); }
 function addStat(day, idx, cardId) {
   plan.exercises[day][idx].stats.push({ k:'Label', v:'Value' });
   savePlan();
-  // Re-render edit stat list
   const si = plan.exercises[day][idx].stats.length - 1;
   const list = document.getElementById('editstats-' + cardId);
   const row = document.createElement('div');
@@ -949,23 +1002,14 @@ function addStat(day, idx, cardId) {
     <button class="edit-stat-del" onclick="deleteStat('${day}',${idx},${si},'${cardId}')" title="Remove">×</button>`;
   list.appendChild(row);
 }
-
 function deleteStat(day, idx, si, cardId) {
   plan.exercises[day][idx].stats.splice(si, 1);
   savePlan();
   const card = document.getElementById(cardId);
-  const ex = plan.exercises[day][idx];
-  card.innerHTML = buildCardHTML(day, idx, ex, cardId);
+  card.innerHTML = buildCardHTML(day, idx, plan.exercises[day][idx], cardId);
 }
-
-function updateExLink(day, idx, val) {
-  plan.exercises[day][idx].link = val || null;
-  savePlan();
-}
-function updateExNote(day, idx, val) {
-  plan.exercises[day][idx].note = val || null;
-  savePlan();
-}
+function updateExLink(day, idx, val) { plan.exercises[day][idx].link = val || null; savePlan(); }
+function updateExNote(day, idx, val) { plan.exercises[day][idx].note = val || null; savePlan(); }
 
 function addExercise(day) {
   const newEx = { type:'lift', name:'New Exercise', stats:[{k:'Reps',v:'15'}], link:null, note:null };
@@ -976,7 +1020,6 @@ function addExercise(day) {
   const card = createCard(day, i, newEx);
   document.getElementById('cards-' + day).appendChild(card);
   updateSubtitle(day);
-  // Auto-open the details in edit mode
   const details = document.getElementById('details-' + id);
   if (details) details.classList.add('open');
   card.scrollIntoView({ behavior:'smooth', block:'center' });
@@ -986,7 +1029,6 @@ function deleteExercise(day, idx) {
   if (!confirm(`Remove "${plan.exercises[day][idx].name}"?`)) return;
   plan.exercises[day].splice(idx, 1);
   savePlan();
-  // Rebuild cards for this day
   const container = document.getElementById('cards-' + day);
   container.innerHTML = '';
   plan.exercises[day].forEach((ex, i) => container.appendChild(createCard(day, i, ex)));
@@ -997,11 +1039,7 @@ function deleteExercise(day, idx) {
 // ============================================================
 //  CARD INTERACTIONS
 // ============================================================
-function onCardTap(id, day, i) {
-  if (editMode) return; // in edit mode details always open
-  toggleCard(id);
-}
-
+function onCardTap(id, day, i) { if (editMode) return; toggleCard(id); }
 function toggleCard(id) {
   const details = document.getElementById('details-' + id);
   if (!details) return;
@@ -1011,43 +1049,33 @@ function toggleCard(id) {
   const chev = document.getElementById('chev-' + id);
   if (chev) chev.textContent = !isOpen ? '▲' : '▼';
 }
-
 function toggleDone(id) {
   if (editMode) return;
   doneState[id] = !doneState[id];
   document.getElementById(id).classList.toggle('done', doneState[id]);
   updateProgress();
 }
-
 function adjustWeight(day, idx, key, defVal, delta, cardId) {
   const cur = getWeight(day, idx, key, defVal);
   const newVal = Math.max(0.5, Math.round((cur + delta) * 10) / 10);
   setWeight(day, idx, key, newVal);
-
   const adjEl = document.getElementById(`adjval-${day}-${idx}-${key}`);
   if (adjEl) adjEl.textContent = newVal;
-
   const flash = document.getElementById(`flash-${day}-${idx}-${key}`);
   if (flash) { flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1500); }
-
   const ex = getExercise(day, idx);
   rebuildMeta(day, idx, cardId, ex);
-
   const volNum = document.getElementById(`volnum-${cardId}`);
   if (volNum) volNum.textContent = calcVolume(day, idx, ex);
-
-  // Update overload hint
   const hint = getOverloadHint(day, idx, ex);
   const hintEl = document.getElementById(`oload-${cardId}`);
   if (hintEl && hint) {
     hintEl.className = `overload-hint ${hint.type}`;
     hintEl.innerHTML = `<span class="oh-icon">${hint.icon}</span><span>${hint.text}</span>`;
   }
-
   const wStat = ex.stats.find(s => s.editable && s.k === key);
   if (wStat) document.getElementById(cardId)?.classList.toggle('is-pr', isCurrentPR(ex.name, newVal));
 }
-
 function rebuildMeta(day, idx, cardId, ex) {
   const metaEl = document.getElementById('meta-' + cardId);
   if (!metaEl) return;
@@ -1103,7 +1131,6 @@ function switchTab(day) {
   if (day === 'history') switchHistoryTab('sessions');
   updateProgress();
 }
-
 function switchHistoryTab(tab) {
   document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.chart-panel').forEach(p => p.classList.remove('active'));
@@ -1114,7 +1141,6 @@ function switchHistoryTab(tab) {
   if (tab==='weekly')   renderVolumeChart('weekly');
   if (tab==='monthly')  renderVolumeChart('monthly');
 }
-
 function resetDay(day) {
   plan.exercises[day].forEach((_, i) => {
     const id = `ex-${day}-${i}`;
@@ -1126,7 +1152,6 @@ function resetDay(day) {
   document.getElementById('done-banner-'+day).classList.remove('visible');
   updateProgress();
 }
-
 function updateProgress() {
   let totalDone = 0, totalAll = 0;
   ['chest','legs','arms'].forEach(day => {
@@ -1282,10 +1307,33 @@ function clearHistory() {
 //  INIT
 // ============================================================
 async function init() {
-  await loadAll();
-  buildCards();
-  document.getElementById('check-history').textContent=`${history.length} sessions`;
-  updateProgress();
+  // Listen for auth state changes (handles magic link redirect)
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (session && session.user) {
+      currentUser = session.user;
+      document.getElementById('auth-overlay').classList.add('hidden');
+
+      // First run: migrate localStorage data if any exists
+      await migrateFromLocalStorage();
+
+      // Load data and render
+      await loadAll();
+      buildCards();
+      document.getElementById('check-history').textContent = `${history.length} sessions`;
+      updateProgress();
+    } else {
+      currentUser = null;
+      document.getElementById('auth-overlay').classList.remove('hidden');
+    }
+  });
+
+  // Also check for existing session immediately (e.g. returning user)
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    // No session — show auth screen (already visible by default)
+    document.getElementById('auth-overlay').classList.remove('hidden');
+  }
+  // If session exists, onAuthStateChange will fire and handle it
 }
 
 init();
