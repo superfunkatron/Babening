@@ -579,7 +579,10 @@ async function dbSet(key, val) {
   const { error } = await sb
     .from('userdata')
     .upsert({ user_id: currentUser.id, key, value: val }, { onConflict: 'user_id,key' });
-  if (error) console.error('dbSet error', key, error);
+  if (error) {
+    console.error('dbSet error', key, error);
+    showToast('DB error: ' + error.message, 'error');
+  }
 }
 
 async function dbDelete(key) {
