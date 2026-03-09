@@ -1310,18 +1310,16 @@ function clearHistory() {
 //  INIT
 // ============================================================
 async function init() {
-  // Listen for auth state changes (handles magic link redirect)
   sb.auth.onAuthStateChange(async (event, session) => {
     if (session && session.user) {
       currentUser = session.user;
       document.getElementById('auth-overlay').classList.add('hidden');
-
-      // First run: migrate localStorage data if any exists
+      showToast('Logged in as ' + session.user.email, 'info');
       await migrateFromLocalStorage();
-
-      // Load data and render
       await loadAll();
+      showToast('Plan loaded: ' + (plan ? 'OK' : 'NULL'), 'info');
       buildCards();
+      showToast('Cards built for ' + plan.exercises.chest.length + ' chest exercises', 'success');
       document.getElementById('check-history').textContent = `${history.length} sessions`;
       updateProgress();
     } else {
@@ -1330,13 +1328,10 @@ async function init() {
     }
   });
 
-  // Also check for existing session immediately (e.g. returning user)
   const { data: { session } } = await sb.auth.getSession();
   if (!session) {
-    // No session — show auth screen (already visible by default)
     document.getElementById('auth-overlay').classList.remove('hidden');
   }
-  // If session exists, onAuthStateChange will fire and handle it
 }
 
 init();
