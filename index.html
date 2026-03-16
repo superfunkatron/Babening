@@ -538,27 +538,31 @@ async function getValidSession() {
 
 // ── Handle magic link redirect ────────────────────────────
 async function handleMagicLinkRedirect() {
-  const hash = window.location.hash;
+  const hash = window.location.hash || location.hash;
   if (!hash || !hash.includes('access_token')) return false;
   const params = new URLSearchParams(hash.substring(1));
   const accessTok = params.get('access_token');
   const refreshTok = params.get('refresh_token');
   const expiresIn = parseInt(params.get('expires_in') || '3600');
   if (!accessTok) return false;
-  // Get user info
-  const res = await fetch(`${SB_URL}/auth/v1/user`, {
-    headers: { 'apikey': SB_ANON, 'Authorization': `Bearer ${accessTok}` }
-  });
-  if (!res.ok) return false;
-  const user = await res.json();
+  // Save session immediately from token without fetching user
   const session = {
     access_token: accessTok,
     refresh_token: refreshTok,
     expires_at: Math.floor(Date.now() / 1000) + expiresIn,
-    user
+    user: { id: null, email: null }
   };
+  // Get user info
+  try {
+    const res = await fetch(`${SB_URL}/auth/v1/user`, {
+      headers: { 'apikey': SB_ANON, 'Authorization': `Bearer ${accessTok}` }
+    });
+    if (res.ok) {
+      const user = await res.json();
+      session.user = user;
+    }
+  } catch(e) { console.error('user fetch failed', e); }
   saveSession(session);
-  // Clean up URL
   window.history.replaceState(null, '', window.location.pathname);
   return session;
 }
