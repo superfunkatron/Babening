@@ -27,7 +27,6 @@
   body { background:var(--bg); color:var(--text); font-family:'Barlow',sans-serif; min-height:100vh; overflow-x:hidden; }
   body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; opacity:0.6; }
 
-  /* EDIT MODE global tint */
   body.edit-mode header { border-bottom-color: var(--edit-accent); }
   body.edit-mode .logo { color: var(--edit-accent); text-shadow: 0 0 8px var(--edit-accent); }
 
@@ -55,23 +54,17 @@
   .progress-label { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); }
   .progress-bar-bg { width:70px; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
   .progress-bar-fill { height:100%; background:var(--neon); border-radius:2px; box-shadow:var(--neon-glow); transition:width 0.4s ease; width:0%; }
-
-  /* EDIT TOGGLE BUTTON */
   .edit-toggle-btn { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:5px 10px; border-radius:5px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); transition:all 0.2s; white-space:nowrap; }
   .edit-toggle-btn:active { opacity:0.7; }
   .edit-toggle-btn.active { border-color:var(--edit-accent); color:var(--edit-accent); background:var(--edit-dim); }
-
-  /* SIGN OUT BUTTON */
   .signout-btn { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase; padding:4px 8px; border-radius:4px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); transition:all 0.2s; white-space:nowrap; }
   .signout-btn:active { color:var(--text); border-color:var(--muted); }
 
-  /* EDIT MODE BANNER */
   .edit-banner { display:none; max-width:480px; margin:0 auto; padding:10px 16px 0; position:relative; z-index:1; }
   .edit-banner.visible { display:block; }
   .edit-banner-inner { background:var(--edit-dim); border:1px solid var(--edit-border); border-radius:8px; padding:10px 14px; font-family:'DM Mono',monospace; font-size:10px; color:var(--edit-accent); letter-spacing:0.5px; line-height:1.6; }
   .edit-banner-inner strong { color:var(--edit-accent); }
 
-  /* ── TABS ── */
   .tabs { display:flex; max-width:480px; margin:0 auto; padding:14px 16px 0; gap:8px; position:relative; z-index:1; }
   .tab-btn { flex:1; background:var(--surface); border:1px solid var(--border); color:var(--muted); font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:1.5px; padding:9px 4px; border-radius:6px; cursor:pointer; transition:all 0.2s; }
   .tab-btn.active { background:var(--neon-dim); border-color:var(--neon); color:var(--neon); text-shadow:var(--neon-glow); }
@@ -79,7 +72,6 @@
   .tab-btn.active .tab-check { color:rgba(57,255,20,0.6); }
   .tab-btn.complete .tab-check { color:var(--neon); }
 
-  /* ── PANELS ── */
   .workout-panel { display:none; max-width:480px; margin:0 auto; padding:16px; position:relative; z-index:1; }
   .workout-panel.active { display:block; animation:fadeUp 0.3s ease; }
   @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -89,7 +81,6 @@
   .section-sub { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-top:4px; margin-bottom:4px; }
   .hint { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:14px; }
 
-  /* ── EDITABLE DAY TITLE ── */
   .day-title-wrap { margin:16px 0 4px; }
   .day-name-display { font-family:'Bebas Neue',sans-serif; font-size:34px; letter-spacing:4px; color:var(--neon); text-shadow:var(--neon-glow); line-height:1; cursor:default; }
   body.edit-mode .day-name-display { cursor:text; border-bottom:1px dashed var(--edit-border); display:inline-block; }
@@ -97,7 +88,6 @@
   body.edit-mode .day-name-display { display:none; }
   body.edit-mode .day-name-input { display:block; }
 
-  /* ── EXERCISE CARDS ── */
   .exercise-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:10px; overflow:hidden; transition:opacity 0.25s, border-color 0.3s; }
   .exercise-card.cardio-card { border-color:#2a1a10; }
   .exercise-card.done { opacity:0.38; }
@@ -123,7 +113,6 @@
   .card-type { font-family:'DM Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:2px; }
   .type-lift { color:rgba(57,255,20,0.5); }
   .type-cardio { color:rgba(255,107,53,0.6); }
-
   .type-toggle { display:none; font-family:'DM Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:1px; padding:2px 7px; border-radius:3px; cursor:pointer; border:1px solid var(--edit-border); color:var(--edit-accent); background:var(--edit-dim); }
   body.edit-mode .type-toggle { display:inline-block; }
   body.edit-mode .card-type { display:none; }
@@ -146,13 +135,11 @@
   body.edit-mode .delete-card-btn { display:flex; }
   .delete-card-btn:active { background:rgba(255,60,60,0.15); color:#ff4444; }
 
-  /* ── CARD DETAILS ── */
   .card-details { display:none; border-top:1px solid var(--border); }
   .card-details.open { display:block; animation:fadeUp 0.2s ease; }
   body.edit-mode .card-details { display:block !important; border-top-color: var(--edit-border); }
   .details-inner { padding:13px 14px; }
 
-  /* ── EDIT FIELDS ── */
   .edit-fields { display:none; margin-bottom:12px; }
   body.edit-mode .edit-fields { display:block; }
   body.edit-mode .stat-row { display:none; }
@@ -164,9 +151,6 @@
   .edit-field-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--edit-accent); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px; }
   .edit-field-input { width:100%; background:var(--surface2); border:1px solid var(--edit-border); border-radius:6px; padding:8px 10px; font-family:'DM Mono',monospace; font-size:13px; color:var(--text); outline:none; }
   .edit-field-input:focus { border-color:var(--edit-accent); }
-  .edit-field-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .edit-field-row .edit-field-group { margin-bottom:0; }
-
   .edit-section-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; display:block; }
   .edit-stat-list { display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
   .edit-stat-row { display:grid; grid-template-columns:1fr 1fr auto; gap:6px; align-items:center; }
@@ -176,16 +160,10 @@
   .edit-stat-del:active { background:rgba(255,60,60,0.1); color:#ff4444; }
   .add-stat-btn { font-family:'DM Mono',monospace; font-size:10px; color:var(--edit-accent); background:transparent; border:1px dashed var(--edit-border); border-radius:5px; padding:5px 10px; cursor:pointer; width:100%; margin-bottom:8px; }
   .add-stat-btn:active { background:var(--edit-dim); }
-  .edit-weight-toggle { display:flex; align-items:center; gap:8px; font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-bottom:8px; }
-  .toggle-switch { width:34px; height:18px; border-radius:9px; background:var(--border); position:relative; cursor:pointer; transition:background 0.2s; flex-shrink:0; }
-  .toggle-switch.on { background:var(--edit-accent); }
-  .toggle-switch::after { content:''; position:absolute; top:2px; left:2px; width:14px; height:14px; border-radius:50%; background:#fff; transition:transform 0.2s; }
-  .toggle-switch.on::after { transform:translateX(16px); }
   .edit-link-input { width:100%; background:var(--surface2); border:1px solid var(--edit-border); border-radius:6px; padding:7px 10px; font-family:'DM Mono',monospace; font-size:11px; color:var(--text); outline:none; }
   .edit-link-input:focus { border-color:var(--edit-accent); }
   .edit-note-input { width:100%; background:var(--surface2); border:1px solid var(--edit-border); border-radius:6px; padding:7px 10px; font-family:'DM Mono',monospace; font-size:11px; color:var(--text); outline:none; resize:none; height:52px; }
 
-  /* ── NORMAL DETAIL ELEMENTS ── */
   .overload-hint { display:flex; align-items:flex-start; gap:8px; padding:8px 12px; border-radius:6px; margin-bottom:10px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.5px; line-height:1.5; }
   .overload-hint.up   { background:rgba(57,255,20,0.06); border:1px solid rgba(57,255,20,0.2); color:rgba(57,255,20,0.8); }
   .overload-hint.same { background:rgba(136,136,136,0.05); border:1px solid rgba(136,136,136,0.15); color:var(--muted); }
@@ -224,7 +202,6 @@
   .cardio-card .how-to-link { background:rgba(255,107,53,0.08); border-color:rgba(255,107,53,0.35); color:var(--cardio-accent); }
   .no-link { color:var(--muted); font-family:'DM Mono',monospace; font-size:9px; text-align:center; padding:6px 0 2px; display:block; letter-spacing:1px; text-transform:uppercase; }
 
-  /* ── DONE BANNER ── */
   .done-banner { display:none; text-align:center; padding:18px; margin:12px 0; background:var(--neon-dim); border:1px solid rgba(57,255,20,0.4); border-radius:10px; }
   .done-banner.visible { display:block; animation:fadeUp 0.4s ease; }
   body.edit-mode .done-banner { display:none !important; }
@@ -232,17 +209,14 @@
   .done-banner .done-text { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:3px; color:var(--neon); text-shadow:var(--neon-glow); }
   .done-banner .done-sub { font-family:'DM Mono',monospace; font-size:10px; color:rgba(57,255,20,0.6); margin-top:4px; letter-spacing:1px; }
 
-  /* ── ADD EXERCISE BUTTON ── */
   .add-exercise-btn { display:none; width:100%; padding:12px; border:1px dashed var(--edit-border); background:transparent; color:var(--edit-accent); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; border-radius:8px; cursor:pointer; margin-bottom:10px; }
   body.edit-mode .add-exercise-btn { display:block; }
   .add-exercise-btn:active { background:var(--edit-dim); }
 
-  /* ── RESET / ACTION BTNS ── */
   .reset-btn { display:block; width:100%; margin-top:18px; padding:11px; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:2px; border-radius:6px; cursor:pointer; }
   .reset-btn:active { border-color:var(--muted); color:var(--text); }
   body.edit-mode .reset-btn { display:none; }
 
-  /* ── HISTORY PANEL ── */
   #panel-history .section-header { color:rgba(57,255,20,0.8); }
   .history-empty { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); text-align:center; padding:40px 20px; letter-spacing:1px; line-height:1.8; }
 
@@ -293,7 +267,6 @@
   .clear-history-btn { display:block; width:100%; margin-top:16px; padding:10px; background:transparent; border:1px solid #3a1515; color:#663333; font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:2px; border-radius:6px; cursor:pointer; }
   .clear-history-btn:active { background:#200a0a; }
 
-  /* ── TIMER OVERLAY ── */
   .timer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:200; align-items:center; justify-content:center; flex-direction:column; gap:16px; }
   .timer-overlay.active { display:flex; animation:fadeUp 0.2s ease; }
   .timer-ring { position:relative; width:180px; height:180px; }
@@ -308,7 +281,6 @@
   .timer-dur-btn { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); background:var(--surface); border:1px solid var(--border); padding:6px 12px; border-radius:5px; cursor:pointer; letter-spacing:1px; }
   .timer-dur-btn.sel { color:var(--neon); border-color:rgba(57,255,20,0.4); background:var(--neon-dim); }
 
-  /* ── TOAST ── */
   .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 18px; font-family:'DM Mono',monospace; font-size:11px; color:var(--text); letter-spacing:1px; z-index:300; opacity:0; transition:opacity 0.3s, transform 0.3s; pointer-events:none; white-space:nowrap; }
   .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
   .toast.success { border-color:rgba(57,255,20,0.4); color:var(--neon); }
@@ -440,43 +412,72 @@
 
 <div style="height:40px"></div>
 
-<!-- Supabase client -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.26.0/dist/umd/supabase.min.js"></script>
-  
 <script>
 // ============================================================
-//  SUPABASE CONFIG
+//  SUPABASE CONFIG — plain fetch, no client library
 // ============================================================
-const SUPABASE_URL  = 'https://ythpyyijhwehzvvduukh.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0aHB5eWlqaHdlaHp2dmR1dWtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMjY2OTMsImV4cCI6MjA4ODYwMjY5M30.6aOBb6DGp18_KfWnvTFxuplky-2WaMZHiM22zbqF_yQ';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+const SB_URL  = 'https://ythpyyijhwehzvvduukh.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0aHB5eWlqaHdlaHp2dmR1dWtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwMjY2OTMsImV4cCI6MjA4ODYwMjY5M30.6aOBb6DGp18_KfWnvTFxuplky-2WaMZHiM22zbqF_yQ';
 
+let accessToken = null;  // set after login
 let currentUser = null;
 
-// ============================================================
-//  AUTH
-// ============================================================
+// ── Auth headers ──────────────────────────────────────────
+function authHeaders() {
+  return {
+    'apikey': SB_ANON,
+    'Authorization': `Bearer ${accessToken || SB_ANON}`,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
+}
+
+// ── REST helpers ──────────────────────────────────────────
+async function sbGet(key) {
+  const res = await fetch(
+    `${SB_URL}/rest/v1/userdata?user_id=eq.${currentUser.id}&key=eq.${encodeURIComponent(key)}&select=value`,
+    { headers: authHeaders() }
+  );
+  if (!res.ok) { console.error('sbGet error', res.status, await res.text()); return null; }
+  const rows = await res.json();
+  return rows.length ? rows[0].value : null;
+}
+
+async function sbSet(key, val) {
+  const res = await fetch(
+    `${SB_URL}/rest/v1/userdata`,
+    {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Prefer': 'resolution=merge-duplicates' },
+      body: JSON.stringify({ user_id: currentUser.id, key, value: val })
+    }
+  );
+  if (!res.ok) {
+    const msg = await res.text();
+    console.error('sbSet error', res.status, msg);
+    showToast('Save error: ' + res.status, 'error');
+  }
+}
+
+// ── Auth ──────────────────────────────────────────────────
 async function handleAuth() {
   const email = document.getElementById('auth-email').value.trim();
-  if (!email || !email.includes('@')) {
-    setAuthMsg('Please enter a valid email address.', 'error');
-    return;
-  }
+  if (!email || !email.includes('@')) { setAuthMsg('Please enter a valid email address.', 'error'); return; }
   const btn = document.getElementById('auth-btn');
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-  const { error } = await sb.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: window.location.href }
+  btn.disabled = true; btn.textContent = 'Sending...';
+  const res = await fetch(`${SB_URL}/auth/v1/otp`, {
+    method: 'POST',
+    headers: { 'apikey': SB_ANON, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, options: { emailRedirectTo: window.location.href } })
   });
-  if (error) {
-    setAuthMsg('Error: ' + error.message, 'error');
-    btn.disabled = false;
-    btn.textContent = 'Send Magic Link';
-  } else {
-    setAuthMsg('✓ Magic link sent! Check your email and tap the link.', 'success');
+  if (res.ok) {
+    setAuthMsg('✓ Magic link sent! Check your email.', 'success');
     document.getElementById('auth-sub').textContent = 'Check your inbox';
     btn.textContent = 'Link Sent';
+  } else {
+    const err = await res.json();
+    setAuthMsg('Error: ' + (err.msg || err.message || res.status), 'error');
+    btn.disabled = false; btn.textContent = 'Send Magic Link';
   }
 }
 
@@ -488,18 +489,79 @@ function setAuthMsg(msg, type='') {
 
 async function handleSignOut() {
   if (!confirm('Sign out?')) return;
-  await sb.auth.signOut();
-  currentUser = null;
+  if (accessToken) {
+    await fetch(`${SB_URL}/auth/v1/logout`, {
+      method: 'POST',
+      headers: { 'apikey': SB_ANON, 'Authorization': `Bearer ${accessToken}` }
+    });
+  }
+  accessToken = null; currentUser = null;
+  localStorage.removeItem('sb-session');
   document.getElementById('auth-overlay').classList.remove('hidden');
-  document.getElementById('auth-btn').disabled = false;
-  document.getElementById('auth-btn').textContent = 'Send Magic Link';
-  setAuthMsg('');
 }
 
-// ============================================================
-//  SCHEMA VERSION
-// ============================================================
-const SCHEMA_VERSION = 2;
+// ── Session persistence ───────────────────────────────────
+function saveSession(session) {
+  localStorage.setItem('sb-session', JSON.stringify({
+    access_token: session.access_token,
+    refresh_token: session.refresh_token,
+    expires_at: session.expires_at,
+    user: session.user
+  }));
+}
+
+async function refreshSession(refreshToken) {
+  const res = await fetch(`${SB_URL}/auth/v1/token?grant_type=refresh_token`, {
+    method: 'POST',
+    headers: { 'apikey': SB_ANON, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refresh_token: refreshToken })
+  });
+  if (!res.ok) return null;
+  return await res.json();
+}
+
+async function getValidSession() {
+  const raw = localStorage.getItem('sb-session');
+  if (!raw) return null;
+  const session = JSON.parse(raw);
+  // Check if token is still valid (with 60s buffer)
+  const expiresAt = session.expires_at * 1000;
+  if (Date.now() < expiresAt - 60000) {
+    return session;
+  }
+  // Token expired — try refresh
+  const refreshed = await refreshSession(session.refresh_token);
+  if (!refreshed || !refreshed.access_token) { localStorage.removeItem('sb-session'); return null; }
+  saveSession(refreshed);
+  return refreshed;
+}
+
+// ── Handle magic link redirect ────────────────────────────
+async function handleMagicLinkRedirect() {
+  const hash = window.location.hash;
+  if (!hash || !hash.includes('access_token')) return false;
+  const params = new URLSearchParams(hash.substring(1));
+  const accessTok = params.get('access_token');
+  const refreshTok = params.get('refresh_token');
+  const expiresIn = parseInt(params.get('expires_in') || '3600');
+  if (!accessTok) return false;
+  // Get user info
+  const res = await fetch(`${SB_URL}/auth/v1/user`, {
+    headers: { 'apikey': SB_ANON, 'Authorization': `Bearer ${accessTok}` }
+  });
+  if (!res.ok) return false;
+  const user = await res.json();
+  const session = {
+    access_token: accessTok,
+    refresh_token: refreshTok,
+    expires_at: Math.floor(Date.now() / 1000) + expiresIn,
+    user
+  };
+  saveSession(session);
+  // Clean up URL
+  window.history.replaceState(null, '', window.location.pathname);
+  return session;
+}
 
 // ============================================================
 //  DEFAULT PLAN
@@ -560,108 +622,57 @@ let timerDuration = 60, timerRemaining = 0, timerInterval = null;
 const CIRC = 502.65;
 
 // ============================================================
-//  SUPABASE DATA LAYER
-//  All data stored as key/value rows in a single 'userdata' table:
-//    user_id (uuid), key (text), value (jsonb)
-// ============================================================
-async function dbGet(key) {
-  const { data, error } = await sb
-    .from('userdata')
-    .select('value')
-    .eq('user_id', currentUser.id)
-    .eq('key', key)
-    .maybeSingle();
-  if (error || !data) return null;
-  return data.value;
-}
-
-async function dbSet(key, val) {
-  const { error } = await sb
-    .from('userdata')
-    .upsert({ user_id: currentUser.id, key, value: val }, { onConflict: 'user_id,key' });
-  if (error) {
-    console.error('dbSet error', key, error);
-    showToast('DB error: ' + error.message, 'error');
-  }
-}
-
-async function dbDelete(key) {
-  await sb.from('userdata').delete().eq('user_id', currentUser.id).eq('key', key);
-}
-
-// ============================================================
-//  MIGRATION — import existing localStorage data on first login
-// ============================================================
-async function migrateFromLocalStorage() {
-  // Check if we already have data in Supabase
-  const existing = await dbGet('plan');
-  if (existing) return; // Already migrated or has data, skip
-
-  let migrated = false;
-
-  // Try old localStorage keys (v2 then v1)
-  const lsKeys = [
-    { ls:'babening-plan-v2',    db:'plan' },
-    { ls:'babening-weights-v2', db:'weights' },
-    { ls:'babening-history-v2', db:'history' },
-    { ls:'babening-prs-v2',     db:'prs' },
-    // v1 fallbacks
-    { ls:'babening-history',    db:'history' },
-    { ls:'babening-prs',        db:'prs' },
-    { ls:'babening-weights',    db:'weights' },
-  ];
-
-  for (const { ls, db } of lsKeys) {
-    try {
-      const raw = localStorage.getItem(ls);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        // Don't overwrite if we already set this key from a newer source
-        const already = await dbGet(db);
-        if (!already) {
-          await dbSet(db, parsed);
-          migrated = true;
-        }
-      }
-    } catch(e) {}
-  }
-
-  if (migrated) {
-    showToast('✓ Local data migrated to cloud', 'success');
-  }
-}
-
-// ============================================================
 //  LOAD / SAVE
 // ============================================================
 async function loadAll() {
   const [savedPlan, savedWeights, savedHistory, savedPRs] = await Promise.all([
-    dbGet('plan'),
-    dbGet('weights'),
-    dbGet('history'),
-    dbGet('prs'),
+    sbGet('plan'), sbGet('weights'), sbGet('history'), sbGet('prs')
   ]);
-
   plan    = savedPlan    || JSON.parse(JSON.stringify(DEFAULT_PLAN));
   weights = savedWeights || {};
   prs     = savedPRs     || {};
   history = savedHistory || [];
 }
 
-async function savePlan()    { await dbSet('plan',    plan); }
-async function saveWeights() { await dbSet('weights', weights); }
-async function saveHistory() { await dbSet('history', history); }
-async function savePRs()     { await dbSet('prs',     prs); }
+async function savePlan()    { await sbSet('plan',    plan); }
+async function saveWeights() { await sbSet('weights', weights); }
+async function saveHistory() { await sbSet('history', history); }
+async function savePRs()     { await sbSet('prs',     prs); }
 
 // ============================================================
-//  EXPORT / IMPORT (keep as local backup option)
+//  MIGRATION — import localStorage data on first cloud login
+// ============================================================
+async function migrateFromLocalStorage() {
+  const existing = await sbGet('plan');
+  if (existing) return;
+  let migrated = false;
+  const lsKeys = [
+    { ls:'babening-plan-v2',    db:'plan' },
+    { ls:'babening-weights-v2', db:'weights' },
+    { ls:'babening-history-v2', db:'history' },
+    { ls:'babening-prs-v2',     db:'prs' },
+    { ls:'babening-history',    db:'history' },
+    { ls:'babening-prs',        db:'prs' },
+    { ls:'babening-weights',    db:'weights' },
+  ];
+  for (const { ls, db } of lsKeys) {
+    try {
+      const raw = localStorage.getItem(ls);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        const already = await sbGet(db);
+        if (!already) { await sbSet(db, parsed); migrated = true; }
+      }
+    } catch(e) {}
+  }
+  if (migrated) showToast('✓ Local data migrated to cloud', 'success');
+}
+
+// ============================================================
+//  EXPORT / IMPORT
 // ============================================================
 function exportData() {
-  const blob = new Blob([JSON.stringify({
-    schemaVersion: SCHEMA_VERSION,
-    exportDate: new Date().toISOString(),
-    plan, weights, history, prs
-  }, null, 2)], { type:'application/json' });
+  const blob = new Blob([JSON.stringify({ exportDate: new Date().toISOString(), plan, weights, history, prs }, null, 2)], { type:'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `babening-backup-${new Date().toISOString().slice(0,10)}.json`;
@@ -677,9 +688,7 @@ function importData(event) {
     try {
       const data = JSON.parse(e.target.result);
       if (!data.history && !data.plan) throw new Error('Invalid file');
-
       if (!confirm(`Import backup from ${data.exportDate ? data.exportDate.slice(0,10) : 'unknown date'}?\n\nThis will MERGE imported history with your current data. Your current plan and weights will be replaced.`)) return;
-
       if (data.history) {
         const existingKeys = new Set(history.map(h => `${h.date}-${h.day}`));
         const newEntries = data.history.filter(h => !existingKeys.has(`${h.date}-${h.day}`));
@@ -694,14 +703,10 @@ function importData(event) {
         await savePRs();
       }
       if (data.weights) { weights = data.weights; await saveWeights(); }
-
-      rebuildAllCards();
-      updateProgress();
+      rebuildAllCards(); updateProgress();
       document.getElementById('check-history').textContent = `${history.length} sessions`;
       showToast(`✓ Imported — ${history.length} sessions total`, 'success');
-    } catch(err) {
-      showToast('✗ Import failed — invalid file', 'error');
-    }
+    } catch(err) { showToast('✗ Import failed — invalid file', 'error'); }
     event.target.value = '';
   };
   reader.readAsText(file);
@@ -713,8 +718,7 @@ function importData(event) {
 let toastTimer;
 function showToast(msg, type='info') {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = `toast ${type} show`;
+  t.textContent = msg; t.className = `toast ${type} show`;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
@@ -724,16 +728,12 @@ function showToast(msg, type='info') {
 // ============================================================
 function getPlan(day) { return plan.exercises[day]; }
 function getExercise(day, i) { return plan.exercises[day][i]; }
-
 function saveDayName(day, val) {
   plan.dayNames[day] = val;
   document.getElementById('dayname-display-' + day).textContent = val;
   savePlan();
 }
 
-// ============================================================
-//  WEIGHT HELPERS
-// ============================================================
 function getWeight(day, idx, key, def) {
   const k = `${day}-${idx}-${key}`;
   return k in weights ? weights[k] : parseFloat(def);
@@ -743,9 +743,6 @@ function setWeight(day, idx, key, val) {
   saveWeights();
 }
 
-// ============================================================
-//  PR LOGIC
-// ============================================================
 function checkAndSetPR(exName, weight, unit) {
   if (!weight) return false;
   const ex = prs[exName];
@@ -757,9 +754,6 @@ function isCurrentPR(exName, weight) {
   const ex = prs[exName]; return !!(ex && weight >= ex.weight);
 }
 
-// ============================================================
-//  OVERLOAD HINT
-// ============================================================
 function getOverloadHint(day, idx, ex) {
   if (ex.type !== 'lift') return null;
   const wStat = ex.stats.find(s => s.editable);
@@ -806,8 +800,7 @@ function buildCards() {
 
 function updateSubtitle(day) {
   const exes = plan.exercises[day];
-  const total = exes.length;
-  document.getElementById('daysub-' + day).textContent = `${total} exercise${total!==1?'s':''} · lift / cardio circuit`;
+  document.getElementById('daysub-' + day).textContent = `${exes.length} exercise${exes.length!==1?'s':''} · lift / cardio circuit`;
 }
 
 function createCard(day, i, ex) {
@@ -817,10 +810,7 @@ function createCard(day, i, ex) {
   div.id = id;
   div.innerHTML = buildCardHTML(day, i, ex, id);
   const wStat = ex.stats.find(s => s.editable);
-  if (wStat) {
-    const cur = getWeight(day, i, wStat.k, wStat.v);
-    if (isCurrentPR(ex.name, cur)) div.classList.add('is-pr');
-  }
+  if (wStat) { const cur = getWeight(day, i, wStat.k, wStat.v); if (isCurrentPR(ex.name, cur)) div.classList.add('is-pr'); }
   return div;
 }
 
@@ -829,52 +819,19 @@ function buildCardHTML(day, i, ex, id) {
   const wStat  = ex.stats.find(s => s.editable);
   const curW   = wStat ? getWeight(day, i, wStat.k, wStat.v) : null;
   const isCurPR = curW ? isCurrentPR(ex.name, curW) : false;
-
-  const metaPills = ex.stats.map(s => {
-    const v = s.editable ? getWeight(day, i, s.k, s.v) : s.v;
-    return `<div class="meta-pill"><span class="pill-label">${s.k}</span> ${v}</div>`;
-  }).join('');
+  const metaPills = ex.stats.map(s => { const v = s.editable ? getWeight(day, i, s.k, s.v) : s.v; return `<div class="meta-pill"><span class="pill-label">${s.k}</span> ${v}</div>`; }).join('');
   const volBadge = getVolumeBadge(day, i, ex);
   const prBadge  = isCurPR && !isCardio && wStat ? `<span class="pr-badge">🏆 PR</span>` : '';
-
-  const nonEditChips = ex.stats.filter(s => !s.editable).map(s =>
-    `<div class="stat-chip"><span class="chip-label">${s.k}</span><span class="chip-val">${s.v}</span></div>`
-  ).join('');
-
+  const nonEditChips = ex.stats.filter(s => !s.editable).map(s => `<div class="stat-chip"><span class="chip-label">${s.k}</span><span class="chip-val">${s.v}</span></div>`).join('');
   const adjusters = ex.stats.filter(s => s.editable).map(s => {
-    const cur = getWeight(day, i, s.k, s.v);
-    const step = getStep(cur);
-    return `<div class="weight-adjuster stat-chip">
-      <span class="chip-label">${s.k} (${s.unit||'kg'})</span>
-      <div class="adj-controls">
-        <button class="adj-btn" onclick="adjustWeight('${day}',${i},'${s.k}',${parseFloat(s.v)},-${step},'${id}')">−</button>
-        <div class="adj-val" id="adjval-${day}-${i}-${s.k}">${cur}</div>
-        <button class="adj-btn" onclick="adjustWeight('${day}',${i},'${s.k}',${parseFloat(s.v)},${step},'${id}')">+</button>
-      </div>
-      <div class="saved-flash" id="flash-${day}-${i}-${s.k}">✓ SAVED</div>
-    </div>`;
+    const cur = getWeight(day, i, s.k, s.v); const step = getStep(cur);
+    return `<div class="weight-adjuster stat-chip"><span class="chip-label">${s.k} (${s.unit||'kg'})</span><div class="adj-controls"><button class="adj-btn" onclick="adjustWeight('${day}',${i},'${s.k}',${parseFloat(s.v)},-${step},'${id}')">−</button><div class="adj-val" id="adjval-${day}-${i}-${s.k}">${cur}</div><button class="adj-btn" onclick="adjustWeight('${day}',${i},'${s.k}',${parseFloat(s.v)},${step},'${id}')">+</button></div><div class="saved-flash" id="flash-${day}-${i}-${s.k}">✓ SAVED</div></div>`;
   }).join('');
-
   const hint = getOverloadHint(day, i, ex);
   const hintHTML = hint ? `<div class="overload-hint ${hint.type}" id="oload-${id}"><span class="oh-icon">${hint.icon}</span><span>${hint.text}</span></div>` : '';
-
-  const volRow = !isCardio && wStat ? `
-    <div class="volume-row" id="volrow-${id}">
-      <span class="vol-label">Total Volume</span>
-      <span><span class="vol-number" id="volnum-${id}">${calcVolume(day,i,ex)}</span> <span class="vol-unit">kg</span></span>
-    </div>` : '';
-
-  const howToLink = ex.link
-    ? `<a href="${ex.link}" target="_blank" class="how-to-link">📖 How-To Guide ↗</a>`
-    : ex.note ? `<span class="no-link">${ex.note}</span>` : '';
-
-  const editStatRows = ex.stats.map((s,si) => `
-    <div class="edit-stat-row" id="statrow-${id}-${si}">
-      <input value="${escHtml(s.k)}" placeholder="Label" oninput="updateStatKey('${day}',${i},${si},this.value)">
-      <input value="${escHtml(s.v)}" placeholder="Value" oninput="updateStatVal('${day}',${i},${si},this.value)">
-      <button class="edit-stat-del" onclick="deleteStat('${day}',${i},${si},'${id}')" title="Remove field">×</button>
-    </div>`).join('');
-
+  const volRow = !isCardio && wStat ? `<div class="volume-row" id="volrow-${id}"><span class="vol-label">Total Volume</span><span><span class="vol-number" id="volnum-${id}">${calcVolume(day,i,ex)}</span> <span class="vol-unit">kg</span></span></div>` : '';
+  const howToLink = ex.link ? `<a href="${ex.link}" target="_blank" class="how-to-link">📖 How-To Guide ↗</a>` : ex.note ? `<span class="no-link">${ex.note}</span>` : '';
+  const editStatRows = ex.stats.map((s,si) => `<div class="edit-stat-row" id="statrow-${id}-${si}"><input value="${escHtml(s.k)}" placeholder="Label" oninput="updateStatKey('${day}',${i},${si},this.value)"><input value="${escHtml(s.v)}" placeholder="Value" oninput="updateStatVal('${day}',${i},${si},this.value)"><button class="edit-stat-del" onclick="deleteStat('${day}',${i},${si},'${id}')" title="Remove field">×</button></div>`).join('');
   return `
     <div class="card-tap" onclick="onCardTap('${id}','${day}',${i})">
       <div class="drag-handle" title="Drag to reorder">⠿</div>
@@ -894,21 +851,12 @@ function buildCardHTML(day, i, ex, id) {
     <div class="card-details" id="details-${id}">
       <div class="details-inner">
         <div class="edit-fields" id="editfields-${id}">
-          <div class="edit-field-group">
-            <span class="edit-field-label">Exercise Name</span>
-            <input class="edit-field-input" value="${escHtml(ex.name)}" oninput="updateExName('${day}',${i},this.value,'${id}')">
-          </div>
+          <div class="edit-field-group"><span class="edit-field-label">Exercise Name</span><input class="edit-field-input" value="${escHtml(ex.name)}" oninput="updateExName('${day}',${i},this.value,'${id}')"></div>
           <span class="edit-section-label">Stats / Fields</span>
           <div class="edit-stat-list" id="editstats-${id}">${editStatRows}</div>
           <button class="add-stat-btn" onclick="addStat('${day}',${i},'${id}')">+ Add Field</button>
-          <div class="edit-field-group">
-            <span class="edit-field-label">How-To Link (optional)</span>
-            <input class="edit-link-input" value="${escHtml(ex.link||'')}" placeholder="https://..." oninput="updateExLink('${day}',${i},this.value)">
-          </div>
-          <div class="edit-field-group" style="margin-top:8px">
-            <span class="edit-field-label">Note / Machine Tip (if no link)</span>
-            <textarea class="edit-note-input" placeholder="E.g. Cardio — keep moving!" oninput="updateExNote('${day}',${i},this.value)">${escHtml(ex.note||'')}</textarea>
-          </div>
+          <div class="edit-field-group"><span class="edit-field-label">How-To Link (optional)</span><input class="edit-link-input" value="${escHtml(ex.link||'')}" placeholder="https://..." oninput="updateExLink('${day}',${i},this.value)"></div>
+          <div class="edit-field-group" style="margin-top:8px"><span class="edit-field-label">Note / Machine Tip (if no link)</span><textarea class="edit-note-input" placeholder="E.g. Cardio — keep moving!" oninput="updateExNote('${day}',${i},this.value)">${escHtml(ex.note||'')}</textarea></div>
         </div>
         ${hintHTML}
         <div class="stat-row">${nonEditChips}${adjusters}</div>
@@ -919,20 +867,16 @@ function buildCardHTML(day, i, ex, id) {
     </div>`;
 }
 
-function escHtml(str) {
-  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function escHtml(str) { return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function getStep(val) { return val < 5 ? 0.5 : val < 20 ? 1 : 2.5; }
 function calcVolume(day, i, ex) {
-  const wStat = ex.stats.find(s => s.editable);
-  const rStat = ex.stats.find(s => s.k === 'Reps');
+  const wStat = ex.stats.find(s => s.editable); const rStat = ex.stats.find(s => s.k === 'Reps');
   if (!wStat || !rStat) return 0;
   return Math.round(getWeight(day, i, wStat.k, wStat.v) * parseFloat(rStat.v) * 10) / 10;
 }
 function getVolumeBadge(day, i, ex) {
   if (ex.type !== 'lift') return null;
-  const wStat = ex.stats.find(s => s.editable);
-  const rStat = ex.stats.find(s => s.k === 'Reps');
+  const wStat = ex.stats.find(s => s.editable); const rStat = ex.stats.find(s => s.k === 'Reps');
   if (!wStat || !rStat) return null;
   return `${calcVolume(day, i, ex)} kg vol`;
 }
@@ -944,201 +888,118 @@ function toggleEditMode() {
   editMode = !editMode;
   document.body.classList.toggle('edit-mode', editMode);
   const btn = document.getElementById('editToggleBtn');
-  const banner = document.getElementById('editBanner');
   btn.textContent = editMode ? '✓ Done' : '✏ Edit';
   btn.classList.toggle('active', editMode);
-  banner.classList.toggle('visible', editMode);
-  if (editMode) {
-    showToast('Edit mode on — changes save automatically', 'info');
-  } else {
-    showToast('✓ Changes saved', 'success');
-    rebuildAllCardsKeepState();
-  }
+  document.getElementById('editBanner').classList.toggle('visible', editMode);
+  if (editMode) { showToast('Edit mode on — changes save automatically', 'info'); }
+  else { showToast('✓ Changes saved', 'success'); rebuildAllCardsKeepState(); }
 }
 
 function rebuildAllCardsKeepState() {
   const savedDone = { ...doneState };
   ['chest','legs','arms'].forEach(day => {
-    const container = document.getElementById('cards-' + day);
-    container.innerHTML = '';
+    document.getElementById('cards-' + day).innerHTML = '';
     openState = {};
-    plan.exercises[day].forEach((ex, i) => container.appendChild(createCard(day, i, ex)));
+    plan.exercises[day].forEach((ex, i) => document.getElementById('cards-' + day).appendChild(createCard(day, i, ex)));
     updateSubtitle(day);
   });
   doneState = savedDone;
-  Object.entries(doneState).forEach(([id, done]) => {
-    if (done) document.getElementById(id)?.classList.add('done');
-  });
+  Object.entries(doneState).forEach(([id, done]) => { if (done) document.getElementById(id)?.classList.add('done'); });
   updateProgress();
 }
 
-// ============================================================
-//  EXERCISE EDIT ACTIONS
-// ============================================================
-function updateExName(day, idx, val, cardId) {
-  plan.exercises[day][idx].name = val;
-  const cardMain = document.querySelector(`#${cardId} .card-main`);
-  if (cardMain) cardMain.textContent = val;
-  savePlan();
-}
-function toggleType(day, idx, cardId) {
-  const ex = plan.exercises[day][idx];
-  ex.type = ex.type === 'lift' ? 'cardio' : 'lift';
-  savePlan();
-  const card = document.getElementById(cardId);
-  card.classList.toggle('cardio-card', ex.type === 'cardio');
-  card.innerHTML = buildCardHTML(day, idx, ex, cardId);
-}
+function updateExName(day, idx, val, cardId) { plan.exercises[day][idx].name = val; const cardMain = document.querySelector(`#${cardId} .card-main`); if (cardMain) cardMain.textContent = val; savePlan(); }
+function toggleType(day, idx, cardId) { const ex = plan.exercises[day][idx]; ex.type = ex.type === 'lift' ? 'cardio' : 'lift'; savePlan(); const card = document.getElementById(cardId); card.classList.toggle('cardio-card', ex.type === 'cardio'); card.innerHTML = buildCardHTML(day, idx, ex, cardId); }
 function updateStatKey(day, idx, si, val) { plan.exercises[day][idx].stats[si].k = val; savePlan(); }
 function updateStatVal(day, idx, si, val) { plan.exercises[day][idx].stats[si].v = val; savePlan(); }
 function addStat(day, idx, cardId) {
-  plan.exercises[day][idx].stats.push({ k:'Label', v:'Value' });
-  savePlan();
+  plan.exercises[day][idx].stats.push({ k:'Label', v:'Value' }); savePlan();
   const si = plan.exercises[day][idx].stats.length - 1;
   const list = document.getElementById('editstats-' + cardId);
-  const row = document.createElement('div');
-  row.className = 'edit-stat-row';
-  row.id = `statrow-${cardId}-${si}`;
-  row.innerHTML = `
-    <input value="Label" oninput="updateStatKey('${day}',${idx},${si},this.value)">
-    <input value="Value" oninput="updateStatVal('${day}',${idx},${si},this.value)">
-    <button class="edit-stat-del" onclick="deleteStat('${day}',${idx},${si},'${cardId}')" title="Remove">×</button>`;
+  const row = document.createElement('div'); row.className = 'edit-stat-row'; row.id = `statrow-${cardId}-${si}`;
+  row.innerHTML = `<input value="Label" oninput="updateStatKey('${day}',${idx},${si},this.value)"><input value="Value" oninput="updateStatVal('${day}',${idx},${si},this.value)"><button class="edit-stat-del" onclick="deleteStat('${day}',${idx},${si},'${cardId}')" title="Remove">×</button>`;
   list.appendChild(row);
 }
-function deleteStat(day, idx, si, cardId) {
-  plan.exercises[day][idx].stats.splice(si, 1);
-  savePlan();
-  const card = document.getElementById(cardId);
-  card.innerHTML = buildCardHTML(day, idx, plan.exercises[day][idx], cardId);
-}
+function deleteStat(day, idx, si, cardId) { plan.exercises[day][idx].stats.splice(si, 1); savePlan(); document.getElementById(cardId).innerHTML = buildCardHTML(day, idx, plan.exercises[day][idx], cardId); }
 function updateExLink(day, idx, val) { plan.exercises[day][idx].link = val || null; savePlan(); }
 function updateExNote(day, idx, val) { plan.exercises[day][idx].note = val || null; savePlan(); }
-
 function addExercise(day) {
   const newEx = { type:'lift', name:'New Exercise', stats:[{k:'Reps',v:'15'}], link:null, note:null };
-  plan.exercises[day].push(newEx);
-  savePlan();
-  const i = plan.exercises[day].length - 1;
-  const id = `ex-${day}-${i}`;
-  const card = createCard(day, i, newEx);
-  document.getElementById('cards-' + day).appendChild(card);
+  plan.exercises[day].push(newEx); savePlan();
+  const i = plan.exercises[day].length - 1; const id = `ex-${day}-${i}`;
+  const card = createCard(day, i, newEx); document.getElementById('cards-' + day).appendChild(card);
   updateSubtitle(day);
-  const details = document.getElementById('details-' + id);
-  if (details) details.classList.add('open');
+  const details = document.getElementById('details-' + id); if (details) details.classList.add('open');
   card.scrollIntoView({ behavior:'smooth', block:'center' });
 }
-
 function deleteExercise(day, idx) {
   if (!confirm(`Remove "${plan.exercises[day][idx].name}"?`)) return;
-  plan.exercises[day].splice(idx, 1);
-  savePlan();
-  const container = document.getElementById('cards-' + day);
-  container.innerHTML = '';
+  plan.exercises[day].splice(idx, 1); savePlan();
+  const container = document.getElementById('cards-' + day); container.innerHTML = '';
   plan.exercises[day].forEach((ex, i) => container.appendChild(createCard(day, i, ex)));
-  updateSubtitle(day);
-  updateProgress();
+  updateSubtitle(day); updateProgress();
 }
 
-// ============================================================
-//  CARD INTERACTIONS
-// ============================================================
 function onCardTap(id, day, i) { if (editMode) return; toggleCard(id); }
 function toggleCard(id) {
-  const details = document.getElementById('details-' + id);
-  if (!details) return;
-  const isOpen = openState[id];
-  details.classList.toggle('open', !isOpen);
-  openState[id] = !isOpen;
-  const chev = document.getElementById('chev-' + id);
-  if (chev) chev.textContent = !isOpen ? '▲' : '▼';
+  const details = document.getElementById('details-' + id); if (!details) return;
+  const isOpen = openState[id]; details.classList.toggle('open', !isOpen); openState[id] = !isOpen;
+  const chev = document.getElementById('chev-' + id); if (chev) chev.textContent = !isOpen ? '▲' : '▼';
 }
 function toggleDone(id) {
   if (editMode) return;
-  doneState[id] = !doneState[id];
-  document.getElementById(id).classList.toggle('done', doneState[id]);
-  updateProgress();
+  doneState[id] = !doneState[id]; document.getElementById(id).classList.toggle('done', doneState[id]); updateProgress();
 }
 function adjustWeight(day, idx, key, defVal, delta, cardId) {
-  const cur = getWeight(day, idx, key, defVal);
-  const newVal = Math.max(0.5, Math.round((cur + delta) * 10) / 10);
+  const cur = getWeight(day, idx, key, defVal); const newVal = Math.max(0.5, Math.round((cur + delta) * 10) / 10);
   setWeight(day, idx, key, newVal);
-  const adjEl = document.getElementById(`adjval-${day}-${idx}-${key}`);
-  if (adjEl) adjEl.textContent = newVal;
-  const flash = document.getElementById(`flash-${day}-${idx}-${key}`);
-  if (flash) { flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1500); }
-  const ex = getExercise(day, idx);
-  rebuildMeta(day, idx, cardId, ex);
-  const volNum = document.getElementById(`volnum-${cardId}`);
-  if (volNum) volNum.textContent = calcVolume(day, idx, ex);
-  const hint = getOverloadHint(day, idx, ex);
-  const hintEl = document.getElementById(`oload-${cardId}`);
-  if (hintEl && hint) {
-    hintEl.className = `overload-hint ${hint.type}`;
-    hintEl.innerHTML = `<span class="oh-icon">${hint.icon}</span><span>${hint.text}</span>`;
-  }
-  const wStat = ex.stats.find(s => s.editable && s.k === key);
-  if (wStat) document.getElementById(cardId)?.classList.toggle('is-pr', isCurrentPR(ex.name, newVal));
+  const adjEl = document.getElementById(`adjval-${day}-${idx}-${key}`); if (adjEl) adjEl.textContent = newVal;
+  const flash = document.getElementById(`flash-${day}-${idx}-${key}`); if (flash) { flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1500); }
+  const ex = getExercise(day, idx); rebuildMeta(day, idx, cardId, ex);
+  const volNum = document.getElementById(`volnum-${cardId}`); if (volNum) volNum.textContent = calcVolume(day, idx, ex);
+  const hint = getOverloadHint(day, idx, ex); const hintEl = document.getElementById(`oload-${cardId}`);
+  if (hintEl && hint) { hintEl.className = `overload-hint ${hint.type}`; hintEl.innerHTML = `<span class="oh-icon">${hint.icon}</span><span>${hint.text}</span>`; }
+  const wStat = ex.stats.find(s => s.editable && s.k === key); if (wStat) document.getElementById(cardId)?.classList.toggle('is-pr', isCurrentPR(ex.name, newVal));
 }
 function rebuildMeta(day, idx, cardId, ex) {
-  const metaEl = document.getElementById('meta-' + cardId);
-  if (!metaEl) return;
-  const wStat = ex.stats.find(s => s.editable);
-  const curW  = wStat ? getWeight(day, idx, wStat.k, wStat.v) : null;
-  const isPR  = curW ? isCurrentPR(ex.name, curW) : false;
-  const pills = ex.stats.map(s => {
-    const v = s.editable ? getWeight(day, idx, s.k, s.v) : s.v;
-    return `<div class="meta-pill"><span class="pill-label">${s.k}</span> ${v}</div>`;
-  }).join('');
-  const vol    = getVolumeBadge(day, idx, ex);
-  const prBadge = isPR && ex.type==='lift' && wStat ? `<span class="pr-badge">🏆 PR</span>` : '';
+  const metaEl = document.getElementById('meta-' + cardId); if (!metaEl) return;
+  const wStat = ex.stats.find(s => s.editable); const curW = wStat ? getWeight(day, idx, wStat.k, wStat.v) : null;
+  const isPR = curW ? isCurrentPR(ex.name, curW) : false;
+  const pills = ex.stats.map(s => { const v = s.editable ? getWeight(day, idx, s.k, s.v) : s.v; return `<div class="meta-pill"><span class="pill-label">${s.k}</span> ${v}</div>`; }).join('');
+  const vol = getVolumeBadge(day, idx, ex); const prBadge = isPR && ex.type==='lift' && wStat ? `<span class="pr-badge">🏆 PR</span>` : '';
   metaEl.innerHTML = pills + (vol?`<span class="vol-badge">${vol}</span>`:'') + prBadge;
 }
 
-// ============================================================
-//  REST TIMER
-// ============================================================
+// ── Timer ─────────────────────────────────────────────────
 function openTimer() {
-  timerRemaining = timerDuration;
-  document.getElementById('timerOverlay').classList.add('active');
-  renderTimerFace();
-  clearInterval(timerInterval);
-  timerInterval = setInterval(() => {
-    timerRemaining--;
-    renderTimerFace();
-    if (timerRemaining <= 0) { clearInterval(timerInterval); try { if(navigator.vibrate) navigator.vibrate([200,100,200]); } catch(e){} }
-  }, 1000);
+  timerRemaining = timerDuration; document.getElementById('timerOverlay').classList.add('active'); renderTimerFace(); clearInterval(timerInterval);
+  timerInterval = setInterval(() => { timerRemaining--; renderTimerFace(); if (timerRemaining <= 0) { clearInterval(timerInterval); try { if(navigator.vibrate) navigator.vibrate([200,100,200]); } catch(e){} } }, 1000);
 }
 function renderTimerFace() {
   const secs = Math.max(0, timerRemaining);
-  const num = document.getElementById('timerNumber');
-  const ring = document.getElementById('timerRingFill');
+  const num = document.getElementById('timerNumber'); const ring = document.getElementById('timerRingFill');
   if (num) num.textContent = secs < 60 ? secs : `${Math.floor(secs/60)}:${String(secs%60).padStart(2,'0')}`;
   if (ring) ring.style.strokeDashoffset = CIRC * (1 - secs/timerDuration);
 }
 function setTimerDuration(secs) {
-  timerDuration = secs; timerRemaining = secs;
-  clearInterval(timerInterval); renderTimerFace();
+  timerDuration = secs; timerRemaining = secs; clearInterval(timerInterval); renderTimerFace();
   timerInterval = setInterval(() => { timerRemaining--; renderTimerFace(); if(timerRemaining<=0) clearInterval(timerInterval); }, 1000);
   document.querySelectorAll('.timer-dur-btn').forEach(b => b.classList.toggle('sel', parseInt(b.textContent)===secs||(b.textContent==='2m'&&secs===120)));
 }
 function closeTimer() { clearInterval(timerInterval); document.getElementById('timerOverlay').classList.remove('active'); }
 
-// ============================================================
-//  TABS & PROGRESS
-// ============================================================
+// ── Tabs & progress ───────────────────────────────────────
 function switchTab(day) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.workout-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-'+day).classList.add('active');
-  document.getElementById('panel-'+day).classList.add('active');
+  document.getElementById('tab-'+day).classList.add('active'); document.getElementById('panel-'+day).classList.add('active');
   if (day === 'history') switchHistoryTab('sessions');
   updateProgress();
 }
 function switchHistoryTab(tab) {
   document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.chart-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('htab-'+tab).classList.add('active');
-  document.getElementById('hpanel-'+tab).classList.add('active');
+  document.getElementById('htab-'+tab).classList.add('active'); document.getElementById('hpanel-'+tab).classList.add('active');
   if (tab==='sessions') renderSessionList();
   if (tab==='prs')      renderPRList();
   if (tab==='weekly')   renderVolumeChart('weekly');
@@ -1146,14 +1007,11 @@ function switchHistoryTab(tab) {
 }
 function resetDay(day) {
   plan.exercises[day].forEach((_, i) => {
-    const id = `ex-${day}-${i}`;
-    doneState[id] = false; openState[id] = false;
-    document.getElementById(id)?.classList.remove('done');
-    document.getElementById('details-'+id)?.classList.remove('open');
+    const id = `ex-${day}-${i}`; doneState[id] = false; openState[id] = false;
+    document.getElementById(id)?.classList.remove('done'); document.getElementById('details-'+id)?.classList.remove('open');
     const chev = document.getElementById('chev-'+id); if(chev) chev.textContent='▼';
   });
-  document.getElementById('done-banner-'+day).classList.remove('visible');
-  updateProgress();
+  document.getElementById('done-banner-'+day).classList.remove('visible'); updateProgress();
 }
 function updateProgress() {
   let totalDone = 0, totalAll = 0;
@@ -1173,94 +1031,50 @@ function updateProgress() {
   document.getElementById('progress-bar').style.width = pct + '%';
 }
 
-// ============================================================
-//  SESSION LOGGING
-// ============================================================
 function logSession(day, exes) {
   const last = history[0];
   if (last && last.day===day && new Date(last.date).toDateString()===new Date().toDateString()) return;
   const snapshot = exes.map((ex, idx) => {
-    const wStat = ex.stats.find(s => s.editable);
-    const rStat = ex.stats.find(s => s.k==='Reps');
-    const weight = wStat ? getWeight(day, idx, wStat.k, wStat.v) : null;
-    const unit   = wStat ? wStat.unit : null;
+    const wStat = ex.stats.find(s => s.editable); const rStat = ex.stats.find(s => s.k==='Reps');
+    const weight = wStat ? getWeight(day, idx, wStat.k, wStat.v) : null; const unit = wStat ? wStat.unit : null;
     const isNewPR = weight ? checkAndSetPR(ex.name, weight, unit) : false;
     return { name:ex.name, weight, reps:rStat?rStat.v:null, unit, isNewPR, type:ex.type };
   });
   history.unshift({ date:new Date().toISOString(), day, dayName:plan.dayNames[day], snapshot });
   if (history.length > 120) history = history.slice(0,120);
-  saveHistory();
-  document.getElementById('check-history').textContent = `${history.length} sessions`;
+  saveHistory(); document.getElementById('check-history').textContent = `${history.length} sessions`;
 }
 
-// ============================================================
-//  RENDER: SESSION LIST
-// ============================================================
 function renderSessionList() {
   const list = document.getElementById('history-list');
   if (!history.length) { list.innerHTML = `<div class="history-empty">No sessions logged yet.<br>Complete a full day to log it here.</div>`; return; }
   const EMOJI = { chest:'💪', legs:'🦵', arms:'🏋️' };
   list.innerHTML = history.map(entry => {
-    const d = new Date(entry.date);
-    const dateStr = d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
-    const liftSnap = entry.snapshot.filter(e=>e.weight);
-    const totalVol = liftSnap.reduce((s,e)=>s+e.weight*parseFloat(e.reps||0),0);
+    const d = new Date(entry.date); const dateStr = d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+    const liftSnap = entry.snapshot.filter(e=>e.weight); const totalVol = liftSnap.reduce((s,e)=>s+e.weight*parseFloat(e.reps||0),0);
     const hasPR = entry.snapshot.some(e=>e.isNewPR);
     const label = entry.dayName || (entry.day==='chest'?'CHEST DAY':entry.day==='legs'?'LEG DAY':'ARMS & SHOULDERS');
-    const rows = entry.snapshot.map(e =>
-      `<div class="history-ex-row${e.isNewPR?' is-pr-row':''}">
-        <span class="history-ex-name">${e.name}</span>
-        <span class="history-ex-detail">${e.weight?`${e.weight}${e.unit||'kg'} × ${e.reps}`:e.reps?`${e.reps} reps`:'—'}${e.isNewPR?' 🏆':''}</span>
-      </div>`
-    ).join('');
-    return `<div class="history-entry${hasPR?' has-pr':''}">
-      <div class="history-entry-header">
-        <span class="history-day-label">${EMOJI[entry.day]||''} ${label}</span>
-        <span class="history-date">${dateStr}${hasPR?' 🏆':''}</span>
-      </div>
-      <div class="history-stats">
-        <div class="h-stat"><div class="h-stat-val">${liftSnap.length}</div><div class="h-stat-label">Lifts</div></div>
-        <div class="h-stat"><div class="h-stat-val">${Math.round(totalVol)}</div><div class="h-stat-label">Total kg</div></div>
-        <div class="h-stat"><div class="h-stat-val">${entry.snapshot.reduce((s,e)=>s+parseFloat(e.reps||0),0)}</div><div class="h-stat-label">Reps</div></div>
-        ${hasPR?`<div class="h-stat"><div class="h-stat-val">🏆</div><div class="h-stat-label">PR Day</div></div>`:''}
-      </div>
-      <div class="history-exercises">${rows}</div>
-    </div>`;
+    const rows = entry.snapshot.map(e => `<div class="history-ex-row${e.isNewPR?' is-pr-row':''}"><span class="history-ex-name">${e.name}</span><span class="history-ex-detail">${e.weight?`${e.weight}${e.unit||'kg'} × ${e.reps}`:e.reps?`${e.reps} reps`:'—'}${e.isNewPR?' 🏆':''}</span></div>`).join('');
+    return `<div class="history-entry${hasPR?' has-pr':''}"><div class="history-entry-header"><span class="history-day-label">${EMOJI[entry.day]||''} ${label}</span><span class="history-date">${dateStr}${hasPR?' 🏆':''}</span></div><div class="history-stats"><div class="h-stat"><div class="h-stat-val">${liftSnap.length}</div><div class="h-stat-label">Lifts</div></div><div class="h-stat"><div class="h-stat-val">${Math.round(totalVol)}</div><div class="h-stat-label">Total kg</div></div><div class="h-stat"><div class="h-stat-val">${entry.snapshot.reduce((s,e)=>s+parseFloat(e.reps||0),0)}</div><div class="h-stat-label">Reps</div></div>${hasPR?`<div class="h-stat"><div class="h-stat-val">🏆</div><div class="h-stat-label">PR Day</div></div>`:''}</div><div class="history-exercises">${rows}</div></div>`;
   }).join('') + `<button class="clear-history-btn" onclick="clearHistory()">🗑 Clear All History &amp; PRs</button>`;
 }
 
-// ============================================================
-//  RENDER: PRs
-// ============================================================
 function renderPRList() {
-  const list = document.getElementById('pr-list');
-  const entries = Object.entries(prs);
+  const list = document.getElementById('pr-list'); const entries = Object.entries(prs);
   if (!entries.length) { list.innerHTML = `<div class="history-empty">No PRs recorded yet.<br>Complete a session to start tracking records.</div>`; return; }
   entries.sort((a,b) => new Date(b[1].date)-new Date(a[1].date));
-  const rows = entries.map(([name,pr]) => {
-    const dateStr = new Date(pr.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-    return `<div class="pr-row"><span class="pr-ex-name">${name}</span><div style="text-align:right"><span class="pr-ex-weight">${pr.weight}${pr.unit||'kg'}</span><span class="pr-ex-date">${dateStr}</span></div></div>`;
-  }).join('');
+  const rows = entries.map(([name,pr]) => { const dateStr = new Date(pr.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); return `<div class="pr-row"><span class="pr-ex-name">${name}</span><div style="text-align:right"><span class="pr-ex-weight">${pr.weight}${pr.unit||'kg'}</span><span class="pr-ex-date">${dateStr}</span></div></div>`; }).join('');
   list.innerHTML = `<div class="pr-wrap"><div class="pr-header"><span style="font-size:20px">🏆</span><span class="pr-title">Personal Records</span></div>${rows}</div>`;
 }
 
-// ============================================================
-//  RENDER: VOLUME CHARTS
-// ============================================================
 function renderVolumeChart(mode) {
   const container = document.getElementById(mode+'-chart');
   if (!history.length) { container.innerHTML = `<div class="history-empty">No data yet. Complete some sessions first!</div>`; return; }
   const buckets = {};
   history.forEach(entry => {
-    const d = new Date(entry.date);
-    let key;
-    if (mode==='weekly') {
-      const jan1 = new Date(d.getFullYear(),0,1);
-      const week = Math.ceil(((d-jan1)/86400000+jan1.getDay()+1)/7);
-      key = `W${week}'${String(d.getFullYear()).slice(2)}`;
-    } else {
-      key = d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'});
-    }
+    const d = new Date(entry.date); let key;
+    if (mode==='weekly') { const jan1 = new Date(d.getFullYear(),0,1); const week = Math.ceil(((d-jan1)/86400000+jan1.getDay()+1)/7); key = `W${week}'${String(d.getFullYear()).slice(2)}`; }
+    else { key = d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}); }
     if (!buckets[key]) buckets[key] = { chest:0, legs:0, arms:0, order:d.getTime() };
     const vol = entry.snapshot.filter(e=>e.weight).reduce((s,e)=>s+e.weight*parseFloat(e.reps||0),0);
     buckets[key][entry.day] += Math.round(vol);
@@ -1269,30 +1083,17 @@ function renderVolumeChart(mode) {
   const COLORS = { chest:'rgba(57,255,20,0.85)', legs:'rgba(255,107,53,0.85)', arms:'rgba(100,160,255,0.85)' };
   const DAY_NAMES = { chest:'Chest', legs:'Legs', arms:'Arms' };
   const PAD_L=48,PAD_B=36,PAD_T=14,PAD_R=12,barGroupW=54,H=180;
-  const W = Math.max(keys.length*barGroupW+PAD_L+PAD_R,300);
-  const chartH=H-PAD_T-PAD_B;
+  const W = Math.max(keys.length*barGroupW+PAD_L+PAD_R,300); const chartH=H-PAD_T-PAD_B;
   const maxVal = Math.max(...keys.map(k=>(buckets[k].chest||0)+(buckets[k].legs||0)+(buckets[k].arms||0)),1);
-  const barW = Math.min(barGroupW*0.62,30);
-  let bars='',xLabels='';
+  const barW = Math.min(barGroupW*0.62,30); let bars='',xLabels='';
   keys.forEach((k,i) => {
-    const b=buckets[k];
-    const cx=PAD_L+i*barGroupW+barGroupW/2;
-    let stackY=H-PAD_B;
-    const total=(b.chest||0)+(b.legs||0)+(b.arms||0);
-    ['arms','legs','chest'].forEach(day => {
-      const val=b[day]||0; if(!val)return;
-      const bh=(val/maxVal)*chartH; stackY-=bh;
-      bars+=`<rect x="${cx-barW/2}" y="${stackY.toFixed(1)}" width="${barW}" height="${bh.toFixed(1)}" fill="${COLORS[day]}" rx="2"/>`;
-    });
+    const b=buckets[k]; const cx=PAD_L+i*barGroupW+barGroupW/2; let stackY=H-PAD_B; const total=(b.chest||0)+(b.legs||0)+(b.arms||0);
+    ['arms','legs','chest'].forEach(day => { const val=b[day]||0; if(!val)return; const bh=(val/maxVal)*chartH; stackY-=bh; bars+=`<rect x="${cx-barW/2}" y="${stackY.toFixed(1)}" width="${barW}" height="${bh.toFixed(1)}" fill="${COLORS[day]}" rx="2"/>`; });
     if(total>0){const ty=H-PAD_B-(total/maxVal)*chartH;bars+=`<text x="${cx}" y="${(ty-4).toFixed(1)}" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.35)" font-family="DM Mono,monospace">${total}</text>`;}
     xLabels+=`<text x="${cx}" y="${H-PAD_B+15}" text-anchor="middle" font-size="8.5" fill="#555" font-family="DM Mono,monospace">${k}</text>`;
   });
   let yAxis='';
-  [0,0.25,0.5,0.75,1].forEach(frac=>{
-    const y=H-PAD_B-frac*chartH; const val=Math.round(maxVal*frac);
-    yAxis+=`<line x1="${PAD_L}" y1="${y.toFixed(1)}" x2="${W-PAD_R}" y2="${y.toFixed(1)}" stroke="#1e1e1e" stroke-width="1"/>`;
-    yAxis+=`<text x="${PAD_L-5}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="8" fill="#444" font-family="DM Mono,monospace">${val}</text>`;
-  });
+  [0,0.25,0.5,0.75,1].forEach(frac=>{ const y=H-PAD_B-frac*chartH; const val=Math.round(maxVal*frac); yAxis+=`<line x1="${PAD_L}" y1="${y.toFixed(1)}" x2="${W-PAD_R}" y2="${y.toFixed(1)}" stroke="#1e1e1e" stroke-width="1"/><text x="${PAD_L-5}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="8" fill="#444" font-family="DM Mono,monospace">${val}</text>`; });
   const svg=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${yAxis}${bars}${xLabels}<line x1="${PAD_L}" y1="${PAD_T}" x2="${PAD_L}" y2="${H-PAD_B}" stroke="#2a2a2a" stroke-width="1"/><line x1="${PAD_L}" y1="${H-PAD_B}" x2="${W-PAD_R}" y2="${H-PAD_B}" stroke="#2a2a2a" stroke-width="1"/></svg>`;
   const legend=Object.entries(COLORS).map(([day,col])=>`<div class="legend-item"><div class="legend-dot" style="background:${col}"></div>${DAY_NAMES[day]}</div>`).join('');
   container.innerHTML=`<div class="chart-wrap"><div class="chart-title">${mode==='weekly'?'WEEKLY':'MONTHLY'} VOLUME (kg)</div><div class="chart-legend">${legend}</div><div class="chart-svg-wrap">${svg}</div></div>`;
@@ -1300,38 +1101,40 @@ function renderVolumeChart(mode) {
 
 function clearHistory() {
   if (!confirm('Clear all history and personal records?')) return;
-  history=[]; prs={};
-  saveHistory(); savePRs();
-  document.getElementById('check-history').textContent='0 sessions';
-  renderSessionList();
+  history=[]; prs={}; saveHistory(); savePRs();
+  document.getElementById('check-history').textContent='0 sessions'; renderSessionList();
 }
 
 // ============================================================
 //  INIT
 // ============================================================
 async function init() {
-  sb.auth.onAuthStateChange(async (event, session) => {
-    if (session && session.user) {
+  // Check for magic link redirect first
+  const redirectSession = await handleMagicLinkRedirect();
+  if (redirectSession) {
+    accessToken  = redirectSession.access_token;
+    currentUser  = redirectSession.user;
+  } else {
+    // Try existing session from localStorage
+    const session = await getValidSession();
+    if (session) {
+      accessToken = session.access_token;
       currentUser = session.user;
-      document.getElementById('auth-overlay').classList.add('hidden');
-      showToast('Logged in as ' + session.user.email, 'info');
-      await migrateFromLocalStorage();
-      await loadAll();
-      showToast('Plan loaded: ' + (plan ? 'OK' : 'NULL'), 'info');
-      buildCards();
-      showToast('Cards built for ' + plan.exercises.chest.length + ' chest exercises', 'success');
-      document.getElementById('check-history').textContent = `${history.length} sessions`;
-      updateProgress();
-    } else {
-      currentUser = null;
-      document.getElementById('auth-overlay').classList.remove('hidden');
     }
-  });
-
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) {
-    document.getElementById('auth-overlay').classList.remove('hidden');
   }
+
+  if (!currentUser) {
+    document.getElementById('auth-overlay').classList.remove('hidden');
+    return;
+  }
+
+  // Logged in — hide auth, load data, render
+  document.getElementById('auth-overlay').classList.add('hidden');
+  await migrateFromLocalStorage();
+  await loadAll();
+  buildCards();
+  document.getElementById('check-history').textContent = `${history.length} sessions`;
+  updateProgress();
 }
 
 init();
