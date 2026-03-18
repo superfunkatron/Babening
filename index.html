@@ -448,7 +448,7 @@ async function sbSet(key, val) {
     `${SB_URL}/rest/v1/userdata`,
     {
       method: 'POST',
-      headers: { ...authHeaders(), 'Prefer': 'resolution=merge-duplicates' },
+      headers: { ...authHeaders(), 'Prefer': 'return=minimal,resolution=merge-duplicates' },
       body: JSON.stringify({ user_id: currentUser.id, key, value: val })
     }
   );
