@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>THE BABENING — Signing in...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background:#0a0a0a; color:#39ff14; font-family:monospace; 
+           display:flex; align-items:center; justify-content:center; 
+           min-height:100vh; margin:0; font-size:14px; letter-spacing:2px; }
+  </style>
+</head>
+<body>
+  OPENING IN BROWSER...
+  <script>
+    // Grab the full hash from this URL and forward it to the main app
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token')) {
+      window.location.replace('https://superfunkatron.github.io/Babening/index.html' + hash);
+    } else {
+      window.location.replace('https://superfunkatron.github.io/Babening/');
+    }
+  </script>
+</body>
+</html>
