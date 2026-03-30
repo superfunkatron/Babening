@@ -557,7 +557,7 @@ async function handleAuth() {
   const res = await fetch(`${SB_URL}/auth/v1/otp`, {
     method: 'POST',
     headers: { 'apikey': SB_ANON, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, options: { emailRedirectTo: 'https://superfunkatron.github.io/Babening/' } })
+    body: JSON.stringify({ email, options: { emailRedirectTo: 'https://superfunkatron.github.io/Babening/auth.html' } })
   });
   if (res.ok) {
     setAuthMsg('✓ Magic link sent! Check your email.', 'success');
