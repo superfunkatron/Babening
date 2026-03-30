@@ -472,7 +472,33 @@ function authHeaders() {
   };
 }
 
+// ── Ensure token is fresh before any API call ─────────────
+async function ensureValidToken() {
+  const raw = localStorage.getItem('sb-session');
+  if (!raw) return false;
+  const session = JSON.parse(raw);
+  // Refresh if within 5 minutes of expiry (generous buffer for long gym sessions)
+  const expiresAt = session.expires_at * 1000;
+  if (Date.now() < expiresAt - 300000) {
+    // Still valid — make sure in-memory token matches stored one
+    if (accessToken !== session.access_token) accessToken = session.access_token;
+    return true;
+  }
+  // Token expired or about to — refresh it
+  const refreshed = await refreshSession(session.refresh_token);
+  if (!refreshed || !refreshed.access_token) {
+    showToast('Session expired — please sign in again', 'error');
+    document.getElementById('auth-overlay').classList.remove('hidden');
+    return false;
+  }
+  saveSession(refreshed);
+  accessToken = refreshed.access_token;
+  if (refreshed.user) currentUser = refreshed.user;
+  return true;
+}
+
 async function sbGet(key) {
+  await ensureValidToken();
   const res = await fetch(
     `${SB_URL}/rest/v1/userdata?user_id=eq.${currentUser.id}&key=eq.${encodeURIComponent(key)}&select=value`,
     { headers: authHeaders() }
@@ -483,6 +509,8 @@ async function sbGet(key) {
 }
 
 async function sbSet(key, val) {
+  const tokenOk = await ensureValidToken();
+  if (!tokenOk) return; // Don't attempt save if we can't get a valid token
   const res = await fetch(
     `${SB_URL}/rest/v1/userdata`,
     {
@@ -494,7 +522,29 @@ async function sbSet(key, val) {
   if (!res.ok) {
     const msg = await res.text();
     console.error('sbSet error', res.status, msg);
-    showToast('Save error: ' + res.status, 'error');
+    // On 401, try one more time after a fresh token fetch
+    if (res.status === 401) {
+      const raw = localStorage.getItem('sb-session');
+      if (raw) {
+        const session = JSON.parse(raw);
+        const refreshed = await refreshSession(session.refresh_token);
+        if (refreshed && refreshed.access_token) {
+          saveSession(refreshed);
+          accessToken = refreshed.access_token;
+          // Retry once
+          const retry = await fetch(`${SB_URL}/rest/v1/userdata`, {
+            method: 'POST',
+            headers: { ...authHeaders(), 'Prefer': 'return=minimal,resolution=merge-duplicates' },
+            body: JSON.stringify({ user_id: currentUser.id, key, value: val })
+          });
+          if (retry.ok) return; // Retry succeeded silently
+        }
+      }
+      showToast('Session expired — please sign in again', 'error');
+      document.getElementById('auth-overlay').classList.remove('hidden');
+    } else {
+      showToast('Save error: ' + res.status, 'error');
+    }
   }
 }
 
