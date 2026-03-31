@@ -12,14 +12,23 @@
 </head>
 <body>
   OPENING IN BROWSER...
-  <script>
-    // Grab the full hash from this URL and forward it to the main app
-    const hash = window.location.hash;
-    if (hash && hash.includes('access_token')) {
-      window.location.replace('https://superfunkatron.github.io/Babening/index.html' + hash);
-    } else {
-      window.location.replace('https://superfunkatron.github.io/Babening/');
-    }
-  </script>
+ <script>
+  const hash = window.location.hash;
+  const target = 'https://superfunkatron.github.io/Babening/index.html' + (hash || '');
+  
+  // Try to force open in Chrome specifically
+  const chromeIntent = 'intent://' + target.replace('https://', '') + 
+    '#Intent;scheme=https;package=com.android.chrome;end';
+  
+  // On Android, try Chrome intent first, fall back to normal redirect
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  if (isAndroid) {
+    window.location.href = chromeIntent;
+    // Fallback after 500ms if intent didn't work
+    setTimeout(() => { window.location.replace(target); }, 500);
+  } else {
+    window.location.replace(target);
+  }
+</script>
 </body>
 </html>
