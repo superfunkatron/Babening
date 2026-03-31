@@ -557,7 +557,7 @@ async function handleAuth() {
   const res = await fetch(`${SB_URL}/auth/v1/otp`, {
     method: 'POST',
     headers: { 'apikey': SB_ANON, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, options: { emailRedirectTo: 'https://superfunkatron.github.io/Babening/auth.html' } })
+    body: JSON.stringify({ email, options: { emailRedirectTo: 'https://superfunkatron.github.io/Babening/' } })
   });
   if (res.ok) {
     setAuthMsg('✓ Magic link sent! Check your email.', 'success');
@@ -621,6 +621,35 @@ async function getValidSession() {
 }
 
 async function handleMagicLinkRedirect() {
+  // Check for token stored by auth.html (survives Gmail→Chrome browser handoff)
+  const pending = localStorage.getItem('sb-pending-token');
+  if (pending) {
+    localStorage.removeItem('sb-pending-token');
+    try {
+      const tokenData  = JSON.parse(pending);
+      const accessTok  = tokenData.access_token;
+      const refreshTok = tokenData.refresh_token;
+      const expiresIn  = parseInt(tokenData.expires_in || '3600');
+      if (accessTok) {
+        const session = {
+          access_token:  accessTok,
+          refresh_token: refreshTok,
+          expires_at: Math.floor(Date.now() / 1000) + expiresIn,
+          user: { id: null, email: null }
+        };
+        try {
+          const res = await fetch(`${SB_URL}/auth/v1/user`, {
+            headers: { 'apikey': SB_ANON, 'Authorization': `Bearer ${accessTok}` }
+          });
+          if (res.ok) { const user = await res.json(); session.user = user; }
+        } catch(e) { console.error('user fetch failed', e); }
+        saveSession(session);
+        return session;
+      }
+    } catch(e) { console.error('pending token parse failed', e); }
+  }
+
+  // Fallback: token in URL hash (when opening directly in Chrome)
   const hash = window.location.hash || location.hash;
   if (!hash || !hash.includes('access_token')) return false;
   const params = new URLSearchParams(hash.substring(1));

@@ -5,30 +5,57 @@
   <title>THE BABENING — Signing in...</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { background:#0a0a0a; color:#39ff14; font-family:monospace; 
-           display:flex; align-items:center; justify-content:center; 
-           min-height:100vh; margin:0; font-size:14px; letter-spacing:2px; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#0a0a0a; color:#39ff14; font-family:'DM Mono',monospace; 
+           display:flex; align-items:center; justify-content:center; flex-direction:column;
+           min-height:100vh; gap:16px; }
+    .label { font-size:12px; letter-spacing:3px; text-transform:uppercase; opacity:0.7; }
+    .dot-row { display:flex; gap:8px; }
+    .dot { width:8px; height:8px; border-radius:50%; background:#39ff14;
+           animation:pulse 1s ease-in-out infinite; }
+    .dot:nth-child(2) { animation-delay:0.2s; }
+    .dot:nth-child(3) { animation-delay:0.4s; }
+    @keyframes pulse { 0%,100%{opacity:0.2} 50%{opacity:1} }
   </style>
 </head>
 <body>
-  OPENING IN BROWSER...
- <script>
-  const hash = window.location.hash;
-  const target = 'https://superfunkatron.github.io/Babening/index.html' + (hash || '');
-  
-  // Try to force open in Chrome specifically
-  const chromeIntent = 'intent://' + target.replace('https://', '') + 
-    '#Intent;scheme=https;package=com.android.chrome;end';
-  
-  // On Android, try Chrome intent first, fall back to normal redirect
-  const isAndroid = /Android/i.test(navigator.userAgent);
-  if (isAndroid) {
-    window.location.href = chromeIntent;
-    // Fallback after 500ms if intent didn't work
-    setTimeout(() => { window.location.replace(target); }, 500);
-  } else {
-    window.location.replace(target);
-  }
-</script>
+  <div class="label">Signing in</div>
+  <div class="dot-row"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  <script>
+    const BASE = 'https://superfunkatron.github.io/Babening/';
+    const hash = window.location.hash;
+
+    if (hash && hash.includes('access_token')) {
+      // Parse the token params out of the hash
+      const params = new URLSearchParams(hash.substring(1));
+      const tokenData = {
+        access_token:  params.get('access_token'),
+        refresh_token: params.get('refresh_token'),
+        expires_in:    params.get('expires_in'),
+        token_type:    params.get('token_type')
+      };
+
+      // Store in localStorage so it survives the browser handoff
+      // (sessionStorage doesn't survive cross-browser redirects)
+      localStorage.setItem('sb-pending-token', JSON.stringify(tokenData));
+
+      // Now redirect to main app — no hash needed, token is in localStorage
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      if (isAndroid) {
+        // Intent URL forces Chrome to open instead of staying in Gmail browser
+        const target = BASE + 'index.html';
+        const intent = 'intent://' + target.replace('https://', '') +
+          '#Intent;scheme=https;package=com.android.chrome;end';
+        window.location.href = intent;
+        // Fallback if intent fails
+        setTimeout(() => { window.location.replace(target); }, 800);
+      } else {
+        window.location.replace(BASE + 'index.html');
+      }
+    } else {
+      // No token — just go to main app
+      window.location.replace(BASE);
+    }
+  </script>
 </body>
 </html>
