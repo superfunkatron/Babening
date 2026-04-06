@@ -573,19 +573,33 @@ async function sbGet(key) {
 
 async function sbSet(key, val) {
   const tokenOk = await ensureValidToken();
-  if (!tokenOk) return; // Don't attempt save if we can't get a valid token
+  if (!tokenOk) return;
+
+  // Use PATCH to update if row exists, POST to insert if not
+  // This avoids upsert conflict issues entirely
+  const checkRes = await fetch(
+    `${SB_URL}/rest/v1/userdata?user_id=eq.${currentUser.id}&key=eq.${encodeURIComponent(key)}&select=id`,
+    { headers: authHeaders() }
+  );
+  const existing = checkRes.ok ? await checkRes.json() : [];
+  const rowExists = existing.length > 0;
+
   const res = await fetch(
-    `${SB_URL}/rest/v1/userdata`,
+    rowExists
+      ? `${SB_URL}/rest/v1/userdata?user_id=eq.${currentUser.id}&key=eq.${encodeURIComponent(key)}`
+      : `${SB_URL}/rest/v1/userdata`,
     {
-      method: 'POST',
-      headers: { ...authHeaders(), 'Prefer': 'return=minimal,resolution=merge-duplicates' },
-      body: JSON.stringify({ user_id: currentUser.id, key, value: val })
+      method: rowExists ? 'PATCH' : 'POST',
+      headers: { ...authHeaders(), 'Prefer': 'return=minimal' },
+      body: JSON.stringify(rowExists
+        ? { value: val }
+        : { user_id: currentUser.id, key, value: val }
+      )
     }
   );
   if (!res.ok) {
     const msg = await res.text();
     console.error('sbSet error', res.status, msg);
-    // On 401, try one more time after a fresh token fetch
     if (res.status === 401) {
       const raw = localStorage.getItem('sb-session');
       if (raw) {
@@ -595,12 +609,17 @@ async function sbSet(key, val) {
           saveSession(refreshed);
           accessToken = refreshed.access_token;
           // Retry once
-          const retry = await fetch(`${SB_URL}/rest/v1/userdata`, {
-            method: 'POST',
-            headers: { ...authHeaders(), 'Prefer': 'return=minimal,resolution=merge-duplicates' },
-            body: JSON.stringify({ user_id: currentUser.id, key, value: val })
-          });
-          if (retry.ok) return; // Retry succeeded silently
+          const retry = await fetch(
+            rowExists
+              ? `${SB_URL}/rest/v1/userdata?user_id=eq.${currentUser.id}&key=eq.${encodeURIComponent(key)}`
+              : `${SB_URL}/rest/v1/userdata`,
+            {
+              method: rowExists ? 'PATCH' : 'POST',
+              headers: { ...authHeaders(), 'Prefer': 'return=minimal' },
+              body: JSON.stringify(rowExists ? { value: val } : { user_id: currentUser.id, key, value: val })
+            }
+          );
+          if (retry.ok) return;
         }
       }
       showToast('Session expired — please sign in again', 'error');
