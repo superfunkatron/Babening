@@ -23,6 +23,43 @@
     --edit-dim: rgba(176,106,255,0.12);
     --edit-border: rgba(176,106,255,0.35);
   }
+  /* ── LIGHT THEME ── */
+  body.theme-light {
+    --neon: #1a8c00;
+    --neon-dim: rgba(26,140,0,0.12);
+    --neon-glow: 0 0 6px rgba(26,140,0,0.4);
+    --bg: #f2f2f2;
+    --surface: #ffffff;
+    --surface2: #e8e8e8;
+    --border: #d0d0d0;
+    --text: #111111;
+    --muted: #888;
+    --cardio-accent: #d44a00;
+    --gold: #b8860b;
+    --gold-dim: rgba(184,134,11,0.1);
+    --edit-accent: #7c3aed;
+    --edit-dim: rgba(124,58,237,0.1);
+    --edit-border: rgba(124,58,237,0.3);
+  }
+  body.theme-light::before { opacity:0.1; }
+  /* ── DIM THEME ── */
+  body.theme-dim {
+    --bg: #050505;
+    --surface: #0a0a0a;
+    --surface2: #0f0f0f;
+    --border: #181818;
+    --text: #777777;
+    --muted: #2e2e2e;
+    --neon: #1d6b0a;
+    --neon-dim: rgba(29,107,10,0.08);
+    --neon-glow: 0 0 4px rgba(29,107,10,0.25);
+    --cardio-accent: #7a3318;
+    --gold: #6e5800;
+    --gold-dim: rgba(110,88,0,0.08);
+  }
+  body.theme-dim::before { opacity:0.5; }
+  .theme-btn { font-family:'DM Mono',monospace; font-size:11px; padding:5px 8px; border-radius:5px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); transition:all 0.2s; }
+  .theme-btn:active { opacity:0.7; }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { background:var(--bg); color:var(--text); font-family:'Barlow',sans-serif; min-height:100vh; overflow-x:hidden; }
   body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; opacity:0.6; }
@@ -44,6 +81,7 @@
   .auth-msg { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); text-align:center; letter-spacing:0.5px; line-height:1.6; min-height:18px; }
   .auth-msg.success { color:var(--neon); }
   .auth-msg.error { color:#ff6b6b; }
+  .auth-hint { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); text-align:center; letter-spacing:0.5px; line-height:1.5; }
 
   /* ── HEADER ── */
   header { position:sticky; top:0; z-index:100; background:rgba(10,10,10,0.96); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:10px 16px; transition:border-color 0.3s; }
@@ -291,6 +329,24 @@
   .clear-history-btn { display:block; width:100%; margin-top:16px; padding:10px; background:transparent; border:1px solid #3a1515; color:#663333; font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:2px; border-radius:6px; cursor:pointer; }
   .clear-history-btn:active { background:#200a0a; }
 
+  /* ── SESSION NOTES ── */
+  .session-note-input { width:100%; margin-top:12px; background:rgba(0,0,0,0.3); border:1px solid rgba(57,255,20,0.2); border-radius:6px; padding:8px 10px; font-family:'DM Mono',monospace; font-size:11px; color:rgba(57,255,20,0.8); outline:none; resize:none; height:58px; letter-spacing:0.5px; }
+  body.theme-light .session-note-input { background:rgba(255,255,255,0.5); border-color:rgba(26,140,0,0.3); color:#333; }
+  .session-note-input::placeholder { color:rgba(57,255,20,0.3); }
+  body.theme-light .session-note-input::placeholder { color:#aaa; }
+  .history-note { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); padding:7px 14px 9px; font-style:italic; border-top:1px solid rgba(255,255,255,0.04); }
+
+  /* ── EXERCISE SEARCH ── */
+  .search-wrap { margin-bottom:12px; }
+  .search-input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:7px; padding:10px 14px; font-family:'DM Mono',monospace; font-size:12px; color:var(--text); outline:none; letter-spacing:0.5px; }
+  .search-input:focus { border-color:var(--neon); }
+  .search-input::placeholder { color:var(--muted); }
+
+  /* ── CARDIO PROGRESS CHART ── */
+  .cardio-machine-tabs { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+  .cardio-machine-tab { padding:5px 10px; background:var(--surface); border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase; border-radius:4px; cursor:pointer; transition:all 0.2s; }
+  .cardio-machine-tab.active { background:rgba(255,107,53,0.12); border-color:rgba(255,107,53,0.4); color:var(--cardio-accent); }
+
   .timer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:200; align-items:center; justify-content:center; flex-direction:column; gap:16px; }
   .timer-overlay.active { display:flex; animation:fadeUp 0.2s ease; }
   .timer-ring { position:relative; width:180px; height:180px; }
@@ -317,10 +373,12 @@
 <div id="auth-overlay">
   <div class="auth-box">
     <div class="auth-logo">THE BABENING</div>
-    <div class="auth-sub" id="auth-sub">Sign in to sync your data</div>
+    <div class="auth-sub" id="auth-sub">Sign in to your account</div>
     <input class="auth-input" id="auth-email" type="email" placeholder="your@email.com" autocomplete="email">
-    <button class="auth-btn" id="auth-btn" onclick="handleAuth()">Send Magic Link</button>
+    <input class="auth-input" id="auth-password" type="password" placeholder="password" autocomplete="current-password">
+    <button class="auth-btn" id="auth-btn" onclick="handleAuth()">Sign In</button>
     <div class="auth-msg" id="auth-msg"></div>
+    <div class="auth-hint">First time? It'll create your account automatically.</div>
   </div>
 </div>
 
@@ -355,6 +413,7 @@
         <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar"></div></div>
       </div>
       <button class="edit-toggle-btn" id="editToggleBtn" onclick="toggleEditMode()">✏ Edit</button>
+      <button class="theme-btn" id="themeBtn" onclick="cycleTheme()" title="Toggle theme">🌙</button>
       <button class="signout-btn" onclick="handleSignOut()" title="Sign out">↩</button>
     </div>
   </div>
@@ -380,7 +439,7 @@
     <div class="section-sub" id="daysub-chest">10 exercises · lift / cardio circuit</div>
     <div class="hint">Tap card to expand · Tap ○ to check off</div>
   </div>
-  <div id="done-banner-chest" class="done-banner"><div class="done-emoji">🔥</div><div class="done-text">CHEST DEMOLISHED</div><div class="done-sub">Get some rest. You earned it.</div></div>
+  <div id="done-banner-chest" class="done-banner"><div class="done-emoji">🔥</div><div class="done-text">CHEST DEMOLISHED</div><div class="done-sub">Get some rest. You earned it.</div><textarea class="session-note-input" id="note-chest" placeholder="Add a session note... (optional)" oninput="saveSessionNote('chest',this.value)"></textarea></div>
   <div id="cards-chest"></div>
   <button class="add-exercise-btn" onclick="addExercise('chest')">+ Add Exercise</button>
   <button class="reset-btn" onclick="resetDay('chest')">↺ Reset Chest Day</button>
@@ -393,7 +452,7 @@
     <div class="section-sub" id="daysub-legs">10 exercises · lift / cardio circuit</div>
     <div class="hint">Tap card to expand · Tap ○ to check off</div>
   </div>
-  <div id="done-banner-legs" class="done-banner"><div class="done-emoji">🦵</div><div class="done-text">LEGS OBLITERATED</div><div class="done-sub">Stairs are optional tomorrow.</div></div>
+  <div id="done-banner-legs" class="done-banner"><div class="done-emoji">🦵</div><div class="done-text">LEGS OBLITERATED</div><div class="done-sub">Stairs are optional tomorrow.</div><textarea class="session-note-input" id="note-legs" placeholder="Add a session note... (optional)" oninput="saveSessionNote('legs',this.value)"></textarea></div>
   <div id="cards-legs"></div>
   <button class="add-exercise-btn" onclick="addExercise('legs')">+ Add Exercise</button>
   <button class="reset-btn" onclick="resetDay('legs')">↺ Reset Leg Day</button>
@@ -406,7 +465,7 @@
     <div class="section-sub" id="daysub-arms">9 exercises · lift / cardio circuit</div>
     <div class="hint">Tap card to expand · Tap ○ to check off</div>
   </div>
-  <div id="done-banner-arms" class="done-banner"><div class="done-emoji">💪</div><div class="done-text">ARMS ANNIHILATED</div><div class="done-sub">Flexing mandatory for 24h.</div></div>
+  <div id="done-banner-arms" class="done-banner"><div class="done-emoji">💪</div><div class="done-text">ARMS ANNIHILATED</div><div class="done-sub">Flexing mandatory for 24h.</div><textarea class="session-note-input" id="note-arms" placeholder="Add a session note... (optional)" oninput="saveSessionNote('arms',this.value)"></textarea></div>
   <div id="cards-arms"></div>
   <button class="add-exercise-btn" onclick="addExercise('arms')">+ Add Exercise</button>
   <button class="reset-btn" onclick="resetDay('arms')">↺ Reset Arms Day</button>
@@ -422,14 +481,19 @@
     <button class="data-btn import-btn" onclick="document.getElementById('importFile').click()">⬆ Import Backup</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
   </div>
+  <div class="search-wrap">
+    <input class="search-input" id="exerciseSearch" placeholder="🔍 Search exercises..." oninput="filterHistory(this.value)">
+  </div>
   <div class="chart-tabs">
     <button class="chart-tab active" onclick="switchHistoryTab('sessions')" id="htab-sessions">Sessions</button>
     <button class="chart-tab" onclick="switchHistoryTab('prs')" id="htab-prs">🏆 PRs</button>
+    <button class="chart-tab" onclick="switchHistoryTab('cardio')" id="htab-cardio">📈 Cardio</button>
     <button class="chart-tab" onclick="switchHistoryTab('weekly')" id="htab-weekly">Weekly</button>
     <button class="chart-tab" onclick="switchHistoryTab('monthly')" id="htab-monthly">Monthly</button>
   </div>
   <div class="chart-panel active" id="hpanel-sessions"><div id="history-list"></div></div>
   <div class="chart-panel" id="hpanel-prs"><div id="pr-list"></div></div>
+  <div class="chart-panel" id="hpanel-cardio"><div id="cardio-chart"></div></div>
   <div class="chart-panel" id="hpanel-weekly"><div id="weekly-chart"></div></div>
   <div class="chart-panel" id="hpanel-monthly"><div id="monthly-chart"></div></div>
 </div>
@@ -447,8 +511,8 @@ let accessToken = null;
 let currentUser = null;
 
 // ── Cardio machine metric lookup ──────────────────────────
-// 'watts' machines track average watts; everything else tracks distance in metres
-const WATTS_MACHINES = new Set(['assault bike','grinder']);
+// Only Assault Bike tracks watts; everything else tracks distance in metres
+const WATTS_MACHINES = new Set(['assault bike']);
 function getCardioMetric(name) {
   return WATTS_MACHINES.has(name.toLowerCase()) ? 'watts' : 'metres';
 }
@@ -456,8 +520,7 @@ function getCardioUnit(name) {
   return WATTS_MACHINES.has(name.toLowerCase()) ? 'W' : 'm';
 }
 function getCardioStep(val, metric) {
-  if (metric === 'watts') return val < 50 ? 5 : 10;
-  return val < 100 ? 10 : val < 1000 ? 50 : 100;
+  return 1; // All increments are 1
 }
 function getCardioDefault(name) {
   return WATTS_MACHINES.has(name.toLowerCase()) ? 100 : 500;
@@ -550,24 +613,84 @@ async function sbSet(key, val) {
 
 // ── Auth ──────────────────────────────────────────────────
 async function handleAuth() {
-  const email = document.getElementById('auth-email').value.trim();
-  if (!email || !email.includes('@')) { setAuthMsg('Please enter a valid email address.', 'error'); return; }
+  const email    = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  if (!email || !email.includes('@')) { setAuthMsg('Please enter a valid email.', 'error'); return; }
+  if (!password || password.length < 6) { setAuthMsg('Password must be at least 6 characters.', 'error'); return; }
   const btn = document.getElementById('auth-btn');
-  btn.disabled = true; btn.textContent = 'Sending...';
-  const res = await fetch(`${SB_URL}/auth/v1/otp`, {
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  setAuthMsg('', '');
+
+  // Try sign in first
+  const signInRes = await fetch(`${SB_URL}/auth/v1/token?grant_type=password`, {
     method: 'POST',
     headers: { 'apikey': SB_ANON, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, options: { emailRedirectTo: 'https://superfunkatron.github.io/Babening/' } })
+    body: JSON.stringify({ email, password })
   });
-  if (res.ok) {
-    setAuthMsg('✓ Magic link sent! Check your email.', 'success');
-    document.getElementById('auth-sub').textContent = 'Check your inbox';
-    btn.textContent = 'Link Sent';
-  } else {
-    const err = await res.json();
-    setAuthMsg('Error: ' + (err.msg || err.message || res.status), 'error');
-    btn.disabled = false; btn.textContent = 'Send Magic Link';
+
+  if (signInRes.ok) {
+    const data = await signInRes.json();
+    const session = buildSession(data);
+    saveSession(session);
+    accessToken = session.access_token;
+    currentUser = session.user;
+    onAuthSuccess();
+    return;
   }
+
+  const signInErr = await signInRes.json();
+  // If invalid credentials, don't try sign up — just report the error
+  if (signInRes.status === 400 && signInErr.error_description && signInErr.error_description.includes('Invalid')) {
+    setAuthMsg('Incorrect email or password.', 'error');
+    btn.disabled = false; btn.textContent = 'Sign In';
+    return;
+  }
+
+  // Account not found — try sign up automatically
+  setAuthMsg('Creating your account...', '');
+  btn.textContent = 'Creating account...';
+  const signUpRes = await fetch(`${SB_URL}/auth/v1/signup`, {
+    method: 'POST',
+    headers: { 'apikey': SB_ANON, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+
+  if (signUpRes.ok) {
+    const data = await signUpRes.json();
+    if (data.access_token) {
+      const session = buildSession(data);
+      saveSession(session);
+      accessToken = session.access_token;
+      currentUser = session.user;
+      onAuthSuccess();
+    } else {
+      // Shouldn't happen with confirm email off, but just in case
+      setAuthMsg('Account created! Please sign in now.', 'success');
+      btn.disabled = false; btn.textContent = 'Sign In';
+    }
+  } else {
+    const err = await signUpRes.json();
+    setAuthMsg('Error: ' + (err.msg || err.message || err.error_description || signUpRes.status), 'error');
+    btn.disabled = false; btn.textContent = 'Sign In';
+  }
+}
+
+function buildSession(data) {
+  return {
+    access_token:  data.access_token,
+    refresh_token: data.refresh_token,
+    expires_at:    Math.floor(Date.now() / 1000) + (data.expires_in || 3600),
+    user:          data.user || { id: null, email: null }
+  };
+}
+
+async function onAuthSuccess() {
+  document.getElementById('auth-overlay').classList.add('hidden');
+  await migrateFromLocalStorage();
+  await loadAll();
+  buildCards();
+  document.getElementById('check-history').textContent = `${history.length} sessions`;
+  updateProgress();
 }
 
 function setAuthMsg(msg, type='') {
@@ -576,13 +699,21 @@ function setAuthMsg(msg, type='') {
   el.className = 'auth-msg' + (type ? ' ' + type : '');
 }
 
+// Allow pressing Enter on password field to submit
+document.addEventListener('DOMContentLoaded', () => {
+  const pw = document.getElementById('auth-password');
+  if (pw) pw.addEventListener('keydown', e => { if (e.key === 'Enter') handleAuth(); });
+  const em = document.getElementById('auth-email');
+  if (em) em.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('auth-password').focus(); });
+});
+
 async function handleSignOut() {
   if (!confirm('Sign out?')) return;
   if (accessToken) {
     await fetch(`${SB_URL}/auth/v1/logout`, {
       method: 'POST',
       headers: { 'apikey': SB_ANON, 'Authorization': `Bearer ${accessToken}` }
-    });
+    }).catch(() => {});
   }
   accessToken = null; currentUser = null;
   localStorage.removeItem('sb-session');
@@ -591,10 +722,10 @@ async function handleSignOut() {
 
 function saveSession(session) {
   localStorage.setItem('sb-session', JSON.stringify({
-    access_token: session.access_token,
+    access_token:  session.access_token,
     refresh_token: session.refresh_token,
-    expires_at: session.expires_at,
-    user: session.user
+    expires_at:    session.expires_at,
+    user:          session.user
   }));
 }
 
@@ -618,60 +749,6 @@ async function getValidSession() {
   if (!refreshed || !refreshed.access_token) { localStorage.removeItem('sb-session'); return null; }
   saveSession(refreshed);
   return refreshed;
-}
-
-async function handleMagicLinkRedirect() {
-  // Check for token stored by auth.html (survives Gmail→Chrome browser handoff)
-  const pending = localStorage.getItem('sb-pending-token');
-  if (pending) {
-    localStorage.removeItem('sb-pending-token');
-    try {
-      const tokenData  = JSON.parse(pending);
-      const accessTok  = tokenData.access_token;
-      const refreshTok = tokenData.refresh_token;
-      const expiresIn  = parseInt(tokenData.expires_in || '3600');
-      if (accessTok) {
-        const session = {
-          access_token:  accessTok,
-          refresh_token: refreshTok,
-          expires_at: Math.floor(Date.now() / 1000) + expiresIn,
-          user: { id: null, email: null }
-        };
-        try {
-          const res = await fetch(`${SB_URL}/auth/v1/user`, {
-            headers: { 'apikey': SB_ANON, 'Authorization': `Bearer ${accessTok}` }
-          });
-          if (res.ok) { const user = await res.json(); session.user = user; }
-        } catch(e) { console.error('user fetch failed', e); }
-        saveSession(session);
-        return session;
-      }
-    } catch(e) { console.error('pending token parse failed', e); }
-  }
-
-  // Fallback: token in URL hash (when opening directly in Chrome)
-  const hash = window.location.hash || location.hash;
-  if (!hash || !hash.includes('access_token')) return false;
-  const params = new URLSearchParams(hash.substring(1));
-  const accessTok = params.get('access_token');
-  const refreshTok = params.get('refresh_token');
-  const expiresIn = parseInt(params.get('expires_in') || '3600');
-  if (!accessTok) return false;
-  const session = {
-    access_token: accessTok,
-    refresh_token: refreshTok,
-    expires_at: Math.floor(Date.now() / 1000) + expiresIn,
-    user: { id: null, email: null }
-  };
-  try {
-    const res = await fetch(`${SB_URL}/auth/v1/user`, {
-      headers: { 'apikey': SB_ANON, 'Authorization': `Bearer ${accessTok}` }
-    });
-    if (res.ok) { const user = await res.json(); session.user = user; }
-  } catch(e) { console.error('user fetch failed', e); }
-  saveSession(session);
-  window.history.replaceState(null, '', window.location.pathname);
-  return session;
 }
 
 // ============================================================
@@ -1061,7 +1138,7 @@ function buildCardHTML(day, i, ex, id) {
 }
 
 function escHtml(str) { return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function getStep(val) { return val < 5 ? 0.5 : val < 20 ? 1 : 2.5; }
+function getStep(val) { return 1; }
 function calcVolume(day, i, ex) {
   const wStat = ex.stats.find(s => s.editable); const rStat = ex.stats.find(s => s.k === 'Reps');
   if (!wStat || !rStat) return 0;
@@ -1227,8 +1304,12 @@ function switchHistoryTab(tab) {
   document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.chart-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('htab-'+tab).classList.add('active'); document.getElementById('hpanel-'+tab).classList.add('active');
+  // Clear search when switching tabs
+  const searchEl = document.getElementById('exerciseSearch');
+  if (searchEl && tab !== 'sessions') searchEl.value = '';
   if (tab==='sessions') renderSessionList();
   if (tab==='prs')      renderPRList();
+  if (tab==='cardio')   renderCardioChart();
   if (tab==='weekly')   renderVolumeChart('weekly');
   if (tab==='monthly')  renderVolumeChart('monthly');
 }
@@ -1265,7 +1346,6 @@ function logSession(day, exes) {
     const wStat = ex.stats.find(s => s.editable); const rStat = ex.stats.find(s => s.k==='Reps');
     const weight = wStat ? getWeight(day, idx, wStat.k, wStat.v) : null; const unit = wStat ? wStat.unit : null;
     const isNewPR = weight ? checkAndSetPR(ex.name, weight, unit) : false;
-    // Capture cardio value
     let cardioValue = null; let cardioUnit = null; let isCardioNewPR = false;
     if (ex.type === 'cardio') {
       cardioValue    = getCardioValue(day, idx, ex.name);
@@ -1274,33 +1354,50 @@ function logSession(day, exes) {
     }
     return { name:ex.name, weight, reps:rStat?rStat.v:null, unit, isNewPR, type:ex.type, cardioValue, cardioUnit, isCardioNewPR };
   });
-  history.unshift({ date:new Date().toISOString(), day, dayName:plan.dayNames[day], snapshot });
+  const note = pendingNotes[day] || '';
+  history.unshift({ date:new Date().toISOString(), day, dayName:plan.dayNames[day], snapshot, note });
   if (history.length > 120) history = history.slice(0,120);
   saveHistory(); document.getElementById('check-history').textContent = `${history.length} sessions`;
 }
 
-function renderSessionList() {
+function renderSessionList(query='') {
   const list = document.getElementById('history-list');
   if (!history.length) { list.innerHTML = `<div class="history-empty">No sessions logged yet.<br>Complete a full day to log it here.</div>`; return; }
   const EMOJI = { chest:'💪', legs:'🦵', arms:'🏋️' };
-  list.innerHTML = history.map(entry => {
+  const q = query.toLowerCase().trim();
+
+  // Filter entries: if query, only show entries that contain matching exercises
+  const filtered = q
+    ? history.filter(entry => entry.snapshot.some(e => e.name.toLowerCase().includes(q)))
+    : history;
+
+  if (!filtered.length) {
+    list.innerHTML = `<div class="history-empty">No sessions found for "${query}".</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(entry => {
     const d = new Date(entry.date); const dateStr = d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
     const liftSnap = entry.snapshot.filter(e=>e.weight); const totalVol = liftSnap.reduce((s,e)=>s+e.weight*parseFloat(e.reps||0),0);
     const hasPR = entry.snapshot.some(e=>e.isNewPR || e.isCardioNewPR);
     const label = entry.dayName || (entry.day==='chest'?'CHEST DAY':entry.day==='legs'?'LEG DAY':'ARMS & SHOULDERS');
-    const rows = entry.snapshot.map(e => {
-      const isCardioRow = e.type === 'cardio';
-      const isPRRow     = e.isNewPR || e.isCardioNewPR;
-      let detail;
-      if (isCardioRow && e.cardioValue) {
-        detail = `<span class="history-ex-detail cardio-val">${e.cardioValue}${e.cardioUnit||'m'}${e.isCardioNewPR?' 🏆':''}</span>`;
-      } else {
-        detail = `<span class="history-ex-detail">${e.weight?`${e.weight}${e.unit||'kg'} × ${e.reps}`:e.reps?`${e.reps} reps`:'—'}${e.isNewPR?' 🏆':''}</span>`;
-      }
-      return `<div class="history-ex-row${isPRRow?' is-pr-row':''}${isCardioRow?' is-cardio-row':''}"><span class="history-ex-name">${e.name}</span>${detail}</div>`;
-    }).join('');
-    return `<div class="history-entry${hasPR?' has-pr':''}"><div class="history-entry-header"><span class="history-day-label">${EMOJI[entry.day]||''} ${label}</span><span class="history-date">${dateStr}${hasPR?' 🏆':''}</span></div><div class="history-stats"><div class="h-stat"><div class="h-stat-val">${liftSnap.length}</div><div class="h-stat-label">Lifts</div></div><div class="h-stat"><div class="h-stat-val">${Math.round(totalVol)}</div><div class="h-stat-label">Total kg</div></div><div class="h-stat"><div class="h-stat-val">${entry.snapshot.reduce((s,e)=>s+parseFloat(e.reps||0),0)}</div><div class="h-stat-label">Reps</div></div>${hasPR?`<div class="h-stat"><div class="h-stat-val">🏆</div><div class="h-stat-label">PR Day</div></div>`:''}</div><div class="history-exercises">${rows}</div></div>`;
-  }).join('') + `<button class="clear-history-btn" onclick="clearHistory()">🗑 Clear All History &amp; PRs</button>`;
+    // If searching, highlight matching rows
+    const rows = entry.snapshot
+      .filter(e => !q || e.name.toLowerCase().includes(q))
+      .map(e => {
+        const isCardioRow = e.type === 'cardio';
+        const isPRRow     = e.isNewPR || e.isCardioNewPR;
+        let detail;
+        if (isCardioRow && e.cardioValue) {
+          detail = `<span class="history-ex-detail cardio-val">${e.cardioValue}${e.cardioUnit||'m'}${e.isCardioNewPR?' 🏆':''}</span>`;
+        } else {
+          detail = `<span class="history-ex-detail">${e.weight?`${e.weight}${e.unit||'kg'} × ${e.reps}`:e.reps?`${e.reps} reps`:'—'}${e.isNewPR?' 🏆':''}</span>`;
+        }
+        return `<div class="history-ex-row${isPRRow?' is-pr-row':''}${isCardioRow?' is-cardio-row':''}"><span class="history-ex-name">${e.name}</span>${detail}</div>`;
+      }).join('');
+    const noteHTML = entry.note ? `<div class="history-note">📝 ${entry.note}</div>` : '';
+    return `<div class="history-entry${hasPR?' has-pr':''}"><div class="history-entry-header"><span class="history-day-label">${EMOJI[entry.day]||''} ${label}</span><span class="history-date">${dateStr}${hasPR?' 🏆':''}</span></div><div class="history-stats"><div class="h-stat"><div class="h-stat-val">${liftSnap.length}</div><div class="h-stat-label">Lifts</div></div><div class="h-stat"><div class="h-stat-val">${Math.round(totalVol)}</div><div class="h-stat-label">Total kg</div></div><div class="h-stat"><div class="h-stat-val">${entry.snapshot.reduce((s,e)=>s+parseFloat(e.reps||0),0)}</div><div class="h-stat-label">Reps</div></div>${hasPR?`<div class="h-stat"><div class="h-stat-val">🏆</div><div class="h-stat-label">PR Day</div></div>`:''}</div><div class="history-exercises">${rows}</div>${noteHTML}</div>`;
+  }).join('') + (q ? '' : `<button class="clear-history-btn" onclick="clearHistory()">🗑 Clear All History &amp; PRs</button>`);
 }
 
 function renderPRList() {
@@ -1356,26 +1453,191 @@ function clearHistory() {
 }
 
 // ============================================================
+//  THEME
+// ============================================================
+const THEMES = ['dark','light','dim'];
+const THEME_ICONS = { dark:'🌙', light:'☀️', dim:'🔅' };
+let currentTheme = 'dark';
+
+function applyTheme(theme) {
+  document.body.classList.remove('theme-light','theme-dim');
+  if (theme === 'light') document.body.classList.add('theme-light');
+  if (theme === 'dim')   document.body.classList.add('theme-dim');
+  currentTheme = theme;
+  const btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = THEME_ICONS[theme];
+  localStorage.setItem('babening-theme', theme);
+}
+
+function cycleTheme() {
+  const idx = THEMES.indexOf(currentTheme);
+  applyTheme(THEMES[(idx + 1) % THEMES.length]);
+}
+
+function loadTheme() {
+  const saved = localStorage.getItem('babening-theme') || 'dark';
+  applyTheme(saved);
+}
+
+// ============================================================
+//  SESSION NOTES
+// ============================================================
+let pendingNotes = {}; // day -> note text, held until session logged
+
+function saveSessionNote(day, text) {
+  pendingNotes[day] = text;
+  // Also patch the most recent history entry for this day if it exists today
+  const todayStr = new Date().toDateString();
+  const entry = history.find(h => h.day === day && new Date(h.date).toDateString() === todayStr);
+  if (entry) {
+    entry.note = text;
+    saveHistory();
+  }
+}
+
+// ============================================================
+//  EXERCISE SEARCH
+// ============================================================
+function filterHistory(query) {
+  const q = query.trim().toLowerCase();
+  // Switch to sessions tab when searching
+  if (q) {
+    document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.chart-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('htab-sessions').classList.add('active');
+    document.getElementById('hpanel-sessions').classList.add('active');
+  }
+  renderSessionList(q);
+}
+
+// ============================================================
+//  CARDIO PROGRESS CHART
+// ============================================================
+let activeCardioMachine = null;
+
+function renderCardioChart() {
+  const container = document.getElementById('cardio-chart');
+
+  // Gather all unique cardio exercise names from history
+  const machineSet = new Set();
+  history.forEach(entry => {
+    entry.snapshot.forEach(e => {
+      if (e.type === 'cardio' && e.cardioValue) machineSet.add(e.name);
+    });
+  });
+
+  if (!machineSet.size) {
+    container.innerHTML = `<div class="history-empty">No cardio data yet.<br>Log cardio efforts during a session to see trends here.</div>`;
+    return;
+  }
+
+  const machines = Array.from(machineSet).sort();
+  if (!activeCardioMachine || !machineSet.has(activeCardioMachine)) {
+    activeCardioMachine = machines[0];
+  }
+
+  // Machine selector tabs
+  const machineTabs = machines.map(m =>
+    `<button class="cardio-machine-tab${m === activeCardioMachine ? ' active' : ''}"
+      onclick="activeCardioMachine='${m.replace(/'/g,"\'")}';renderCardioChart()">${m}</button>`
+  ).join('');
+
+  // Get data points for active machine, oldest first
+  const points = [];
+  [...history].reverse().forEach(entry => {
+    const snap = entry.snapshot.find(e => e.name === activeCardioMachine && e.cardioValue);
+    if (snap) {
+      points.push({
+        date: new Date(entry.date),
+        value: snap.cardioValue,
+        unit: snap.cardioUnit || 'm',
+        dayName: entry.dayName || entry.day
+      });
+    }
+  });
+
+  if (points.length < 2) {
+    container.innerHTML = `
+      <div class="cardio-machine-tabs">${machineTabs}</div>
+      <div class="history-empty">Need at least 2 sessions to show a trend.<br>Keep logging!</div>`;
+    return;
+  }
+
+  const unit = points[0].unit;
+  const maxVal = Math.max(...points.map(p => p.value));
+  const minVal = Math.min(...points.map(p => p.value));
+  const PAD_L=44, PAD_B=36, PAD_T=14, PAD_R=12, H=160;
+  const W = Math.max(points.length * 48 + PAD_L + PAD_R, 300);
+  const chartH = H - PAD_T - PAD_B;
+  const range = maxVal - minVal || 1;
+
+  const pts = points.map((p, i) => {
+    const x = PAD_L + i * ((W - PAD_L - PAD_R) / (points.length - 1));
+    const y = PAD_T + chartH - ((p.value - minVal) / range) * chartH;
+    return { x, y, ...p };
+  });
+
+  // Build SVG path
+  const linePath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const areaPath = linePath + ` L${pts[pts.length-1].x.toFixed(1)},${(H-PAD_B).toFixed(1)} L${pts[0].x.toFixed(1)},${(H-PAD_B).toFixed(1)} Z`;
+
+  const dots = pts.map(p =>
+    `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="var(--cardio-accent)" stroke="var(--bg)" stroke-width="2"/>
+     <text x="${p.x.toFixed(1)}" y="${(p.y-10).toFixed(1)}" text-anchor="middle" font-size="8" fill="rgba(255,107,53,0.7)" font-family="DM Mono,monospace">${p.value}</text>`
+  ).join('');
+
+  const xLabels = pts.map(p =>
+    `<text x="${p.x.toFixed(1)}" y="${H-PAD_B+14}" text-anchor="middle" font-size="8" fill="#555" font-family="DM Mono,monospace">${p.date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</text>`
+  ).join('');
+
+  let yAxis = '';
+  [0,0.5,1].forEach(frac => {
+    const y = PAD_T + chartH - frac * chartH;
+    const val = Math.round(minVal + frac * range);
+    yAxis += `<line x1="${PAD_L}" y1="${y.toFixed(1)}" x2="${W-PAD_R}" y2="${y.toFixed(1)}" stroke="#1e1e1e" stroke-width="1"/>
+      <text x="${PAD_L-5}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="8" fill="#444" font-family="DM Mono,monospace">${val}</text>`;
+  });
+
+  const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(255,107,53,0.25)"/>
+      <stop offset="100%" stop-color="rgba(255,107,53,0)"/>
+    </linearGradient></defs>
+    ${yAxis}
+    <path d="${areaPath}" fill="url(#cg)"/>
+    <path d="${linePath}" fill="none" stroke="var(--cardio-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    ${dots}${xLabels}
+    <line x1="${PAD_L}" y1="${PAD_T}" x2="${PAD_L}" y2="${H-PAD_B}" stroke="#2a2a2a" stroke-width="1"/>
+    <line x1="${PAD_L}" y1="${H-PAD_B}" x2="${W-PAD_R}" y2="${H-PAD_B}" stroke="#2a2a2a" stroke-width="1"/>
+  </svg>`;
+
+  container.innerHTML = `
+    <div class="cardio-machine-tabs">${machineTabs}</div>
+    <div class="chart-wrap">
+      <div class="chart-title">${activeCardioMachine.toUpperCase()} — ${unit === 'W' ? 'AVG WATTS' : 'DISTANCE (m)'}</div>
+      <div class="chart-svg-wrap">${svg}</div>
+    </div>`;
+}
+
+// ============================================================
 //  INIT
 // ============================================================
 async function init() {
-  const redirectSession = await handleMagicLinkRedirect();
-  if (redirectSession) {
-    accessToken  = redirectSession.access_token;
-    currentUser  = redirectSession.user;
-  } else {
-    const session = await getValidSession();
-    if (session) {
-      accessToken = session.access_token;
-      currentUser = session.user;
-    }
+  loadTheme();
+
+  // Try to restore session from localStorage
+  const session = await getValidSession();
+  if (session) {
+    accessToken = session.access_token;
+    currentUser = session.user;
   }
 
-  if (!currentUser) {
+  if (!currentUser || !currentUser.id) {
     document.getElementById('auth-overlay').classList.remove('hidden');
     return;
   }
 
+  // Valid session found — go straight in
   document.getElementById('auth-overlay').classList.add('hidden');
   await migrateFromLocalStorage();
   await loadAll();
