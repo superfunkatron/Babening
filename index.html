@@ -1834,7 +1834,7 @@ async function loadVenues() {
       <div class="venue-card-meta">${[v.suburb, v.chain].filter(Boolean).join(' · ') || '&nbsp;'}</div>
       ${v.notes ? `<div class="venue-card-meta" style="margin-top:4px;font-style:italic;color:var(--muted);">${v.notes}</div>` : ''}
       <div class="venue-card-actions">
-        <button class="venue-action-btn" onclick="openEquipmentPanel('${v.id}', ${JSON.stringify(v.name)})">🏋️ EQUIPMENT</button>
+        <button class="venue-action-btn" onclick="openEquipmentPanel('${v.id}', '${v.name.replace(/'/g, "\\'")}')">🏋️ EQUIPMENT</button>
         <button class="venue-action-btn venue-delete-btn" onclick="deleteVenue('${v.id}')">✕ DELETE</button>
       </div>
     </div>
