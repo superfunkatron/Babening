@@ -1821,6 +1821,7 @@ async function loadVenuesTab() {
 }
 
 async function loadVenues() {
+  console.log('loadVenuesTab called, allEquipmentTypes:', allEquipmentTypes.length);
   const venues = await sbRestGet(`venues?select=id,name,suburb,chain,notes&user_id=eq.${currentUser.id}&order=name`) || [];
   const list = document.getElementById('venues-list');
   if (!venues.length) {
@@ -1868,6 +1869,7 @@ async function saveVenue() {
 }
 
 async function deleteVenue(venueId) {
+  console.log('openEquipmentPanel called', venueId, venueName, 'equip count:', allEquipmentTypes.length);
   if (!confirm('Delete this gym and all its equipment data?')) return;
   try {
     await sbDelete(`venues?id=eq.${venueId}&user_id=eq.${currentUser.id}`);
