@@ -365,6 +365,24 @@
   .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
   .toast.success { border-color:rgba(57,255,20,0.4); color:var(--neon); }
   .toast.info { border-color:var(--edit-border); color:var(--edit-accent); }
+  /* ── VENUES TAB ── */
+  .edit-only-tab { display:none !important; }
+  body.edit-mode .edit-only-tab { display:flex !important; flex-direction:column; align-items:center; }
+  .venue-card { background:var(--surface); border:1px solid var(--edit-border); border-radius:10px; padding:14px; margin-bottom:10px; }
+  .venue-card-name { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--edit-accent); line-height:1; }
+  .venue-card-meta { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:3px; letter-spacing:0.5px; }
+  .venue-card-actions { display:flex; gap:8px; margin-top:10px; }
+  .venue-action-btn { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:5px 10px; border-radius:5px; cursor:pointer; border:1px solid var(--edit-border); background:transparent; color:var(--edit-accent); transition:all 0.2s; }
+  .venue-action-btn:active { background:var(--edit-dim); }
+  .venue-delete-btn { border-color:rgba(255,60,60,0.3); color:rgba(255,60,60,0.6); }
+  .venue-delete-btn:active { background:rgba(255,60,60,0.1); color:#ff4444; }
+  .equip-row { display:flex; align-items:flex-start; gap:10px; background:var(--surface2); border:1px solid var(--border); border-radius:7px; padding:10px 12px; }
+  .equip-row.has-it { border-color:rgba(176,106,255,0.35); background:var(--edit-dim); }
+  .equip-checkbox { width:18px; height:18px; accent-color:var(--edit-accent); cursor:pointer; flex-shrink:0; margin-top:1px; }
+  .equip-label { font-family:'DM Mono',monospace; font-size:11px; color:var(--text); }
+  .equip-category-heading { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-top:12px; margin-bottom:4px; padding-left:2px; }
+  .equip-notes-input { width:100%; background:var(--surface); border:1px solid var(--edit-border); border-radius:4px; padding:5px 8px; font-family:'DM Mono',monospace; font-size:10px; color:var(--text); outline:none; margin-top:6px; display:none; }
+  .equip-row.has-it .equip-notes-input { display:block; }
 </style>
 </head>
 <body>
@@ -430,6 +448,8 @@
   <button class="tab-btn" onclick="switchTab('legs')" id="tab-legs">🦵 LEGS<span class="tab-check" id="check-legs">0/10</span></button>
   <button class="tab-btn" onclick="switchTab('arms')" id="tab-arms">🏋️ ARMS<span class="tab-check" id="check-arms">0/9</span></button>
   <button class="tab-btn" onclick="switchTab('history')" id="tab-history">📋 LOG<span class="tab-check" id="check-history">0 sessions</span></button>
+  <button class="tab-btn edit-only-tab" onclick="switchTab('venues')" id="tab-venues">📍 VENUES<span class="tab-check" id="check-venues"></span></button>
+  <button class="tab-btn edit-only-tab" onclick="switchTab('venues')" id="tab-venues">📍 VENUES<span class="tab-check" id="check-venues"></span></button>
 </div>
 
 <div class="workout-panel active" id="panel-chest">
@@ -470,12 +490,87 @@
   <button class="add-exercise-btn" onclick="addExercise('arms')">+ Add Exercise</button>
   <button class="reset-btn" onclick="resetDay('arms')">↺ Reset Arms Day</button>
 </div>
+<div class="workout-panel" id="panel-venues">
+  <div class="section-header">VENUES</div>
+  <div class="section-sub">YOUR GYM PROFILES</div>
+  <p class="hint">Add gyms, tick their equipment, get smart swap suggestions on the go</p>
 
+  <div id="venues-list" style="margin-bottom:16px;"></div>
+
+  <div style="background:var(--surface);border:1px solid var(--edit-border);border-radius:10px;padding:16px;margin-bottom:16px;">
+    <div class="edit-field-label" style="margin-bottom:12px;font-size:11px;">ADD A GYM</div>
+    <div class="edit-field-group">
+      <label class="edit-field-label">Name</label>
+      <input class="edit-field-input" id="venue-name-input" type="text" placeholder="e.g. Camperdown Fitness" />
+    </div>
+    <div class="edit-field-group">
+      <label class="edit-field-label">Suburb</label>
+      <input class="edit-field-input" id="venue-suburb-input" type="text" placeholder="e.g. Camperdown" />
+    </div>
+    <div class="edit-field-group">
+      <label class="edit-field-label">Chain (optional)</label>
+      <input class="edit-field-input" id="venue-chain-input" type="text" placeholder="e.g. Fitness First, independent" />
+    </div>
+    <div class="edit-field-group">
+      <label class="edit-field-label">Notes (optional)</label>
+      <textarea class="edit-note-input" id="venue-notes-input" placeholder="Opening hours, parking, vibe..."></textarea>
+    </div>
+    <button class="add-stat-btn" id="save-venue-btn" onclick="saveVenue()" style="border-color:var(--edit-accent);color:var(--edit-accent);margin-top:4px;">+ SAVE GYM</button>
+  </div>
+
+  <div id="venue-equipment-panel" style="display:none;background:var(--surface);border:1px solid var(--edit-border);border-radius:10px;padding:16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="edit-field-label" id="venue-equipment-title" style="font-size:11px;">EQUIPMENT AT THIS GYM</div>
+      <button onclick="closeEquipmentPanel()" style="background:transparent;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;padding:0;">✕ close</button>
+    </div>
+    <div id="equipment-checklist"></div>
+  </div>
+</div>
+  
 <div class="workout-panel" id="panel-history">
   <div style="margin:16px 0 14px">
     <div class="section-header" style="color:rgba(57,255,20,0.8)">WORKOUT LOG</div>
     <div class="section-sub">Sessions, PRs &amp; Volume Charts</div>
   </div>
+  <div class="workout-panel" id="panel-venues">
+  <div class="section-header">VENUES</div>
+  <div class="section-sub">YOUR GYM PROFILES</div>
+  <p class="hint">Add gyms, tick their equipment, get smart exercise swaps</p>
+
+  <!-- Venue list -->
+  <div id="venues-list" style="margin-bottom:16px;"></div>
+
+  <!-- Add venue form -->
+  <div id="add-venue-form" style="background:var(--surface);border:1px solid var(--edit-border);border-radius:10px;padding:16px;margin-bottom:16px;">
+    <div class="edit-field-label" style="margin-bottom:12px;">ADD A GYM</div>
+    <div class="edit-field-group">
+      <label class="edit-field-label">Name</label>
+      <input class="edit-field-input" id="venue-name-input" type="text" placeholder="e.g. Camperdown Fitness" />
+    </div>
+    <div class="edit-field-group">
+      <label class="edit-field-label">Suburb</label>
+      <input class="edit-field-input" id="venue-suburb-input" type="text" placeholder="e.g. Camperdown" />
+    </div>
+    <div class="edit-field-group">
+      <label class="edit-field-label">Chain (optional)</label>
+      <input class="edit-field-input" id="venue-chain-input" type="text" placeholder="e.g. Fitness First, independent" />
+    </div>
+    <div class="edit-field-group">
+      <label class="edit-field-label">Notes (optional)</label>
+      <textarea class="edit-note-input" id="venue-notes-input" placeholder="Opening hours, parking, vibe..."></textarea>
+    </div>
+    <button class="add-stat-btn" id="save-venue-btn" onclick="saveVenue()" style="border-color:var(--edit-accent);color:var(--edit-accent);margin-top:4px;">+ SAVE GYM</button>
+  </div>
+
+  <!-- Equipment panel (shown after selecting a venue) -->
+  <div id="venue-equipment-panel" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div class="edit-field-label" id="venue-equipment-title">EQUIPMENT AT THIS GYM</div>
+      <button onclick="closeEquipmentPanel()" style="background:transparent;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;">✕ CLOSE</button>
+    </div>
+    <div id="equipment-checklist" style="display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+</div>
   <div class="data-actions">
     <button class="data-btn" onclick="exportData()">⬇ Export Backup</button>
     <button class="data-btn import-btn" onclick="document.getElementById('importFile').click()">⬆ Import Backup</button>
@@ -1315,8 +1410,10 @@ function closeTimer() { clearInterval(timerInterval); document.getElementById('t
 function switchTab(day) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.workout-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-'+day).classList.add('active'); document.getElementById('panel-'+day).classList.add('active');
+  document.getElementById('tab-'+day).classList.add('active');
+  document.getElementById('panel-'+day).classList.add('active');
   if (day === 'history') switchHistoryTab('sessions');
+  if (day === 'venues') loadVenuesTab();
   updateProgress();
 }
 function switchHistoryTab(tab) {
@@ -1666,6 +1763,334 @@ async function init() {
 }
 
 init();
+  // ── VENUES ──────────────────────────────────────────────────
+
+let allEquipmentTypes = [];
+let currentVenueId = null;
+let venueEquipmentState = {}; // equipmentId -> { checked, brand, notes }
+
+async function loadVenuesTab() {
+  await loadVenues();
+  if (!allEquipmentTypes.length) {
+    const res = await sbGet('equipment_types?select=id,name,category&order=category,name');
+    allEquipmentTypes = res || [];
+  }
+}
+
+async function loadVenues() {
+  const venues = await sbGet('venues?select=id,name,suburb,chain,notes&order=name');
+  const list = document.getElementById('venues-list');
+  if (!venues || venues.length === 0) {
+    list.innerHTML = `<p class="hint" style="text-align:center;padding:16px 0;">No gyms yet — add your first one below</p>`;
+    return;
+  }
+  list.innerHTML = venues.map(v => `
+    <div class="venue-card" id="venue-card-${v.id}">
+      <div class="venue-card-name">${v.name}</div>
+      <div class="venue-card-meta">${[v.suburb, v.chain].filter(Boolean).join(' · ')}</div>
+      ${v.notes ? `<div class="venue-card-meta" style="margin-top:4px;font-style:italic;">${v.notes}</div>` : ''}
+      <div class="venue-card-actions">
+        <button class="venue-action-btn" onclick="openEquipmentPanel('${v.id}','${v.name.replace(/'/g,"\\'")}')">🏋️ EQUIPMENT</button>
+        <button class="venue-action-btn venue-delete-btn" onclick="deleteVenue('${v.id}')">✕ DELETE</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function saveVenue() {
+  const name = document.getElementById('venue-name-input').value.trim();
+  if (!name) { alert('Please enter a gym name'); return; }
+  const btn = document.getElementById('save-venue-btn');
+  btn.textContent = 'SAVING...';
+  btn.disabled = true;
+  const { data: { user } } = await window._sb_client ? window._sb_client.auth.getUser() : { data: { user: null } };
+  const userId = user?.id || window._currentUserId;
+  const row = {
+    user_id: userId,
+    name: document.getElementById('venue-name-input').value.trim(),
+    suburb: document.getElementById('venue-suburb-input').value.trim() || null,
+    chain: document.getElementById('venue-chain-input').value.trim() || null,
+    notes: document.getElementById('venue-notes-input').value.trim() || null,
+  };
+  try {
+    await sbPost('venues', row);
+    document.getElementById('venue-name-input').value = '';
+    document.getElementById('venue-suburb-input').value = '';
+    document.getElementById('venue-chain-input').value = '';
+    document.getElementById('venue-notes-input').value = '';
+    await loadVenues();
+  } catch(e) {
+    alert('Could not save venue: ' + e.message);
+  }
+  btn.textContent = '+ SAVE GYM';
+  btn.disabled = false;
+}
+
+async function deleteVenue(venueId) {
+  if (!confirm('Delete this gym and all its equipment data?')) return;
+  await sbDelete(`venues?id=eq.${venueId}`);
+  if (currentVenueId === venueId) closeEquipmentPanel();
+  await loadVenues();
+}
+
+async function openEquipmentPanel(venueId, venueName) {
+  currentVenueId = venueId;
+  venueEquipmentState = {};
+  document.getElementById('venue-equipment-title').textContent = `EQUIPMENT AT ${venueName.toUpperCase()}`;
+  document.getElementById('venue-equipment-panel').style.display = 'block';
+
+  // Load what this venue already has
+  const existing = await sbGet(`venue_equipment?venue_id=eq.${venueId}&select=equipment_id,brand,notes`);
+  (existing || []).forEach(e => {
+    venueEquipmentState[e.equipment_id] = { checked: true, brand: e.brand || '', notes: e.notes || '' };
+  });
+
+  renderEquipmentChecklist();
+}
+
+function renderEquipmentChecklist() {
+  const categories = [...new Set(allEquipmentTypes.map(e => e.category))].sort();
+  const checklist = document.getElementById('equipment-checklist');
+  checklist.innerHTML = categories.map(cat => {
+    const items = allEquipmentTypes.filter(e => e.category === cat);
+    return `
+      <div class="equip-category" style="margin-top:10px;margin-bottom:4px;">${cat}</div>
+      ${items.map(eq => {
+        const state = venueEquipmentState[eq.id] || { checked: false, notes: '' };
+        return `
+          <div class="equip-row${state.checked ? ' has-it' : ''}" id="equip-row-${eq.id}">
+            <input type="checkbox" class="equip-checkbox" ${state.checked ? 'checked' : ''}
+              onchange="toggleEquipment(${eq.id}, this.checked)" />
+            <div style="flex:1;">
+              <div class="equip-label">${eq.name}</div>
+              <input type="text" class="equip-notes-input" id="equip-notes-${eq.id}"
+                placeholder="Brand, notes (e.g. Hammer Strength)..."
+                value="${state.notes || ''}"
+                onchange="updateEquipmentNotes(${eq.id}, this.value)" />
+            </div>
+          </div>`;
+      }).join('')}`;
+  }).join('');
+}
+
+async function toggleEquipment(equipmentId, checked) {
+  const row = document.getElementById(`equip-row-${equipmentId}`);
+  row.classList.toggle('has-it', checked);
+  if (checked) {
+    venueEquipmentState[equipmentId] = { checked: true, notes: venueEquipmentState[equipmentId]?.notes || '' };
+    const { data: { user } } = await window._sb_client ? window._sb_client.auth.getUser() : { data: { user: null } };
+    const userId = user?.id || window._currentUserId;
+    await sbPost('venue_equipment', {
+      venue_id: currentVenueId,
+      equipment_id: equipmentId,
+      user_id: userId,
+      notes: venueEquipmentState[equipmentId].notes || null
+    });
+  } else {
+    delete venueEquipmentState[equipmentId];
+    await sbDelete(`venue_equipment?venue_id=eq.${currentVenueId}&equipment_id=eq.${equipmentId}`);
+  }
+}
+
+async function updateEquipmentNotes(equipmentId, notes) {
+  if (!venueEquipmentState[equipmentId]) return;
+  venueEquipmentState[equipmentId].notes = notes;
+  await sbPatch(`venue_equipment?venue_id=eq.${currentVenueId}&equipment_id=eq.${equipmentId}`, { notes: notes || null });
+}
+
+function closeEquipmentPanel() {
+  currentVenueId = null;
+  document.getElementById('venue-equipment-panel').style.display = 'none';
+}
+  // ── GENERAL SUPABASE REST HELPERS ────────────────────────
+async function sbFetch(path, opts = {}) {
+  await ensureValidToken();
+  const res = await fetch(`${SB_URL}/rest/v1/${path}`, {
+    headers: { ...authHeaders(), ...opts.headers },
+    ...opts
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    console.error('sbFetch error', res.status, err);
+    throw new Error(err);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+async function sbRestGet(path) {
+  return sbFetch(path);
+}
+
+async function sbPost(path, body) {
+  return sbFetch(path, {
+    method: 'POST',
+    headers: { 'Prefer': 'return=representation' },
+    body: JSON.stringify(body)
+  });
+}
+
+async function sbPatch(path, body) {
+  return sbFetch(path, {
+    method: 'PATCH',
+    headers: { 'Prefer': 'return=minimal' },
+    body: JSON.stringify(body)
+  });
+}
+
+async function sbDelete(path) {
+  return sbFetch(path, { method: 'DELETE' });
+}
+
+// ── VENUES ───────────────────────────────────────────────
+let allEquipmentTypes = [];
+let currentVenueId = null;
+let venueEquipmentState = {};
+
+async function loadVenuesTab() {
+  if (!allEquipmentTypes.length) {
+    allEquipmentTypes = await sbRestGet('equipment_types?select=id,name,category&order=category,name') || [];
+  }
+  await loadVenues();
+}
+
+async function loadVenues() {
+  const venues = await sbRestGet(`venues?select=id,name,suburb,chain,notes&user_id=eq.${currentUser.id}&order=name`) || [];
+  const list = document.getElementById('venues-list');
+  if (!venues.length) {
+    list.innerHTML = `<p class="hint" style="text-align:center;padding:12px 0 4px;">No gyms yet — add your first one below</p>`;
+    return;
+  }
+  list.innerHTML = venues.map(v => `
+    <div class="venue-card">
+      <div class="venue-card-name">${v.name}</div>
+      <div class="venue-card-meta">${[v.suburb, v.chain].filter(Boolean).join(' · ') || '&nbsp;'}</div>
+      ${v.notes ? `<div class="venue-card-meta" style="margin-top:4px;font-style:italic;color:var(--muted);">${v.notes}</div>` : ''}
+      <div class="venue-card-actions">
+        <button class="venue-action-btn" onclick="openEquipmentPanel('${v.id}', ${JSON.stringify(v.name)})">🏋️ EQUIPMENT</button>
+        <button class="venue-action-btn venue-delete-btn" onclick="deleteVenue('${v.id}')">✕ DELETE</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function saveVenue() {
+  const name = document.getElementById('venue-name-input').value.trim();
+  if (!name) { showToast('Please enter a gym name', 'error'); return; }
+  const btn = document.getElementById('save-venue-btn');
+  btn.textContent = 'SAVING...';
+  btn.disabled = true;
+  try {
+    await sbPost('venues', {
+      user_id: currentUser.id,
+      name,
+      suburb: document.getElementById('venue-suburb-input').value.trim() || null,
+      chain:  document.getElementById('venue-chain-input').value.trim()  || null,
+      notes:  document.getElementById('venue-notes-input').value.trim()  || null,
+    });
+    document.getElementById('venue-name-input').value   = '';
+    document.getElementById('venue-suburb-input').value = '';
+    document.getElementById('venue-chain-input').value  = '';
+    document.getElementById('venue-notes-input').value  = '';
+    showToast('Gym saved!', 'success');
+    await loadVenues();
+  } catch(e) {
+    showToast('Could not save gym', 'error');
+  }
+  btn.textContent = '+ SAVE GYM';
+  btn.disabled = false;
+}
+
+async function deleteVenue(venueId) {
+  if (!confirm('Delete this gym and all its equipment data?')) return;
+  try {
+    await sbDelete(`venues?id=eq.${venueId}&user_id=eq.${currentUser.id}`);
+    if (currentVenueId === venueId) closeEquipmentPanel();
+    showToast('Gym deleted', 'success');
+    await loadVenues();
+  } catch(e) {
+    showToast('Could not delete gym', 'error');
+  }
+}
+
+async function openEquipmentPanel(venueId, venueName) {
+  currentVenueId = venueId;
+  venueEquipmentState = {};
+  document.getElementById('venue-equipment-title').textContent = `EQUIPMENT AT ${venueName.toUpperCase()}`;
+  document.getElementById('venue-equipment-panel').style.display = 'block';
+  const existing = await sbRestGet(`venue_equipment?venue_id=eq.${venueId}&select=equipment_id,notes`) || [];
+  existing.forEach(e => {
+    venueEquipmentState[e.equipment_id] = { checked: true, notes: e.notes || '' };
+  });
+  renderEquipmentChecklist();
+  document.getElementById('venue-equipment-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderEquipmentChecklist() {
+  const categories = [...new Set(allEquipmentTypes.map(e => e.category))].sort();
+  document.getElementById('equipment-checklist').innerHTML = categories.map(cat => {
+    const items = allEquipmentTypes.filter(e => e.category === cat);
+    return `
+      <div class="equip-category-heading">${cat}</div>
+      ${items.map(eq => {
+        const state = venueEquipmentState[eq.id];
+        const checked = !!state;
+        const notes = state?.notes || '';
+        return `
+          <div class="equip-row${checked ? ' has-it' : ''}" id="equip-row-${eq.id}">
+            <input type="checkbox" class="equip-checkbox" ${checked ? 'checked' : ''}
+              onchange="toggleEquipment(${eq.id}, this.checked)" />
+            <div style="flex:1;min-width:0;">
+              <div class="equip-label">${eq.name}</div>
+              <input type="text" class="equip-notes-input"
+                placeholder="Brand or notes e.g. Hammer Strength..."
+                value="${notes.replace(/"/g, '&quot;')}"
+                onblur="updateEquipmentNotes(${eq.id}, this.value)" />
+            </div>
+          </div>`;
+      }).join('')}`;
+  }).join('');
+}
+
+async function toggleEquipment(equipmentId, checked) {
+  const row = document.getElementById(`equip-row-${equipmentId}`);
+  row.classList.toggle('has-it', checked);
+  try {
+    if (checked) {
+      venueEquipmentState[equipmentId] = { checked: true, notes: '' };
+      await sbPost('venue_equipment', {
+        venue_id:     currentVenueId,
+        equipment_id: equipmentId,
+        notes:        null
+      });
+    } else {
+      delete venueEquipmentState[equipmentId];
+      await sbDelete(`venue_equipment?venue_id=eq.${currentVenueId}&equipment_id=eq.${equipmentId}`);
+    }
+  } catch(e) {
+    showToast('Could not update equipment', 'error');
+    row.classList.toggle('has-it', !checked);
+  }
+}
+
+async function updateEquipmentNotes(equipmentId, notes) {
+  if (!venueEquipmentState[equipmentId]) return;
+  venueEquipmentState[equipmentId].notes = notes;
+  try {
+    await sbPatch(
+      `venue_equipment?venue_id=eq.${currentVenueId}&equipment_id=eq.${equipmentId}`,
+      { notes: notes.trim() || null }
+    );
+  } catch(e) {
+    console.error('Could not save equipment notes', e);
+  }
+}
+
+function closeEquipmentPanel() {
+  currentVenueId = null;
+  venueEquipmentState = {};
+  document.getElementById('venue-equipment-panel').style.display = 'none';
+}
 </script>
 </body>
 </html>
