@@ -1781,14 +1781,6 @@ async function sbFetch(path, opts = {}) {
   const text = await res.text();
   return text ? JSON.parse(text) : null;
 }
-  if (!res.ok) {
-    const err = await res.text();
-    console.error('sbFetch error', res.status, err);
-    throw new Error(err);
-  }
-  const text = await res.text();
-  return text ? JSON.parse(text) : null;
-}
 
 async function sbRestGet(path) {
   return sbFetch(path);
