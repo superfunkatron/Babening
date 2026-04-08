@@ -1768,6 +1768,7 @@ init();
   // ── GENERAL SUPABASE REST HELPERS ────────────────────────
 async function sbFetch(path, opts = {}) {
   await ensureValidToken();
+  console.log('sbFetch headers:', JSON.stringify({ ...authHeaders(), ...extraHeaders }));
   const { headers: extraHeaders = {}, ...restOpts } = opts;
   const res = await fetch(`${SB_URL}/rest/v1/${path}`, {
     headers: { ...authHeaders(), ...extraHeaders },
