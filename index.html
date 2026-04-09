@@ -2197,7 +2197,7 @@ async function selectVenue(venueId) {
   } else {
     currentDayVenues[day] = null;
     updateVenueDisplay(day, null);
-    await sbSet(`venue_default_${day}`, null);
+    await sbDelete(`userdata?user_id=eq.${currentUser.id}&key=eq.venue_default_${day}`);
   }
 }
 
