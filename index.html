@@ -1842,9 +1842,6 @@ async function init() {
   await loadAll();
   buildCards();
   document.getElementById('check-history').textContent = `${history.length} sessions`;
-  updateProgress();
-}
-
   await initVenueSelectors();
   updateProgress();
 }
