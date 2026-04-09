@@ -1964,7 +1964,7 @@ async function deleteVenue(venueId) {
     console.error('deleteVenue error:', e.message);
     showToast('Could not delete gym: ' + e.message, 'error');
   }
-
+ }
 async function openEquipmentPanel(venueId, venueName) {
   currentVenueId = venueId;
   venueEquipmentState = {};
