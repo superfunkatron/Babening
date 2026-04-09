@@ -383,6 +383,23 @@
   .equip-category-heading { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-top:12px; margin-bottom:4px; padding-left:2px; }
   .equip-notes-input { width:100%; background:var(--surface); border:1px solid var(--edit-border); border-radius:4px; padding:5px 8px; font-family:'DM Mono',monospace; font-size:10px; color:var(--text); outline:none; margin-top:6px; display:none; }
   .equip-row.has-it .equip-notes-input { display:block; }
+  /* ── VENUE SELECTOR ── */
+  .venue-selector-wrap { display:flex; align-items:center; gap:8px; margin-bottom:14px; padding:10px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; }
+  .venue-selector-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; flex-shrink:0; }
+  .venue-selector-btn { flex:1; background:transparent; border:none; font-family:'DM Mono',monospace; font-size:11px; color:var(--text); cursor:pointer; text-align:left; padding:0; display:flex; align-items:center; justify-content:space-between; gap:6px; }
+  .venue-selector-btn:active { opacity:0.7; }
+  .venue-selector-name { color:var(--edit-accent); }
+  .venue-selector-nudge { color:var(--muted); font-style:italic; }
+  .venue-picker-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:flex-end; justify-content:center; }
+  .venue-picker-overlay.open { display:flex; }
+  .venue-picker-sheet { background:var(--surface); border-radius:14px 14px 0 0; padding:20px 16px 32px; width:100%; max-width:480px; border-top:1px solid var(--edit-border); }
+  .venue-picker-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; color:var(--edit-accent); margin-bottom:14px; }
+  .venue-picker-option { display:flex; align-items:center; padding:12px 14px; border:1px solid var(--border); border-radius:8px; margin-bottom:8px; cursor:pointer; font-family:'DM Mono',monospace; font-size:12px; color:var(--text); background:var(--surface2); transition:all 0.2s; }
+  .venue-picker-option:active { background:var(--edit-dim); border-color:var(--edit-accent); }
+  .venue-picker-option.selected { border-color:var(--edit-accent); color:var(--edit-accent); background:var(--edit-dim); }
+  .venue-picker-option-sub { font-size:10px; color:var(--muted); margin-top:2px; }
+  .venue-picker-cancel { width:100%; padding:12px; background:transparent; border:1px solid var(--border); border-radius:8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); cursor:pointer; margin-top:4px; }
+  .venue-picker-cancel:active { background:var(--surface2); }
 </style>
 </head>
 <body>
@@ -453,6 +470,13 @@
 </div>
 
 <div class="workout-panel active" id="panel-chest">
+  <div class="venue-selector-wrap" id="venue-selector-chest">
+    <span class="venue-selector-label">📍 at</span>
+    <button class="venue-selector-btn" onclick="openVenuePicker('chest')">
+      <span class="venue-selector-name" id="venue-display-chest">—</span>
+      <span style="color:var(--muted);font-size:10px;">▾</span>
+    </button>
+  </div>
   <div class="day-title-wrap">
     <div class="day-name-display" id="dayname-display-chest">CHEST DAY</div>
     <input class="day-name-input" id="dayname-input-chest" value="CHEST DAY" oninput="saveDayName('chest',this.value)">
@@ -466,6 +490,13 @@
 </div>
 
 <div class="workout-panel" id="panel-legs">
+  <div class="venue-selector-wrap" id="venue-selector-legs">
+    <span class="venue-selector-label">📍 at</span>
+    <button class="venue-selector-btn" onclick="openVenuePicker('legs')">
+      <span class="venue-selector-name" id="venue-display-legs">—</span>
+      <span style="color:var(--muted);font-size:10px;">▾</span>
+    </button>
+  </div>
   <div class="day-title-wrap">
     <div class="day-name-display" id="dayname-display-legs">LEG DAY</div>
     <input class="day-name-input" id="dayname-input-legs" value="LEG DAY" oninput="saveDayName('legs',this.value)">
@@ -479,6 +510,13 @@
 </div>
 
 <div class="workout-panel" id="panel-arms">
+  <div class="venue-selector-wrap" id="venue-selector-arms">
+    <span class="venue-selector-label">📍 at</span>
+    <button class="venue-selector-btn" onclick="openVenuePicker('arms')">
+      <span class="venue-selector-name" id="venue-display-arms">—</span>
+      <span style="color:var(--muted);font-size:10px;">▾</span>
+    </button>
+  </div>
   <div class="day-title-wrap">
     <div class="day-name-display" id="dayname-display-arms">ARMS & SHOULDERS</div>
     <input class="day-name-input" id="dayname-input-arms" value="ARMS & SHOULDERS" oninput="saveDayName('arms',this.value)">
@@ -782,9 +820,9 @@ async function handleAuth() {
     saveSession(session);
     accessToken = session.access_token;
     currentUser = session.user;
-    onAuthSuccess();
-    return;
-  }
+    await initVenueSelectors();
+  updateProgress();
+}
 
   const signInErr = await signInRes.json();
   // If invalid credentials, don't try sign up — just report the error
@@ -1505,7 +1543,16 @@ function logSession(day, exes) {
     return { name:ex.name, weight, reps:rStat?rStat.v:null, unit, isNewPR, type:ex.type, cardioValue, cardioUnit, isCardioNewPR };
   });
   const note = pendingNotes[day] || '';
-  history.unshift({ date:new Date().toISOString(), day, dayName:plan.dayNames[day], snapshot, note });
+  const sessionVenue = currentDayVenues[day];
+history.unshift({ 
+  date: new Date().toISOString(), 
+  day, 
+  dayName: plan.dayNames[day], 
+  snapshot, 
+  note,
+  venue_id:   sessionVenue?.id   || null,
+  venue_name: sessionVenue?.name || null
+});
   if (history.length > 120) history = history.slice(0,120);
   saveHistory(); document.getElementById('check-history').textContent = `${history.length} sessions`;
 }
@@ -1546,6 +1593,8 @@ function renderSessionList(query='') {
         return `<div class="history-ex-row${isPRRow?' is-pr-row':''}${isCardioRow?' is-cardio-row':''}"><span class="history-ex-name">${e.name}</span>${detail}</div>`;
       }).join('');
     const noteHTML = entry.note ? `<div class="history-note">📝 ${entry.note}</div>` : '';
+    const venueHTML = entry.venue_name ? `<div class="history-note" style="color:var(--edit-accent);opacity:0.7;">📍 ${entry.venue_name}</div>` : '';
+    return `<div class="history-entry${hasPR?' has-pr':''}"><div class="history-entry-header"><span class="history-day-label">${EMOJI[entry.day]||''} ${label}</span><span class="history-date">${dateStr}${hasPR?' 🏆':''}</span></div><div class="history-stats"><div class="h-stat"><div class="h-stat-val">${liftSnap.length}</div><div class="h-stat-label">Lifts</div></div><div class="h-stat"><div class="h-stat-val">${Math.round(totalVol)}</div><div class="h-stat-label">Total kg</div></div><div class="h-stat"><div class="h-stat-val">${entry.snapshot.reduce((s,e)=>s+parseFloat(e.reps||0),0)}</div><div class="h-stat-label">Reps</div></div>${hasPR?`<div class="h-stat"><div class="h-stat-val">🏆</div><div class="h-stat-label">PR Day</div></div>`:''}</div><div class="history-exercises">${rows}</div>${venueHTML}${noteHTML}</div>`;
     return `<div class="history-entry${hasPR?' has-pr':''}"><div class="history-entry-header"><span class="history-day-label">${EMOJI[entry.day]||''} ${label}</span><span class="history-date">${dateStr}${hasPR?' 🏆':''}</span></div><div class="history-stats"><div class="h-stat"><div class="h-stat-val">${liftSnap.length}</div><div class="h-stat-label">Lifts</div></div><div class="h-stat"><div class="h-stat-val">${Math.round(totalVol)}</div><div class="h-stat-label">Total kg</div></div><div class="h-stat"><div class="h-stat-val">${entry.snapshot.reduce((s,e)=>s+parseFloat(e.reps||0),0)}</div><div class="h-stat-label">Reps</div></div>${hasPR?`<div class="h-stat"><div class="h-stat-val">🏆</div><div class="h-stat-label">PR Day</div></div>`:''}</div><div class="history-exercises">${rows}</div>${noteHTML}</div>`;
   }).join('') + (q ? '' : `<button class="clear-history-btn" onclick="clearHistory()">🗑 Clear All History &amp; PRs</button>`);
 }
@@ -1796,6 +1845,9 @@ async function init() {
   updateProgress();
 }
 
+  await initVenueSelectors();
+  updateProgress();
+}
 init();
  
   // ── GENERAL SUPABASE REST HELPERS ────────────────────────
@@ -2068,6 +2120,98 @@ async function confirmRename() {
     showToast('Could not rename equipment', 'error');
   }
 }
+  // ── VENUE SELECTOR ───────────────────────────────────────
+let venuePickerDay = null;
+let savedVenues = [];
+let currentDayVenues = { chest: null, legs: null, arms: null };
+
+async function initVenueSelectors() {
+  // Load all user venues once
+  savedVenues = await sbRestGet(`venues?select=id,name,suburb,chain&user_id=eq.${currentUser.id}&order=name`) || [];
+
+  // Load per-day defaults from userdata
+  for (const day of ['chest', 'legs', 'arms']) {
+    const venueId = await sbGet(`venue_default_${day}`);
+    if (venueId && savedVenues.length) {
+      const venue = savedVenues.find(v => v.id === venueId);
+      if (venue) {
+        currentDayVenues[day] = venue;
+        updateVenueDisplay(day, venue);
+      }
+    } else {
+      updateVenueDisplay(day, null);
+    }
+  }
+}
+
+function updateVenueDisplay(day, venue) {
+  const el = document.getElementById(`venue-display-${day}`);
+  if (!el) return;
+  if (!savedVenues.length) {
+    el.outerHTML = `<span class="venue-selector-nudge" id="venue-display-${day}">add a gym in edit mode</span>`;
+    const btn = el.closest('.venue-selector-btn');
+    if (btn) btn.style.pointerEvents = 'none';
+    return;
+  }
+  if (venue) {
+    el.className = 'venue-selector-name';
+    el.textContent = venue.name;
+  } else {
+    el.className = 'venue-selector-nudge';
+    el.textContent = 'tap to set gym';
+  }
+}
+
+function openVenuePicker(day) {
+  if (!savedVenues.length) return;
+  venuePickerDay = day;
+  const current = currentDayVenues[day];
+  const options = document.getElementById('venue-picker-options');
+  options.innerHTML = [
+    `<div class="venue-picker-option${!current ? ' selected' : ''}" onclick="selectVenue(null)">
+      <div>
+        <div>— not set —</div>
+      </div>
+    </div>`,
+    ...savedVenues.map(v => `
+      <div class="venue-picker-option${current?.id === v.id ? ' selected' : ''}" onclick="selectVenue('${v.id}')">
+        <div>
+          <div>${v.name}</div>
+          ${v.suburb || v.chain ? `<div class="venue-picker-option-sub">${[v.suburb, v.chain].filter(Boolean).join(' · ')}</div>` : ''}
+        </div>
+      </div>`)
+  ].join('');
+  document.getElementById('venue-picker-overlay').classList.add('open');
+}
+
+async function selectVenue(venueId) {
+  closeVenuePicker();
+  const day = venuePickerDay;
+  if (!day) return;
+  if (venueId) {
+    const venue = savedVenues.find(v => v.id === venueId);
+    currentDayVenues[day] = venue;
+    updateVenueDisplay(day, venue);
+    await sbSet(`venue_default_${day}`, venueId);
+  } else {
+    currentDayVenues[day] = null;
+    updateVenueDisplay(day, null);
+    await sbSet(`venue_default_${day}`, null);
+  }
+}
+
+function closeVenuePicker(e) {
+  if (e && e.target !== document.getElementById('venue-picker-overlay')) return;
+  document.getElementById('venue-picker-overlay').classList.remove('open');
+  venuePickerDay = null;
+}
 </script>
+  <div class="venue-picker-overlay" id="venue-picker-overlay" onclick="closeVenuePicker(event)">
+  <div class="venue-picker-sheet">
+    <div class="venue-picker-title">TRAINING AT</div>
+    <div id="venue-picker-options"></div>
+    <button class="venue-picker-cancel" onclick="closeVenuePicker()">CANCEL</button>
+  </div>
+</div>
 </body>
 </html>
