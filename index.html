@@ -1942,9 +1942,9 @@ async function saveVenue() {
     document.getElementById('venue-suburb-input').value = '';
     document.getElementById('venue-chain-input').value  = '';
     document.getElementById('venue-notes-input').value  = '';
-  showToast('Gym saved!', 'success');
-    await loadVenues();
     savedVenues = await sbRestGet(`venues?select=id,name,suburb,chain&user_id=eq.${currentUser.id}&order=name`) || [];
+    showToast('Gym saved!', 'success');
+    await loadVenues();
   } catch(e) {
     showToast('Could not save gym', 'error');
   }
@@ -1953,11 +1953,11 @@ async function saveVenue() {
 }
 
 async function deleteVenue(venueId) {
-  console.log('openEquipmentPanel called', venueId, venueName, 'equip count:', allEquipmentTypes.length);
   if (!confirm('Delete this gym and all its equipment data?')) return;
   try {
     await sbDelete(`venues?id=eq.${venueId}&user_id=eq.${currentUser.id}`);
     if (currentVenueId === venueId) closeEquipmentPanel();
+    savedVenues = savedVenues.filter(v => v.id !== venueId);
     showToast('Gym deleted', 'success');
     await loadVenues();
   } catch(e) {
