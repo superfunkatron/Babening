@@ -2185,9 +2185,11 @@ function openVenuePicker(day) {
 async function selectVenue(venueId) {
   closeVenuePicker();
   const day = venuePickerDay;
-  if (!day) return;
+  console.log('selectVenue called', venueId, 'day:', day);
+  if (!day) { console.log('no day set, returning'); return; }
   if (venueId) {
     const venue = savedVenues.find(v => v.id === venueId);
+    console.log('found venue:', venue);
     currentDayVenues[day] = venue;
     updateVenueDisplay(day, venue);
     await sbSet(`venue_default_${day}`, venueId);
