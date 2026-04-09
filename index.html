@@ -2161,6 +2161,7 @@ function updateVenueDisplay(day, venue) {
 }
 
 function openVenuePicker(day) {
+   console.log('openVenuePicker called with day:', day);
   if (!savedVenues.length) return;
   venuePickerDay = day;
   const current = currentDayVenues[day];
