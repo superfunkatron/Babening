@@ -1942,8 +1942,9 @@ async function saveVenue() {
     document.getElementById('venue-suburb-input').value = '';
     document.getElementById('venue-chain-input').value  = '';
     document.getElementById('venue-notes-input').value  = '';
-    showToast('Gym saved!', 'success');
+  showToast('Gym saved!', 'success');
     await loadVenues();
+    savedVenues = await sbRestGet(`venues?select=id,name,suburb,chain&user_id=eq.${currentUser.id}&order=name`) || [];
   } catch(e) {
     showToast('Could not save gym', 'error');
   }
