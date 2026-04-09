@@ -383,79 +383,6 @@
   .equip-category-heading { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-top:12px; margin-bottom:4px; padding-left:2px; }
   .equip-notes-input { width:100%; background:var(--surface); border:1px solid var(--edit-border); border-radius:4px; padding:5px 8px; font-family:'DM Mono',monospace; font-size:10px; color:var(--text); outline:none; margin-top:6px; display:none; }
   .equip-row.has-it .equip-notes-input { display:block; }
-  async function saveCustomEquipment() {
-  const name = document.getElementById('custom-equip-name').value.trim();
-  const category = document.getElementById('custom-equip-category').value;
-  if (!name) { showToast('Please enter an equipment name', 'error'); return; }
-
-  // Check for duplicate name
-  const duplicate = allEquipmentTypes.find(e => e.name.toLowerCase() === name.toLowerCase());
-  if (duplicate) { showToast('That equipment already exists in the list', 'error'); return; }
-
-  try {
-    // Insert into equipment_types
-    const result = await sbPost('equipment_types', { name, category });
-    const newEquip = Array.isArray(result) ? result[0] : result;
-
-    // Add to local list
-    allEquipmentTypes.push(newEquip);
-
-    // Auto-tick for this venue
-    venueEquipmentState[newEquip.id] = { checked: true, notes: '' };
-    await sbPost('venue_equipment', {
-      venue_id:     currentVenueId,
-      equipment_id: newEquip.id,
-      notes:        null
-    });
-
-    // Clear input and re-render
-    document.getElementById('custom-equip-name').value = '';
-    renderEquipmentChecklist();
-    showToast(`${name} added and ticked for this gym`, 'success');
-
-    // Scroll new item into view
-    const newRow = document.getElementById(`equip-row-${newEquip.id}`);
-    if (newRow) newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-  } catch(e) {
-    showToast('Could not add equipment: ' + e.message, 'error');
-  }
-}
-
-let renamingEquipId = null;
-let renamingEquipOldName = null;
-
-function openRenamePanel(equipId, currentName) {
-  renamingEquipId = equipId;
-  renamingEquipOldName = currentName;
-  document.getElementById('rename-equip-input').value = currentName;
-  document.getElementById('rename-equip-panel').style.display = 'block';
-  document.getElementById('rename-equip-input').focus();
-}
-
-function closeRenamePanel() {
-  renamingEquipId = null;
-  renamingEquipOldName = null;
-  document.getElementById('rename-equip-panel').style.display = 'none';
-  document.getElementById('rename-equip-input').value = '';
-}
-
-async function confirmRename() {
-  const newName = document.getElementById('rename-equip-input').value.trim();
-  if (!newName) { showToast('Please enter a name', 'error'); return; }
-  if (newName === renamingEquipOldName) { closeRenamePanel(); return; }
-  try {
-    await sbPatch(`equipment_types?id=eq.${renamingEquipId}`, { name: newName });
-    // Update local list
-    const equip = allEquipmentTypes.find(e => e.id === renamingEquipId);
-    if (equip) equip.name = newName;
-    closeRenamePanel();
-    renderEquipmentChecklist();
-    showToast('Equipment renamed', 'success');
-  } catch(e) {
-    showToast('Could not rename equipment', 'error');
-  }
-}
 </style>
 </head>
 <body>
@@ -697,6 +624,9 @@ async function confirmRename() {
 </div>
 
 <div style="height:40px"></div>
+
+
+
 
 <script>
 // ============================================================
@@ -2064,6 +1994,79 @@ function closeEquipmentPanel() {
   currentVenueId = null;
   venueEquipmentState = {};
   document.getElementById('venue-equipment-panel').style.display = 'none';
+}
+    async function saveCustomEquipment() {
+  const name = document.getElementById('custom-equip-name').value.trim();
+  const category = document.getElementById('custom-equip-category').value;
+  if (!name) { showToast('Please enter an equipment name', 'error'); return; }
+
+  // Check for duplicate name
+  const duplicate = allEquipmentTypes.find(e => e.name.toLowerCase() === name.toLowerCase());
+  if (duplicate) { showToast('That equipment already exists in the list', 'error'); return; }
+
+  try {
+    // Insert into equipment_types
+    const result = await sbPost('equipment_types', { name, category });
+    const newEquip = Array.isArray(result) ? result[0] : result;
+
+    // Add to local list
+    allEquipmentTypes.push(newEquip);
+
+    // Auto-tick for this venue
+    venueEquipmentState[newEquip.id] = { checked: true, notes: '' };
+    await sbPost('venue_equipment', {
+      venue_id:     currentVenueId,
+      equipment_id: newEquip.id,
+      notes:        null
+    });
+
+    // Clear input and re-render
+    document.getElementById('custom-equip-name').value = '';
+    renderEquipmentChecklist();
+    showToast(`${name} added and ticked for this gym`, 'success');
+
+    // Scroll new item into view
+    const newRow = document.getElementById(`equip-row-${newEquip.id}`);
+    if (newRow) newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  } catch(e) {
+    showToast('Could not add equipment: ' + e.message, 'error');
+  }
+}
+
+let renamingEquipId = null;
+let renamingEquipOldName = null;
+
+function openRenamePanel(equipId, currentName) {
+  renamingEquipId = equipId;
+  renamingEquipOldName = currentName;
+  document.getElementById('rename-equip-input').value = currentName;
+  document.getElementById('rename-equip-panel').style.display = 'block';
+  document.getElementById('rename-equip-input').focus();
+}
+
+function closeRenamePanel() {
+  renamingEquipId = null;
+  renamingEquipOldName = null;
+  document.getElementById('rename-equip-panel').style.display = 'none';
+  document.getElementById('rename-equip-input').value = '';
+}
+
+async function confirmRename() {
+  const newName = document.getElementById('rename-equip-input').value.trim();
+  if (!newName) { showToast('Please enter a name', 'error'); return; }
+  if (newName === renamingEquipOldName) { closeRenamePanel(); return; }
+  try {
+    await sbPatch(`equipment_types?id=eq.${renamingEquipId}`, { name: newName });
+    // Update local list
+    const equip = allEquipmentTypes.find(e => e.id === renamingEquipId);
+    if (equip) equip.name = newName;
+    closeRenamePanel();
+    renderEquipmentChecklist();
+    showToast('Equipment renamed', 'success');
+  } catch(e) {
+    showToast('Could not rename equipment', 'error');
+  }
 }
 </script>
 </body>
