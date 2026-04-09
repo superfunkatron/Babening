@@ -876,6 +876,7 @@ async function onAuthSuccess() {
   await loadAll();
   buildCards();
   document.getElementById('check-history').textContent = `${history.length} sessions`;
+  await initVenueSelectors();
   updateProgress();
 }
 
