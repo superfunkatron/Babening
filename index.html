@@ -400,6 +400,13 @@
   .venue-picker-option-sub { font-size:10px; color:var(--muted); margin-top:2px; }
   .venue-picker-cancel { width:100%; padding:12px; background:transparent; border:1px solid var(--border); border-radius:8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); cursor:pointer; margin-top:4px; }
   .venue-picker-cancel:active { background:var(--surface2); }
+  /* ── FREE TEXT WEIGHT INPUT ── */
+  .adj-val-input { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--neon); text-shadow:var(--neon-glow); width:70px; text-align:center; background:transparent; border:none; outline:none; border-left:1px solid rgba(57,255,20,0.15); border-right:1px solid rgba(57,255,20,0.15); padding:0 8px; line-height:38px; -moz-appearance:textfield; }
+  .adj-val-input::-webkit-outer-spin-button, .adj-val-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+  .adj-val-input:focus { color:var(--edit-accent); text-shadow:none; border-left-color:rgba(176,106,255,0.4); border-right-color:rgba(176,106,255,0.4); }
+  .cardio-adj-val-input { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--cardio-accent); width:80px; text-align:center; background:transparent; border:none; outline:none; border-left:1px solid rgba(255,107,53,0.15); border-right:1px solid rgba(255,107,53,0.15); padding:0 8px; line-height:42px; -moz-appearance:textfield; }
+  .cardio-adj-val-input::-webkit-outer-spin-button, .cardio-adj-val-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+  .cardio-adj-val-input:focus { color:var(--edit-accent); text-shadow:none; }
 </style>
 </head>
 <body>
@@ -1263,7 +1270,7 @@ function buildCardHTML(day, i, ex, id) {
   const nonEditChips = ex.stats.filter(s => !s.editable).map(s => `<div class="stat-chip"><span class="chip-label">${s.k}</span><span class="chip-val">${s.v}</span></div>`).join('');
   const adjusters    = ex.stats.filter(s => s.editable).map(s => {
     const cur = getWeight(day, i, s.k, s.v); const step = getStep(cur);
-    return `<div class="weight-adjuster stat-chip"><span class="chip-label">${s.k} (${s.unit||'kg'})</span><div class="adj-controls"><button class="adj-btn" onclick="adjustWeight('${day}',${i},'${s.k}',${parseFloat(s.v)},-${step},'${id}')">−</button><div class="adj-val" id="adjval-${day}-${i}-${s.k}">${cur}</div><button class="adj-btn" onclick="adjustWeight('${day}',${i},'${s.k}',${parseFloat(s.v)},${step},'${id}')">+</button></div><div class="saved-flash" id="flash-${day}-${i}-${s.k}">✓ SAVED</div></div>`;
+   return `<div class="weight-adjuster stat-chip"><span class="chip-label">${s.k} (${s.unit||'kg'})</span><div class="adj-controls"><button class="adj-btn" onclick="adjustWeight('${day}',${i},'${s.k}',${parseFloat(s.v)},-${step},'${id}')">−</button><input type="number" class="adj-val-input" id="adjval-${day}-${i}-${s.k}" value="${cur}" inputmode="decimal" onblur="commitWeight('${day}',${i},'${s.k}',${parseFloat(s.v)},'${id}',this.value)" onfocus="this.select()" /><button class="adj-btn" onclick="adjustWeight('${day}',${i},'${s.k}',${parseFloat(s.v)},${step},'${id}')">+</button></div><div class="saved-flash" id="flash-${day}-${i}-${s.k}">✓ SAVED</div></div>`;
   }).join('');
 
   // Cardio adjuster block
@@ -1273,7 +1280,7 @@ function buildCardHTML(day, i, ex, id) {
       <span class="chip-label">${cardioMetric === 'watts' ? 'Avg Watts' : 'Distance'}</span>
       <div class="cardio-adj-controls">
         <button class="cardio-adj-btn" onclick="adjustCardio('${day}',${i},'${id}',-${cardioStep})">−</button>
-        <div class="cardio-adj-val" id="cardioval-${id}">${cardioVal}</div>
+        <input type="number" class="cardio-adj-val-input" id="cardioval-${id}" value="${cardioVal}" inputmode="numeric" onblur="commitCardio('${day}',${i},'${id}',this.value)" onfocus="this.select()" />
         <button class="cardio-adj-btn" onclick="adjustCardio('${day}',${i},'${id}',${cardioStep})">+</button>
       </div>
       <div class="cardio-adj-unit">${cardioMetric === 'watts' ? 'average watts' : 'metres'}</div>
@@ -2208,6 +2215,56 @@ function closeVenuePicker(e) {
   if (e && e.target !== document.getElementById('venue-picker-overlay')) return;
   document.getElementById('venue-picker-overlay').classList.remove('open');
   venuePickerDay = null;
+}
+  // ── FREE TEXT WEIGHT / CARDIO COMMIT ────────────────────
+function commitWeight(day, idx, key, defVal, cardId, rawVal) {
+  const parsed = parseFloat(rawVal);
+  if (isNaN(parsed) || parsed < 0) {
+    // Invalid — restore previous value
+    const cur = getWeight(day, idx, key, defVal);
+    const el = document.getElementById(`adjval-${day}-${idx}-${key}`);
+    if (el) el.value = cur;
+    return;
+  }
+  const newVal = Math.round(parsed * 10) / 10;
+  const el = document.getElementById(`adjval-${day}-${idx}-${key}`);
+  if (el) el.value = newVal;
+  setWeight(day, idx, key, newVal);
+  const flash = document.getElementById(`flash-${day}-${idx}-${key}`);
+  if (flash) { flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1500); }
+  const ex = getExercise(day, idx);
+  rebuildMeta(day, idx, cardId, ex);
+  const volNum = document.getElementById(`volnum-${cardId}`);
+  if (volNum) volNum.textContent = calcVolume(day, idx, ex);
+  const hint = getOverloadHint(day, idx, ex);
+  const hintEl = document.getElementById(`oload-${cardId}`);
+  if (hintEl && hint) { hintEl.className = `overload-hint ${hint.type}`; hintEl.innerHTML = `<span class="oh-icon">${hint.icon}</span><span>${hint.text}</span>`; }
+  const wStat = ex.stats.find(s => s.editable && s.k === key);
+  if (wStat) document.getElementById(cardId)?.classList.toggle('is-pr', isCurrentPR(ex.name, newVal));
+}
+
+function commitCardio(day, idx, cardId, rawVal) {
+  const parsed = parseInt(rawVal, 10);
+  if (isNaN(parsed) || parsed < 0) {
+    // Invalid — restore previous value
+    const ex = getExercise(day, idx);
+    const metric = getCardioMetric(ex.name);
+    const cur = (cardioValues[day]?.[idx]) ?? getCardioDefault(ex.name);
+    const el = document.getElementById(`cardioval-${cardId}`);
+    if (el) el.value = cur;
+    return;
+  }
+  const ex = getExercise(day, idx);
+  if (!cardioValues[day]) cardioValues[day] = {};
+  cardioValues[day][idx] = parsed;
+  saveCardioValues();
+  const el = document.getElementById(`cardioval-${cardId}`);
+  if (el) el.value = parsed;
+  const flash = document.getElementById(`cardioflash-${cardId}`);
+  if (flash) { flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1500); }
+  const hint = getOverloadHint(day, idx, ex);
+  const hintEl = document.getElementById(`oload-${cardId}`);
+  if (hintEl && hint) { hintEl.className = `overload-hint ${hint.type}`; hintEl.innerHTML = `<span class="oh-icon">${hint.icon}</span><span>${hint.text}</span>`; }
 }
 </script>
   <div class="venue-picker-overlay" id="venue-picker-overlay" onclick="closeVenuePicker(event)">
