@@ -1357,7 +1357,7 @@ function adjustCardio(day, idx, cardId, delta) {
   setCardioValue(day, idx, newVal);
 
   const valEl = document.getElementById(`cardioval-${cardId}`);
-  if (valEl) valEl.textContent = newVal;
+  if (valEl) { if (valEl.tagName === 'INPUT') valEl.value = newVal; else valEl.textContent = newVal; }
 
   const flash = document.getElementById(`cardioflash-${cardId}`);
   if (flash) { flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1500); }
@@ -1446,7 +1446,7 @@ function toggleDone(id) {
 function adjustWeight(day, idx, key, defVal, delta, cardId) {
   const cur = getWeight(day, idx, key, defVal); const newVal = Math.max(0.5, Math.round((cur + delta) * 10) / 10);
   setWeight(day, idx, key, newVal);
-  const adjEl = document.getElementById(`adjval-${day}-${idx}-${key}`); if (adjEl) adjEl.textContent = newVal;
+  const adjEl = document.getElementById(`adjval-${day}-${idx}-${key}`); if (adjEl) { if (adjEl.tagName === 'INPUT') adjEl.value = newVal; else adjEl.textContent = newVal; }
   const flash = document.getElementById(`flash-${day}-${idx}-${key}`); if (flash) { flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1500); }
   const ex = getExercise(day, idx); rebuildMeta(day, idx, cardId, ex);
   const volNum = document.getElementById(`volnum-${cardId}`); if (volNum) volNum.textContent = calcVolume(day, idx, ex);
