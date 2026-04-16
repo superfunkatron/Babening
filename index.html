@@ -2255,8 +2255,7 @@ function commitCardio(day, idx, cardId, rawVal) {
     return;
   }
   const ex = getExercise(day, idx);
-  if (!cardioValues[day]) cardioValues[day] = {};
-  cardioValues[day][idx] = parsed;
+  cardioValues[`${day}-${idx}`] = parsed;
   saveCardioValues();
   const el = document.getElementById(`cardioval-${cardId}`);
   if (el) el.value = parsed;
