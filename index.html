@@ -407,6 +407,8 @@
   .cardio-adj-val-input { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--cardio-accent); width:80px; text-align:center; background:transparent; border:none; outline:none; border-left:1px solid rgba(255,107,53,0.15); border-right:1px solid rgba(255,107,53,0.15); padding:0 8px; line-height:42px; -moz-appearance:textfield; }
   .cardio-adj-val-input::-webkit-outer-spin-button, .cardio-adj-val-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
   .cardio-adj-val-input:focus { color:var(--edit-accent); text-shadow:none; }
+  .history-delete-btn { background:transparent; border:none; color:rgba(255,60,60,0.3); font-size:14px; cursor:pointer; padding:4px 6px; border-radius:4px; transition:all 0.2s; float:right; margin-top:-2px; }
+  .history-delete-btn:active { color:#ff4444; background:rgba(255,60,60,0.1); }
 </style>
 </head>
 <body>
@@ -1175,7 +1177,8 @@ function getOverloadHint(day, idx, ex) {
   const wStat = ex.stats.find(s => s.editable);
   if (!wStat) return null;
   const cur = getWeight(day, idx, wStat.k, wStat.v);
-  const prevSessions = history.filter(h => h.day === day);
+  // Look across all days for previous sessions with this exercise
+  const prevSessions = history.filter(h => h.snapshot.some(s => s.name === ex.name));
   if (!prevSessions.length) return { type:'new', icon:'✦', text:'No previous session. Set a baseline today!' };
   const prevEx = prevSessions[0].snapshot.find(s => s.name === ex.name);
   if (!prevEx || !prevEx.weight) return { type:'new', icon:'✦', text:'No previous data for this lift.' };
@@ -1602,10 +1605,12 @@ function renderSessionList(query='') {
         }
         return `<div class="history-ex-row${isPRRow?' is-pr-row':''}${isCardioRow?' is-cardio-row':''}"><span class="history-ex-name">${e.name}</span>${detail}</div>`;
       }).join('');
+   const entryIdx = history.indexOf(entry);
     const noteHTML = entry.note ? `<div class="history-note">📝 ${entry.note}</div>` : '';
     const venueHTML = entry.venue_name ? `<div class="history-note" style="color:var(--edit-accent);opacity:0.7;">📍 ${entry.venue_name}</div>` : '';
-    return `<div class="history-entry${hasPR?' has-pr':''}"><div class="history-entry-header"><span class="history-day-label">${EMOJI[entry.day]||''} ${label}</span><span class="history-date">${dateStr}${hasPR?' 🏆':''}</span></div><div class="history-stats"><div class="h-stat"><div class="h-stat-val">${liftSnap.length}</div><div class="h-stat-label">Lifts</div></div><div class="h-stat"><div class="h-stat-val">${Math.round(totalVol)}</div><div class="h-stat-label">Total kg</div></div><div class="h-stat"><div class="h-stat-val">${entry.snapshot.reduce((s,e)=>s+parseFloat(e.reps||0),0)}</div><div class="h-stat-label">Reps</div></div>${hasPR?`<div class="h-stat"><div class="h-stat-val">🏆</div><div class="h-stat-label">PR Day</div></div>`:''}</div><div class="history-exercises">${rows}</div>${venueHTML}${noteHTML}</div>`;
-    return `<div class="history-entry${hasPR?' has-pr':''}"><div class="history-entry-header"><span class="history-day-label">${EMOJI[entry.day]||''} ${label}</span><span class="history-date">${dateStr}${hasPR?' 🏆':''}</span></div><div class="history-stats"><div class="h-stat"><div class="h-stat-val">${liftSnap.length}</div><div class="h-stat-label">Lifts</div></div><div class="h-stat"><div class="h-stat-val">${Math.round(totalVol)}</div><div class="h-stat-label">Total kg</div></div><div class="h-stat"><div class="h-stat-val">${entry.snapshot.reduce((s,e)=>s+parseFloat(e.reps||0),0)}</div><div class="h-stat-label">Reps</div></div>${hasPR?`<div class="h-stat"><div class="h-stat-val">🏆</div><div class="h-stat-label">PR Day</div></div>`:''}</div><div class="history-exercises">${rows}</div>${noteHTML}</div>`;
+    const deleteBtn = `<button class="history-delete-btn" onclick="deleteHistoryEntry(${entryIdx})" title="Delete this session">🗑</button>`;
+    return `<div class="history-entry${hasPR?' has-pr':''}"><div class="history-entry-header"><span class="history-day-label">${EMOJI[entry.day]||''} ${label}</span><span class="history-date">${dateStr}${hasPR?' 🏆':''}${deleteBtn}</span></span></div><div class="history-stats"><div class="h-stat"><div class="h-stat-val">${liftSnap.length}</div><div class="h-stat-label">Lifts</div></div><div class="h-stat"><div class="h-stat-val">${Math.round(totalVol)}</div><div class="h-stat-label">Total kg</div></div><div class="h-stat"><div class="h-stat-val">${entry.snapshot.reduce((s,e)=>s+parseFloat(e.reps||0),0)}</div><div class="h-stat-label">Reps</div></div>${hasPR?`<div class="h-stat"><div class="h-stat-val">🏆</div><div class="h-stat-label">PR Day</div></div>`:''}</div><div class="history-exercises">${rows}</div>${venueHTML}${noteHTML}</div>`;
+    return `<div class="history-entry${hasPR?' has-pr':''}"><div class="history-entry-header"><span class="history-day-label">${EMOJI[entry.day]||''} ${label}</span><span class="history-date">${dateStr}${hasPR?' 🏆':''}${deleteBtn}</span></span></div><div class="history-stats"><div class="h-stat"><div class="h-stat-val">${liftSnap.length}</div><div class="h-stat-label">Lifts</div></div><div class="h-stat"><div class="h-stat-val">${Math.round(totalVol)}</div><div class="h-stat-label">Total kg</div></div><div class="h-stat"><div class="h-stat-val">${entry.snapshot.reduce((s,e)=>s+parseFloat(e.reps||0),0)}</div><div class="h-stat-label">Reps</div></div>${hasPR?`<div class="h-stat"><div class="h-stat-val">🏆</div><div class="h-stat-label">PR Day</div></div>`:''}</div><div class="history-exercises">${rows}</div>${noteHTML}</div>`;
   }).join('') + (q ? '' : `<button class="clear-history-btn" onclick="clearHistory()">🗑 Clear All History &amp; PRs</button>`);
 }
 
@@ -2264,6 +2269,14 @@ function commitCardio(day, idx, cardId, rawVal) {
   const hint = getOverloadHint(day, idx, ex);
   const hintEl = document.getElementById(`oload-${cardId}`);
   if (hintEl && hint) { hintEl.className = `overload-hint ${hint.type}`; hintEl.innerHTML = `<span class="oh-icon">${hint.icon}</span><span>${hint.text}</span>`; }
+}
+  function deleteHistoryEntry(idx) {
+  if (!confirm('Delete this session from your history? This cannot be undone.')) return;
+  history.splice(idx, 1);
+  saveHistory();
+  document.getElementById('check-history').textContent = `${history.length} sessions`;
+  renderSessionList();
+  showToast('Session deleted', 'success');
 }
 </script>
   <div class="venue-picker-overlay" id="venue-picker-overlay" onclick="closeVenuePicker(event)">
