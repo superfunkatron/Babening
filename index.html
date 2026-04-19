@@ -2426,69 +2426,75 @@ async function openSwapOverlay(day, idx, exName) {
   }
 
   document.getElementById('swap-sheet-sub').textContent = 'Finding similar exercises…';
-  document.getElementById('swap-results').innerHTML = '';
+  document.getElementById('swap-results').innerHTML = `<p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding:24px 0;">Loading…</p>`;
   document.getElementById('swap-overlay').classList.add('open');
 
-  // Score all exercises against this one
-  const candidates = await sbRestGet(
-    `exercises?select=id,name,force,mechanic,category,instructions&limit=654&order=name`
-  ) || [];
+  try {
+    // ── Single bulk fetch of all exercises ──────────────
+    const [candidates, allMuscleLinks, curatedSubs] = await Promise.all([
+      sbRestGet(`exercises?select=id,name,force,mechanic,category,instructions&limit=700&order=name`) || [],
+      sbRestGet(`exercise_muscles?is_primary=eq.true&position=eq.0&select=exercise_id,muscle_id`) || [],
+      sbRestGet(`exercise_substitutions?user_id=eq.${currentUser.id}&select=exercise_a_id,exercise_b_id`) || []
+    ]);
 
-  // Get primary muscle for each candidate
-  const scored = [];
-  for (const c of candidates) {
-    if (c.id === link.id) continue; // skip self
-    let score = 0;
-    const reasons = [];
+    // Build a lookup: exercise_id -> first primary muscle_id
+    const muscleByExercise = {};
+    (allMuscleLinks || []).forEach(m => { muscleByExercise[m.exercise_id] = m.muscle_id; });
 
-    // Get first primary muscle of candidate
-    const cMuscles = await sbRestGet(
-      `exercise_muscles?exercise_id=eq.${c.id}&is_primary=eq.true&position=eq.0&select=muscle_id&limit=1`
-    ) || [];
+    // Build curated set for quick lookup
+    const curatedIds = new Set();
+    (curatedSubs || []).forEach(s => {
+      if (s.exercise_a_id === link.id) curatedIds.add(s.exercise_b_id);
+      if (s.exercise_b_id === link.id) curatedIds.add(s.exercise_a_id);
+    });
 
-    // Primary muscle match (40pts)
-    if (cMuscles.length && link.primaryMuscleIds?.includes(cMuscles[0].muscle_id)) {
-      score += 40; reasons.push('same primary muscle');
-    } else {
-      continue; // must match primary muscle to surface at all
+    const myPrimaryMuscleId = link.primaryMuscleIds?.[0];
+
+    // ── Score all candidates in memory ──────────────────
+    const scored = [];
+    for (const c of (candidates || [])) {
+      if (c.id === link.id) continue;
+
+      const cMuscleId = muscleByExercise[c.id];
+      if (!cMuscleId) continue;
+
+      // Must match primary muscle to surface at all
+      if (cMuscleId !== myPrimaryMuscleId) continue;
+
+      let score = 40; // primary muscle matched
+      const reasons = ['same primary muscle'];
+
+      if (link.force && c.force === link.force)       { score += 25; reasons.push('same force'); }
+      if (link.mechanic && c.mechanic === link.mechanic) { score += 20; reasons.push('same mechanic'); }
+      if (link.category && c.category === link.category) { score += 10; }
+      if (curatedIds.has(c.id))                        { score += 15; reasons.push('curated match'); }
+
+      scored.push({ ...c, score, reasons });
     }
 
-    // Force match (25pts)
-    if (link.force && c.force === link.force) { score += 25; reasons.push('same force'); }
+    scored.sort((a, b) => b.score - a.score);
+    const top = scored.slice(0, 5);
 
-    // Mechanic match (20pts)
-    if (link.mechanic && c.mechanic === link.mechanic) { score += 20; reasons.push('same mechanic'); }
+    if (!top.length) {
+      document.getElementById('swap-sheet-sub').textContent = 'No similar exercises found';
+      document.getElementById('swap-results').innerHTML = `<p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding:24px 0;">Try linking to a different library exercise</p>`;
+      return;
+    }
 
-    // Category match (10pts)
-    if (link.category && c.category === link.category) { score += 10; }
+    document.getElementById('swap-sheet-sub').textContent = `Top ${top.length} similar exercises — tap to see instructions`;
+    document.getElementById('swap-results').innerHTML = top.map(r => `
+      <div class="swap-result" onclick="this.classList.toggle('expanded')">
+        <div class="swap-result-name">${r.name}</div>
+        <div class="swap-result-meta">${[r.category, r.force, r.mechanic].filter(Boolean).join(' · ')}</div>
+        <div class="swap-result-score">${r.reasons.join(' + ')} — ${r.score}pts</div>
+        <div class="swap-result-instructions">${(r.instructions||[]).map((s,i) => `${i+1}. ${s}`).join('<br>')}</div>
+      </div>`).join('');
 
-    // Check curated substitutions (+15 bonus)
-    const curated = await sbRestGet(
-      `exercise_substitutions?user_id=eq.${currentUser.id}&or=(exercise_a_id.eq.${link.id},exercise_b_id.eq.${link.id})&select=exercise_a_id,exercise_b_id`
-    ) || [];
-    const isCurated = curated.some(s => s.exercise_a_id === c.id || s.exercise_b_id === c.id);
-    if (isCurated) { score += 15; reasons.push('curated match'); }
-
-    if (score >= 40) scored.push({ ...c, score, reasons, firstMuscleId: cMuscles[0].muscle_id });
+  } catch(e) {
+    document.getElementById('swap-sheet-sub').textContent = 'Error loading suggestions';
+    document.getElementById('swap-results').innerHTML = `<p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding:24px 0;">Something went wrong — try again</p>`;
+    console.error('Swap overlay error:', e);
   }
-
-  scored.sort((a, b) => b.score - a.score);
-  const top = scored.slice(0, 5);
-
-  if (!top.length) {
-    document.getElementById('swap-sheet-sub').textContent = 'No similar exercises found in the library';
-    document.getElementById('swap-results').innerHTML = `<p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding:24px 0;">Try linking to a different library exercise</p>`;
-    return;
-  }
-
-  document.getElementById('swap-sheet-sub').textContent = `Top ${top.length} similar exercises`;
-  document.getElementById('swap-results').innerHTML = top.map(r => `
-    <div class="swap-result" onclick="this.classList.toggle('expanded')">
-      <div class="swap-result-name">${r.name}</div>
-      <div class="swap-result-meta">${[r.category, r.force, r.mechanic].filter(Boolean).join(' · ')}</div>
-      <div class="swap-result-score">${r.reasons.join(' + ')} — ${r.score}pts</div>
-      <div class="swap-result-instructions">${(r.instructions||[]).map((s,i) => `${i+1}. ${s}`).join('<br>')}</div>
-    </div>`).join('');
 }
 
 function closeSwapOverlay(e) {
