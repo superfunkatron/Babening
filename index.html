@@ -468,6 +468,68 @@
   .activity-logged-flash { font-family:'DM Mono',monospace; font-size:10px; color:var(--cardio-accent); text-align:center; margin-top:8px; opacity:0; transition:opacity 0.3s; letter-spacing:1px; }
   .activity-logged-flash.show { opacity:1; }
   .history-entry.other-entry .history-day-label { color:var(--cardio-accent); }
+  /* ── ONBOARDING ── */
+  .onboarding-overlay { position:fixed; inset:0; background:var(--bg); z-index:500; overflow-y:auto; display:flex; align-items:flex-start; justify-content:center; padding:24px 16px 48px; }
+  .onboarding-overlay.hidden { display:none; }
+  .onboarding-sheet { width:100%; max-width:480px; }
+  .onboarding-step { display:flex; flex-direction:column; }
+  .onboarding-step.hidden { display:none; }
+  .ob-logo { font-size:48px; text-align:center; margin-bottom:12px; }
+  .ob-title { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:3px; color:var(--text); text-align:center; line-height:1; margin-bottom:6px; }
+  .ob-sub { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); text-align:center; margin-bottom:24px; }
+  .ob-step-indicator { font-family:'DM Mono',monospace; font-size:10px; color:var(--edit-accent); letter-spacing:2px; text-align:center; margin-bottom:12px; }
+  .ob-section-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; }
+  .ob-presets { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
+  .ob-preset-btn { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 10px; cursor:pointer; text-align:left; transition:all 0.2s; }
+  .ob-preset-btn:active, .ob-preset-btn.selected { border-color:var(--edit-accent); background:var(--edit-dim); }
+  .ob-preset-name { font-family:'DM Mono',monospace; font-size:11px; color:var(--text); font-weight:bold; }
+  .ob-preset-sub { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); margin-top:3px; }
+  .ob-day-names { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+  .ob-day-name-row { display:flex; align-items:center; gap:10px; }
+  .ob-day-num { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); width:36px; flex-shrink:0; }
+  .ob-day-input { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:9px 12px; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; color:var(--text); outline:none; }
+  .ob-day-input:focus { border-color:var(--edit-accent); }
+  .ob-next-btn { width:100%; padding:14px; background:var(--edit-accent); border:none; border-radius:10px; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; color:#fff; cursor:pointer; margin-top:8px; transition:opacity 0.2s; }
+  .ob-next-btn:disabled { opacity:0.35; cursor:not-allowed; }
+  .ob-next-btn:not(:disabled):active { opacity:0.8; }
+  .ob-skip-btn { width:100%; padding:10px; background:transparent; border:none; font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); cursor:pointer; margin-top:4px; letter-spacing:1px; }
+  .ob-field-group { margin-bottom:10px; }
+  .ob-field-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px; }
+  .ob-field-input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:9px 12px; font-family:'DM Mono',monospace; font-size:13px; color:var(--text); outline:none; box-sizing:border-box; }
+  .ob-field-input:focus { border-color:var(--edit-accent); }
+  .ob-day-tabs { display:flex; gap:6px; margin-bottom:12px; }
+  .ob-day-tab { flex:1; padding:8px 4px; background:var(--surface); border:1px solid var(--border); border-radius:6px; font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); cursor:pointer; transition:all 0.2s; }
+  .ob-day-tab.active { border-color:var(--edit-accent); color:var(--edit-accent); background:var(--edit-dim); }
+  .ob-exercise-list { display:flex; flex-direction:column; gap:6px; margin-bottom:10px; min-height:40px; }
+  .ob-exercise-list.hidden { display:none; }
+  .ob-ex-row { display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 12px; }
+  .ob-ex-input { flex:1; background:transparent; border:none; font-family:'DM Mono',monospace; font-size:12px; color:var(--text); outline:none; }
+  .ob-ex-type { font-family:'DM Mono',monospace; font-size:9px; padding:3px 6px; border-radius:4px; cursor:pointer; border:1px solid var(--border); color:var(--muted); background:transparent; flex-shrink:0; }
+  .ob-ex-type.cardio { color:var(--cardio-accent); border-color:rgba(255,107,53,0.3); }
+  .ob-ex-del { background:transparent; border:none; color:var(--muted); font-size:14px; cursor:pointer; padding:0 4px; flex-shrink:0; }
+  .ob-add-ex-btn { width:100%; padding:10px; background:transparent; border:1px dashed var(--border); border-radius:8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); cursor:pointer; margin-bottom:14px; transition:all 0.2s; }
+  .ob-add-ex-btn:active { border-color:var(--edit-accent); color:var(--edit-accent); }
+  .ob-hint-box { background:var(--surface); border:1px solid var(--edit-border); border-radius:8px; padding:12px 14px; margin-bottom:16px; }
+  .ob-hint-title { font-family:'DM Mono',monospace; font-size:10px; color:var(--edit-accent); margin-bottom:4px; }
+  .ob-hint-text { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); line-height:1.6; }
+  .ob-finish-hint { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); text-align:center; margin-top:6px; }
+  /* ── HELP SHEET ── */
+  .help-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:400; display:flex; align-items:flex-end; justify-content:center; }
+  .help-overlay.hidden { display:none; }
+  .help-sheet { background:var(--surface); border-radius:14px 14px 0 0; width:100%; max-width:480px; max-height:85vh; overflow-y:auto; border-top:1px solid var(--edit-border); }
+  .help-header { display:flex; align-items:center; justify-content:space-between; padding:18px 16px 14px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--surface); z-index:1; }
+  .help-title { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--text); }
+  .help-close { background:transparent; border:none; color:var(--muted); font-family:'DM Mono',monospace; font-size:12px; cursor:pointer; }
+  .help-content { padding:16px; }
+  .help-section { margin-bottom:20px; }
+  .help-section-title { font-family:'DM Mono',monospace; font-size:11px; color:var(--edit-accent); letter-spacing:1px; margin-bottom:8px; }
+  .help-section-body { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); line-height:1.7; }
+  .help-section-body p { margin-bottom:6px; }
+  .help-section-body ol, .help-section-body ul { padding-left:16px; }
+  .help-section-body li { margin-bottom:4px; }
+  .help-section-body strong { color:var(--text); }
+  .help-btn { background:transparent; border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); cursor:pointer; transition:all 0.2s; }
+  .help-btn:active { border-color:var(--edit-accent); color:var(--edit-accent); }
 </style>
 </head>
 <body>
@@ -515,6 +577,8 @@
         <span class="progress-label" id="progress-text">0 / 0</span>
         <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar"></div></div>
       </div>
+      <button class="help-btn" onclick="openHelp()">?</button>
+<button class="edit-toggle-btn" id="editToggleBtn" onclick="toggleEditMode()">✏ Edit</button>
       <button class="edit-toggle-btn" id="editToggleBtn" onclick="toggleEditMode()">✏ Edit</button>
       <button class="theme-btn" id="themeBtn" onclick="cycleTheme()" title="Toggle theme">🌙</button>
       <button class="signout-btn" onclick="handleSignOut()" title="Sign out">↩</button>
@@ -1084,10 +1148,14 @@ async function onAuthSuccess() {
   document.getElementById('auth-overlay').classList.add('hidden');
   await migrateFromLocalStorage();
   await loadAll();
+  await loadExerciseLinks();
+  if (!plan) {
+    showOnboarding();
+    return;
+  }
   buildCards();
   document.getElementById('check-history').textContent = `${history.length} sessions`;
   await initVenueSelectors();
-  await loadExerciseLinks();
   updateProgress();
 }
 
@@ -1152,6 +1220,10 @@ async function getValidSession() {
 // ============================================================
 //  DEFAULT PLAN
 // ============================================================
+const EMPTY_PLAN = {
+  dayNames: { chest:'CHEST DAY', legs:'LEG DAY', arms:'ARMS & SHOULDERS' },
+  exercises: { chest: [], legs: [], arms: [] }
+};
 const DEFAULT_PLAN = {
   dayNames: { chest:'CHEST DAY', legs:'LEG DAY', arms:'ARMS & SHOULDERS' },
   exercises: {
@@ -1215,7 +1287,7 @@ async function loadAll() {
   const [savedPlan, savedWeights, savedHistory, savedPRs, savedCardio] = await Promise.all([
     sbGet('plan'), sbGet('weights'), sbGet('history'), sbGet('prs'), sbGet('cardio')
   ]);
-  plan         = savedPlan    || JSON.parse(JSON.stringify(DEFAULT_PLAN));
+  plan         = savedPlan    || null;
   weights      = savedWeights || {};
   prs          = savedPRs     || {};
   history      = savedHistory || [];
@@ -2060,13 +2132,17 @@ async function init() {
   }
 
   // Valid session found — go straight in
-  document.getElementById('auth-overlay').classList.add('hidden');
+ document.getElementById('auth-overlay').classList.add('hidden');
   await migrateFromLocalStorage();
   await loadAll();
+  await loadExerciseLinks();
+  if (!plan) {
+    showOnboarding();
+    return;
+  }
   buildCards();
   document.getElementById('check-history').textContent = `${history.length} sessions`;
   await initVenueSelectors();
-  await loadExerciseLinks();
   updateProgress();
 }
 init();
@@ -2735,6 +2811,174 @@ function logActivity(type, label, fieldDefs) {
 
   showToast(`${label} logged!`, 'success');
 }
+// ── ONBOARDING ───────────────────────────────────────────
+let obCurrentDay = 'chest';
+let obExercises = { chest: [], legs: [], arms: [] };
+
+const PRESETS = {
+  chest_legs_arms:   { chest:'CHEST DAY',  legs:'LEG DAY',   arms:'ARMS & SHOULDERS' },
+  push_pull_legs:    { chest:'PUSH DAY',   legs:'PULL DAY',  arms:'LEG DAY' },
+  upper_lower_cardio:{ chest:'UPPER BODY', legs:'LOWER BODY',arms:'CARDIO DAY' },
+  custom:            { chest:'DAY ONE',    legs:'DAY TWO',   arms:'DAY THREE' }
+};
+
+function showOnboarding() {
+  document.getElementById('onboarding-overlay').classList.remove('hidden');
+}
+
+function hideOnboarding() {
+  document.getElementById('onboarding-overlay').classList.add('hidden');
+}
+
+function selectPreset(preset) {
+  document.querySelectorAll('.ob-preset-btn').forEach(b => b.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  const names = PRESETS[preset];
+  document.getElementById('ob-day-chest').value = names.chest;
+  document.getElementById('ob-day-legs').value  = names.legs;
+  document.getElementById('ob-day-arms').value  = names.arms;
+  // Update tab labels
+  document.getElementById('ob-tab-chest').textContent = names.chest.split(' ')[0];
+  document.getElementById('ob-tab-legs').textContent  = names.legs.split(' ')[0];
+  document.getElementById('ob-tab-arms').textContent  = names.arms.split(' ')[0];
+}
+
+function obStep1Next() {
+  const chest = document.getElementById('ob-day-chest').value.trim();
+  const legs  = document.getElementById('ob-day-legs').value.trim();
+  const arms  = document.getElementById('ob-day-arms').value.trim();
+  if (!chest || !legs || !arms) { showToast('Please name all three days', 'error'); return; }
+  document.getElementById('ob-step-1').classList.add('hidden');
+  document.getElementById('ob-step-2').classList.remove('hidden');
+}
+
+async function obStep2Next() {
+  const name = document.getElementById('ob-venue-name').value.trim();
+  if (!name) { showToast('Please enter a gym name, or tap Skip', 'error'); return; }
+  try {
+    await sbPost('venues', {
+      user_id: currentUser.id,
+      name,
+      suburb: document.getElementById('ob-venue-suburb').value.trim() || null,
+      chain:  document.getElementById('ob-venue-chain').value.trim()  || null,
+      notes:  null
+    });
+    savedVenues = await sbRestGet(`venues?select=id,name,suburb,chain&user_id=eq.${currentUser.id}&order=name`) || [];
+    showToast(`${name} saved!`, 'success');
+  } catch(e) {
+    showToast('Could not save venue — continuing anyway', 'error');
+  }
+  obGoToStep3();
+}
+
+function obStep2Skip() {
+  obGoToStep3();
+}
+
+function obGoToStep3() {
+  document.getElementById('ob-step-2').classList.add('hidden');
+  document.getElementById('ob-step-3').classList.remove('hidden');
+  obCheckFinishReady();
+}
+
+function obSwitchDay(day) {
+  obCurrentDay = day;
+  ['chest','legs','arms'].forEach(d => {
+    document.getElementById(`ob-tab-${d}`).classList.toggle('active', d === day);
+    document.getElementById(`ob-exercise-list-${d}`).classList.toggle('hidden', d !== day);
+  });
+}
+
+function obAddExercise() {
+  const list = document.getElementById(`ob-exercise-list-${obCurrentDay}`);
+  const idx = obExercises[obCurrentDay].length;
+  obExercises[obCurrentDay].push({ name:'', type:'lift' });
+
+  const row = document.createElement('div');
+  row.className = 'ob-ex-row';
+  row.id = `ob-ex-${obCurrentDay}-${idx}`;
+  row.innerHTML = `
+    <input class="ob-ex-input" type="text" placeholder="Exercise name e.g. Bench Press"
+      oninput="obUpdateExName('${obCurrentDay}',${idx},this.value)" />
+    <button class="ob-ex-type" id="ob-ex-type-${obCurrentDay}-${idx}"
+      onclick="obToggleType('${obCurrentDay}',${idx})">LIFT</button>
+    <button class="ob-ex-del" onclick="obDeleteExercise('${obCurrentDay}',${idx})">×</button>`;
+  list.appendChild(row);
+  row.querySelector('input').focus();
+  obCheckFinishReady();
+}
+
+function obUpdateExName(day, idx, val) {
+  obExercises[day][idx].name = val;
+  obCheckFinishReady();
+}
+
+function obToggleType(day, idx) {
+  const ex = obExercises[day][idx];
+  ex.type = ex.type === 'lift' ? 'cardio' : 'lift';
+  const btn = document.getElementById(`ob-ex-type-${day}-${idx}`);
+  btn.textContent = ex.type === 'lift' ? 'LIFT' : 'CARDIO';
+  btn.classList.toggle('cardio', ex.type === 'cardio');
+}
+
+function obDeleteExercise(day, idx) {
+  obExercises[day].splice(idx, 1);
+  document.getElementById(`ob-ex-${day}-${idx}`)?.remove();
+  obCheckFinishReady();
+}
+
+function obCheckFinishReady() {
+  const totalNamed = ['chest','legs','arms'].reduce((total, day) => {
+    return total + obExercises[day].filter(e => e.name.trim()).length;
+  }, 0);
+  const btn = document.getElementById('ob-finish-btn');
+  const hint = document.getElementById('ob-finish-hint');
+  btn.disabled = totalNamed === 0;
+  hint.style.display = totalNamed > 0 ? 'none' : 'block';
+}
+
+async function obFinish() {
+  const dayNames = {
+    chest: document.getElementById('ob-day-chest').value.trim(),
+    legs:  document.getElementById('ob-day-legs').value.trim(),
+    arms:  document.getElementById('ob-day-arms').value.trim()
+  };
+
+  // Build plan from onboarding exercises
+  const exercises = { chest: [], legs: [], arms: [] };
+  ['chest','legs','arms'].forEach(day => {
+    obExercises[day].filter(e => e.name.trim()).forEach(e => {
+      if (e.type === 'cardio') {
+        exercises[day].push({ type:'cardio', name:e.name.trim(), stats:[{k:'Time',v:'5 min'}], link:null, note:null });
+      } else {
+        exercises[day].push({ type:'lift', name:e.name.trim(), stats:[{k:'Reps',v:'15'},{k:'Weight',v:'20',editable:true,unit:'kg'}], link:null, note:null });
+      }
+    });
+  });
+
+  plan = { dayNames, exercises };
+  await savePlan();
+
+  hideOnboarding();
+  buildCards();
+  document.getElementById('check-history').textContent = `${history.length} sessions`;
+  await initVenueSelectors();
+  updateProgress();
+  showToast('Welcome to THE BABENING! 💪', 'success');
+}
+
+// ── HELP ─────────────────────────────────────────────────
+function openHelp() {
+  // Hide quickstart section if user has completed at least one session
+  const qs = document.getElementById('help-quickstart');
+  if (qs && history.length > 0) qs.style.display = 'none';
+  document.getElementById('help-overlay').classList.remove('hidden');
+}
+
+function closeHelp(e) {
+  if (e && e.target !== document.getElementById('help-overlay')) return;
+  document.getElementById('help-overlay').classList.add('hidden');
+}
 </script>
   <div class="venue-picker-overlay" id="venue-picker-overlay" onclick="closeVenuePicker(event)">
   <div class="venue-picker-sheet">
@@ -2764,6 +3008,175 @@ function logActivity(type, label, fieldDefs) {
     <div class="swap-sheet-sub" id="swap-sheet-sub">Exercises with similar muscles and movement</div>
     <div id="swap-results"></div>
     <button class="swap-cancel" onclick="closeSwapOverlay()">CANCEL</button>
+  </div>
+</div>
+<!-- ── ONBOARDING OVERLAY ── -->
+<div id="onboarding-overlay" class="onboarding-overlay hidden">
+  <div class="onboarding-sheet">
+
+    <!-- Step 1: Welcome + day structure -->
+    <div class="onboarding-step" id="ob-step-1">
+      <div class="ob-logo">💪</div>
+      <div class="ob-title">WELCOME TO THE BABENING</div>
+      <div class="ob-sub">Let's set up your workout in about 2 minutes.</div>
+
+      <div class="ob-section-label">CHOOSE YOUR DAY STRUCTURE</div>
+      <div class="ob-presets">
+        <button class="ob-preset-btn" onclick="selectPreset('chest_legs_arms')">
+          <div class="ob-preset-name">Chest / Legs / Arms</div>
+          <div class="ob-preset-sub">Classic three-day split</div>
+        </button>
+        <button class="ob-preset-btn" onclick="selectPreset('push_pull_legs')">
+          <div class="ob-preset-name">Push / Pull / Legs</div>
+          <div class="ob-preset-sub">Movement-based split</div>
+        </button>
+        <button class="ob-preset-btn" onclick="selectPreset('upper_lower_cardio')">
+          <div class="ob-preset-name">Upper / Lower / Cardio</div>
+          <div class="ob-preset-sub">Balanced approach</div>
+        </button>
+        <button class="ob-preset-btn" onclick="selectPreset('custom')">
+          <div class="ob-preset-name">Custom</div>
+          <div class="ob-preset-sub">Name your own days</div>
+        </button>
+      </div>
+
+      <div class="ob-section-label" style="margin-top:16px;">NAME YOUR DAYS</div>
+      <div class="ob-day-names">
+        <div class="ob-day-name-row">
+          <span class="ob-day-num">Day 1</span>
+          <input class="ob-day-input" id="ob-day-chest" type="text" value="CHEST DAY" placeholder="Day 1 name" />
+        </div>
+        <div class="ob-day-name-row">
+          <span class="ob-day-num">Day 2</span>
+          <input class="ob-day-input" id="ob-day-legs" type="text" value="LEG DAY" placeholder="Day 2 name" />
+        </div>
+        <div class="ob-day-name-row">
+          <span class="ob-day-num">Day 3</span>
+          <input class="ob-day-input" id="ob-day-arms" type="text" value="ARMS & SHOULDERS" placeholder="Day 3 name" />
+        </div>
+      </div>
+
+      <button class="ob-next-btn" onclick="obStep1Next()">NEXT: ADD YOUR GYM →</button>
+    </div>
+
+    <!-- Step 2: Venue -->
+    <div class="onboarding-step hidden" id="ob-step-2">
+      <div class="ob-step-indicator">STEP 2 OF 3</div>
+      <div class="ob-title">WHERE DO YOU TRAIN?</div>
+      <div class="ob-sub">Add your main gym. You can add more later in Edit Mode.</div>
+
+      <div class="ob-field-group">
+        <label class="ob-field-label">Gym name</label>
+        <input class="ob-field-input" id="ob-venue-name" type="text" placeholder="e.g. Camperdown Fitness" />
+      </div>
+      <div class="ob-field-group">
+        <label class="ob-field-label">Suburb (optional)</label>
+        <input class="ob-field-input" id="ob-venue-suburb" type="text" placeholder="e.g. Camperdown" />
+      </div>
+      <div class="ob-field-group">
+        <label class="ob-field-label">Chain (optional)</label>
+        <input class="ob-field-input" id="ob-venue-chain" type="text" placeholder="e.g. Fitness First, independent" />
+      </div>
+
+      <button class="ob-next-btn" onclick="obStep2Next()">NEXT: ADD EXERCISES →</button>
+      <button class="ob-skip-btn" onclick="obStep2Skip()">Skip for now</button>
+    </div>
+
+    <!-- Step 3: Exercises -->
+    <div class="onboarding-step hidden" id="ob-step-3">
+      <div class="ob-step-indicator">STEP 3 OF 3</div>
+      <div class="ob-title">ADD YOUR EXERCISES</div>
+      <div class="ob-sub">Add at least one exercise to get started. You can add more any time in Edit Mode.</div>
+
+      <div class="ob-day-tabs">
+        <button class="ob-day-tab active" onclick="obSwitchDay('chest')" id="ob-tab-chest" id="ob-tab-chest">Day 1</button>
+        <button class="ob-day-tab" onclick="obSwitchDay('legs')" id="ob-tab-legs">Day 2</button>
+        <button class="ob-day-tab" onclick="obSwitchDay('arms')" id="ob-tab-arms">Day 3</button>
+      </div>
+
+      <div id="ob-exercise-list-chest" class="ob-exercise-list"></div>
+      <div id="ob-exercise-list-legs" class="ob-exercise-list hidden"></div>
+      <div id="ob-exercise-list-arms" class="ob-exercise-list hidden"></div>
+
+      <button class="ob-add-ex-btn" onclick="obAddExercise()">+ ADD EXERCISE TO THIS DAY</button>
+
+      <div class="ob-hint-box">
+        <div class="ob-hint-title">💡 TIP: Link exercises to the library</div>
+        <div class="ob-hint-text">After setup, go into Edit Mode on any exercise card and tap "Link to exercise library" — this unlocks smart swap suggestions when you're at a different gym.</div>
+      </div>
+
+      <button class="ob-next-btn" id="ob-finish-btn" onclick="obFinish()" disabled>START TRAINING →</button>
+      <div class="ob-finish-hint" id="ob-finish-hint">Add at least one exercise to continue</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── HELP SHEET ── -->
+<div id="help-overlay" class="help-overlay hidden" onclick="closeHelp(event)">
+  <div class="help-sheet">
+    <div class="help-header">
+      <div class="help-title">HOW TO USE THE BABENING</div>
+      <button class="help-close" onclick="closeHelp()">✕</button>
+    </div>
+    <div class="help-content">
+
+      <div class="help-section" id="help-quickstart">
+        <div class="help-section-title">🚀 QUICK START</div>
+        <div class="help-section-body">
+          <p>THE BABENING is your personal gym tracker. Three training days, your exercises, your weights — all saved to the cloud.</p>
+          <ol>
+            <li>Pick your training day (Chest, Legs, Arms)</li>
+            <li>Log your weights and reps as you go</li>
+            <li>Tick each exercise when done</li>
+            <li>Hit the check circle on the last exercise to log the session</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-section-title">✏️ EDITING YOUR ROUTINE</div>
+        <div class="help-section-body">
+          <p>Tap <strong>EDIT</strong> in the top right to enter Edit Mode. From there you can:</p>
+          <ul>
+            <li>Add, remove and reorder exercises</li>
+            <li>Rename your training days</li>
+            <li>Add notes and how-to links to each exercise</li>
+            <li>Link exercises to the library for swap suggestions</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-section-title">📍 VENUES</div>
+        <div class="help-section-body">
+          <p>In Edit Mode, tap the Venues tab to add your gyms. Once added, select your gym at the top of each training day before you start. It gets logged with your session history.</p>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-section-title">⇄ SWAP SUGGESTIONS</div>
+        <div class="help-section-body">
+          <p>At a different gym and missing your usual machine? Tap <strong>⇄ FIND SWAPS</strong> on any exercise card to see similar alternatives from the exercise library, ranked by how closely they match your usual movement.</p>
+          <p style="margin-top:6px;">First, link the exercise to the library in Edit Mode using the "Link to exercise library" button on each card.</p>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-section-title">➕ OTHER ACTIVITY</div>
+        <div class="help-section-body">
+          <p>Log walks, rides, sport, classes and stretching sessions in the OTHER tab. These appear in your history alongside your gym sessions.</p>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-section-title">📋 HISTORY & PRs</div>
+        <div class="help-section-body">
+          <p>Every completed session is saved in the LOG tab. Personal records are detected automatically and marked with 🏆. The app will also nudge you when it's time to increase your weight.</p>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 </body>
