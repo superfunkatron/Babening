@@ -401,10 +401,10 @@
   .venue-picker-cancel { width:100%; padding:12px; background:transparent; border:1px solid var(--border); border-radius:8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); cursor:pointer; margin-top:4px; }
   .venue-picker-cancel:active { background:var(--surface2); }
   /* ── FREE TEXT WEIGHT INPUT ── */
-  .adj-val-input { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--neon); text-shadow:var(--neon-glow); width:70px; text-align:center; background:transparent; border:none; outline:none; border-left:1px solid rgba(57,255,20,0.15); border-right:1px solid rgba(57,255,20,0.15); padding:0 8px; line-height:38px; -moz-appearance:textfield; }
+  .adj-val-input { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--neon); text-shadow:var(--neon-glow); width:70px; text-align:center; background:transparent; border:none; outline:none; border-left:1px solid rgba(57,255,20,0.15); border-right:1px solid rgba(57,255,20,0.15); padding:0 8px; line-height:38px; appearance:textfield; }
   .adj-val-input::-webkit-outer-spin-button, .adj-val-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
   .adj-val-input:focus { color:var(--edit-accent); text-shadow:none; border-left-color:rgba(176,106,255,0.4); border-right-color:rgba(176,106,255,0.4); }
-  .cardio-adj-val-input { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--cardio-accent); width:80px; text-align:center; background:transparent; border:none; outline:none; border-left:1px solid rgba(255,107,53,0.15); border-right:1px solid rgba(255,107,53,0.15); padding:0 8px; line-height:42px; -moz-appearance:textfield; }
+  .cardio-adj-val-input { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--cardio-accent); width:80px; text-align:center; background:transparent; border:none; outline:none; border-left:1px solid rgba(255,107,53,0.15); border-right:1px solid rgba(255,107,53,0.15); padding:0 8px; line-height:42px; appearance:textfield; }
   .cardio-adj-val-input::-webkit-outer-spin-button, .cardio-adj-val-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
   .cardio-adj-val-input:focus { color:var(--edit-accent); text-shadow:none; }
   .history-delete-btn { background:transparent; border:none; color:rgba(255,60,60,0.3); font-size:14px; cursor:pointer; padding:4px 6px; border-radius:4px; transition:all 0.2s; float:right; margin-top:-2px; }
@@ -1337,7 +1337,7 @@ function buildCardHTML(day, i, ex, id) {
   const volRow    = !isCardio && wStat ? `<div class="volume-row" id="volrow-${id}"><span class="vol-label">Total Volume</span><span><span class="vol-number" id="volnum-${id}">${calcVolume(day,i,ex)}</span> <span class="vol-unit">kg</span></span></div>` : '';
   const howToLink = ex.link ? `<a href="${ex.link}" target="_blank" class="how-to-link">📖 How-To Guide ↗</a>` : ex.note ? `<span class="no-link">${ex.note}</span>` : '';
 
-  const editStatRows = ex.stats.map((s,si) => `<div class="edit-stat-row" id="statrow-${id}-${si}"><input value="${escHtml(s.k)}" placeholder="Label" oninput="updateStatKey('${day}',${i},${si},this.value)"><input value="${escHtml(s.v)}" placeholder="Value" oninput="updateStatVal('${day}',${i},${si},this.value)"><button class="edit-stat-del" onclick="deleteStat('${day}',${i},${si},'${id}')" title="Remove field">×</button></div>`).join('');
+  const editStatRows = ex.stats.map((s,si) => `<div class="edit-stat-row" id="statrow-${id}-${si}"><input value="${escHtml(s.k)}" placeholder="Label" oninput="updateStatKey('${day}',${i},${si},this.value)"><input value="${escHtml(s.v)}" placeholder="Value" oninput="updateStatVal('${day}',${i},${si},this.value)"><button class="edit-stat-del" onclick="deleteStat('${day}',${i},${si},'${id}')" title="Remove field">x</button></div>`).join('');
 
   return `
     <div class="card-tap" onclick="onCardTap('${id}','${day}',${i})">
@@ -1353,7 +1353,7 @@ function buildCardHTML(day, i, ex, id) {
         <div class="card-meta" id="meta-${id}">${metaPills}${volBadge?`<span class="vol-badge">${volBadge}</span>`:''}${cardioBadge}${prBadge}</div>
       </div>
       <div class="card-chevron" id="chev-${id}">▼</div>
-      <button class="delete-card-btn" onclick="event.stopPropagation();deleteExercise('${day}',${i})" title="Remove exercise">×</button>
+      <button class="delete-card-btn" onclick="event.stopPropagation();deleteExercise('${day}',${i})" title="Remove exercise">x</button>
     </div>
     <div class="card-details" id="details-${id}">
       <div class="details-inner">
@@ -1366,7 +1366,7 @@ function buildCardHTML(day, i, ex, id) {
           <div class="edit-field-group" style="margin-top:8px"><span class="edit-field-label">Note / Machine Tip (if no link)</span><textarea class="edit-note-input" placeholder="E.g. Cardio — keep moving!" oninput="updateExNote('${day}',${i},this.value)">${escHtml(ex.note||'')}</textarea></div>
           <div class="edit-field-group" style="margin-top:8px">
             <span class="edit-field-label">Library Link (for swap suggestions)</span>
-            ${getLibLinkHTML(ex.name, '${day}', ${i}, '${id}')}
+           ${getLibLinkHTML(ex.name, day, i, id)}
           </div>
         </div>
         <button class="swap-btn" onclick="event.stopPropagation();openSwapOverlay('${day}',${i},'${escHtml(ex.name)}')">⇄ FIND SWAPS</button>
