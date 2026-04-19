@@ -447,6 +447,27 @@
   .swap-result-instructions { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:6px; display:none; line-height:1.6; }
   .swap-result.expanded .swap-result-instructions { display:block; }
   .swap-cancel { width:100%; padding:12px; background:transparent; border:1px solid var(--border); border-radius:8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); cursor:pointer; margin-top:4px; }
+/* ── OTHER TAB ── */
+  .other-only-tab { display:none !important; }
+  body:not(.edit-mode) .other-only-tab { display:flex !important; flex-direction:column; align-items:center; }
+  .activity-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; cursor:pointer; transition:all 0.2s; }
+  .activity-card:active { border-color:var(--cardio-accent); background:rgba(255,107,53,0.05); }
+  .activity-card-header { display:flex; align-items:center; gap:12px; margin-bottom:0; }
+  .activity-card-emoji { font-size:28px; line-height:1; }
+  .activity-card-name { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:var(--text); }
+  .activity-card-sub { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:2px; }
+  .activity-card-fields { display:none; margin-top:14px; border-top:1px solid var(--border); padding-top:14px; }
+  .activity-card.open .activity-card-fields { display:block; }
+  .activity-card.open { border-color:var(--cardio-accent); }
+  .activity-field-group { margin-bottom:10px; }
+  .activity-field-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px; }
+  .activity-field-input { width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:9px 12px; font-family:'DM Mono',monospace; font-size:14px; color:var(--text); outline:none; box-sizing:border-box; }
+  .activity-field-input:focus { border-color:var(--cardio-accent); }
+  .activity-log-btn { width:100%; padding:11px; background:transparent; border:1px solid var(--cardio-accent); border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; color:var(--cardio-accent); cursor:pointer; margin-top:4px; transition:all 0.2s; }
+  .activity-log-btn:active { background:rgba(255,107,53,0.12); }
+  .activity-logged-flash { font-family:'DM Mono',monospace; font-size:10px; color:var(--cardio-accent); text-align:center; margin-top:8px; opacity:0; transition:opacity 0.3s; letter-spacing:1px; }
+  .activity-logged-flash.show { opacity:1; }
+  .history-entry.other-entry .history-day-label { color:var(--cardio-accent); }
 </style>
 </head>
 <body>
@@ -511,8 +532,9 @@
   <button class="tab-btn active" onclick="switchTab('chest')" id="tab-chest">💪 CHEST<span class="tab-check" id="check-chest">0/10</span></button>
   <button class="tab-btn" onclick="switchTab('legs')" id="tab-legs">🦵 LEGS<span class="tab-check" id="check-legs">0/10</span></button>
   <button class="tab-btn" onclick="switchTab('arms')" id="tab-arms">🏋️ ARMS<span class="tab-check" id="check-arms">0/9</span></button>
-  <button class="tab-btn" onclick="switchTab('history')" id="tab-history">📋 LOG<span class="tab-check" id="check-history">0 sessions</span></button>
-  <button class="tab-btn edit-only-tab" onclick="switchTab('venues')" id="tab-venues">📍 VENUES<span class="tab-check" id="check-venues"></span></button>
+<button class="tab-btn" onclick="switchTab('history')" id="tab-history">📋 LOG<span class="tab-check" id="check-history">0 sessions</span></button>
+  <button class="tab-btn other-only-tab" onclick="switchTab('other')" id="tab-other">➕ OTHER<span class="tab-check" id="check-other"></span></button>
+    <button class="tab-btn edit-only-tab" onclick="switchTab('venues')" id="tab-venues">📍 VENUES<span class="tab-check" id="check-venues"></span></button>
 </div>
 
 <div class="workout-panel active" id="panel-chest">
@@ -573,6 +595,146 @@
   <div id="cards-arms"></div>
   <button class="add-exercise-btn" onclick="addExercise('arms')">+ Add Exercise</button>
   <button class="reset-btn" onclick="resetDay('arms')">↺ Reset Arms Day</button>
+</div>
+<div class="workout-panel" id="panel-other">
+  <div class="section-header">OTHER ACTIVITY</div>
+  <div class="section-sub">LOG ANYTHING OUTSIDE YOUR THREE DAYS</div>
+  <p class="hint">Tap an activity to log it. No pressure, no streaks — just a record.</p>
+
+  <!-- Walk -->
+  <div class="activity-card" id="activity-walk" onclick="toggleActivityCard('walk')">
+    <div class="activity-card-header">
+      <div class="activity-card-emoji">🚶</div>
+      <div>
+        <div class="activity-card-name">WALK</div>
+        <div class="activity-card-sub">Distance + duration</div>
+      </div>
+    </div>
+    <div class="activity-card-fields">
+      <div class="activity-field-group">
+        <label class="activity-field-label">Distance (km)</label>
+        <input class="activity-field-input" id="walk-distance" type="number" inputmode="decimal" placeholder="e.g. 6.2" step="0.1" min="0" />
+      </div>
+      <div class="activity-field-group">
+        <label class="activity-field-label">Duration (mins)</label>
+        <input class="activity-field-input" id="walk-duration" type="number" inputmode="numeric" placeholder="e.g. 75" min="0" />
+      </div>
+      <div class="activity-field-group">
+        <label class="activity-field-label">Notes (optional)</label>
+        <input class="activity-field-input" id="walk-notes" type="text" placeholder="e.g. Morning walk around the bay" />
+      </div>
+      <button class="activity-log-btn" onclick="event.stopPropagation();logActivity('walk','🚶 Walk',['walk-distance:Distance (km)','walk-duration:Duration (mins)','walk-notes:Notes'])">✓ LOG THIS WALK</button>
+      <div class="activity-logged-flash" id="flash-walk">✓ LOGGED!</div>
+    </div>
+  </div>
+
+  <!-- Cycle -->
+  <div class="activity-card" id="activity-cycle" onclick="toggleActivityCard('cycle')">
+    <div class="activity-card-header">
+      <div class="activity-card-emoji">🚴</div>
+      <div>
+        <div class="activity-card-name">CYCLE</div>
+        <div class="activity-card-sub">Distance + duration</div>
+      </div>
+    </div>
+    <div class="activity-card-fields">
+      <div class="activity-field-group">
+        <label class="activity-field-label">Distance (km)</label>
+        <input class="activity-field-input" id="cycle-distance" type="number" inputmode="decimal" placeholder="e.g. 20" step="0.1" min="0" />
+      </div>
+      <div class="activity-field-group">
+        <label class="activity-field-label">Duration (mins)</label>
+        <input class="activity-field-input" id="cycle-duration" type="number" inputmode="numeric" placeholder="e.g. 45" min="0" />
+      </div>
+      <div class="activity-field-group">
+        <label class="activity-field-label">Notes (optional)</label>
+        <input class="activity-field-input" id="cycle-notes" type="text" placeholder="e.g. Morning ride" />
+      </div>
+      <button class="activity-log-btn" onclick="event.stopPropagation();logActivity('cycle','🚴 Cycle',['cycle-distance:Distance (km)','cycle-duration:Duration (mins)','cycle-notes:Notes'])">✓ LOG THIS RIDE</button>
+      <div class="activity-logged-flash" id="flash-cycle">✓ LOGGED!</div>
+    </div>
+  </div>
+
+  <!-- Sport -->
+  <div class="activity-card" id="activity-sport" onclick="toggleActivityCard('sport')">
+    <div class="activity-card-header">
+      <div class="activity-card-emoji">⚽</div>
+      <div>
+        <div class="activity-card-name">SPORT</div>
+        <div class="activity-card-sub">Any game or match</div>
+      </div>
+    </div>
+    <div class="activity-card-fields">
+      <div class="activity-field-group">
+        <label class="activity-field-label">Sport / Activity</label>
+        <input class="activity-field-input" id="sport-name" type="text" placeholder="e.g. Backyard cricket, Tennis" />
+      </div>
+      <div class="activity-field-group">
+        <label class="activity-field-label">Duration (mins)</label>
+        <input class="activity-field-input" id="sport-duration" type="number" inputmode="numeric" placeholder="e.g. 60" min="0" />
+      </div>
+      <div class="activity-field-group">
+        <label class="activity-field-label">Notes (optional)</label>
+        <input class="activity-field-input" id="sport-notes" type="text" placeholder="e.g. Won by 3 goals" />
+      </div>
+      <button class="activity-log-btn" onclick="event.stopPropagation();logActivity('sport','⚽ Sport',['sport-name:Activity','sport-duration:Duration (mins)','sport-notes:Notes'])">✓ LOG THIS SESSION</button>
+      <div class="activity-logged-flash" id="flash-sport">✓ LOGGED!</div>
+    </div>
+  </div>
+
+  <!-- Stretch / Yoga -->
+  <div class="activity-card" id="activity-stretch" onclick="toggleActivityCard('stretch')">
+    <div class="activity-card-header">
+      <div class="activity-card-emoji">🧘</div>
+      <div>
+        <div class="activity-card-name">STRETCH / YOGA</div>
+        <div class="activity-card-sub">Recovery and flexibility</div>
+      </div>
+    </div>
+    <div class="activity-card-fields">
+      <div class="activity-field-group">
+        <label class="activity-field-label">Style (optional)</label>
+        <input class="activity-field-input" id="stretch-style" type="text" placeholder="e.g. Yin, Hatha, general stretch" />
+      </div>
+      <div class="activity-field-group">
+        <label class="activity-field-label">Duration (mins)</label>
+        <input class="activity-field-input" id="stretch-duration" type="number" inputmode="numeric" placeholder="e.g. 30" min="0" />
+      </div>
+      <div class="activity-field-group">
+        <label class="activity-field-label">Notes (optional)</label>
+        <input class="activity-field-input" id="stretch-notes" type="text" placeholder="e.g. Focused on hips and lower back" />
+      </div>
+      <button class="activity-log-btn" onclick="event.stopPropagation();logActivity('stretch','🧘 Stretch / Yoga',['stretch-style:Style','stretch-duration:Duration (mins)','stretch-notes:Notes'])">✓ LOG THIS SESSION</button>
+      <div class="activity-logged-flash" id="flash-stretch">✓ LOGGED!</div>
+    </div>
+  </div>
+
+  <!-- Class -->
+  <div class="activity-card" id="activity-class" onclick="toggleActivityCard('class')">
+    <div class="activity-card-header">
+      <div class="activity-card-emoji">🏃</div>
+      <div>
+        <div class="activity-card-name">CLASS</div>
+        <div class="activity-card-sub">Bodypump, Spin, Pilates etc.</div>
+      </div>
+    </div>
+    <div class="activity-card-fields">
+      <div class="activity-field-group">
+        <label class="activity-field-label">Class name</label>
+        <input class="activity-field-input" id="class-name" type="text" placeholder="e.g. Bodypump, Spin, Pilates" />
+      </div>
+      <div class="activity-field-group">
+        <label class="activity-field-label">Duration (mins)</label>
+        <input class="activity-field-input" id="class-duration" type="number" inputmode="numeric" placeholder="e.g. 45" min="0" />
+      </div>
+      <div class="activity-field-group">
+        <label class="activity-field-label">Notes (optional)</label>
+        <input class="activity-field-input" id="class-notes" type="text" placeholder="e.g. Really tough instructor today" />
+      </div>
+      <button class="activity-log-btn" onclick="event.stopPropagation();logActivity('class','🏃 Class',['class-name:Class','class-duration:Duration (mins)','class-notes:Notes'])">✓ LOG THIS CLASS</button>
+      <div class="activity-logged-flash" id="flash-class">✓ LOGGED!</div>
+    </div>
+  </div>
 </div>
 <div class="workout-panel" id="panel-venues">
   <div class="section-header">VENUES</div>
@@ -1616,7 +1778,7 @@ history.unshift({
 function renderSessionList(query='') {
   const list = document.getElementById('history-list');
   if (!history.length) { list.innerHTML = `<div class="history-empty">No sessions logged yet.<br>Complete a full day to log it here.</div>`; return; }
-  const EMOJI = { chest:'💪', legs:'🦵', arms:'🏋️' };
+  const EMOJI = { chest:'💪', legs:'🦵', arms:'🏋️', other:'➕' };
   const q = query.toLowerCase().trim();
 
   // Filter entries: if query, only show entries that contain matching exercises
@@ -1636,12 +1798,15 @@ function renderSessionList(query='') {
     const label = entry.dayName || (entry.day==='chest'?'CHEST DAY':entry.day==='legs'?'LEG DAY':'ARMS & SHOULDERS');
     // If searching, highlight matching rows
     const rows = entry.snapshot
-      .filter(e => !q || e.name.toLowerCase().includes(q))
+      .filter(e => !q || e.name.toLowerCase().includes(q) || (e.reps && String(e.reps).toLowerCase().includes(q)))
       .map(e => {
+        const isOtherRow = e.type === 'other';
         const isCardioRow = e.type === 'cardio';
-        const isPRRow     = e.isNewPR || e.isCardioNewPR;
+        const isPRRow = e.isNewPR || e.isCardioNewPR;
         let detail;
-        if (isCardioRow && e.cardioValue) {
+        if (isOtherRow) {
+          detail = `<span class="history-ex-detail">${e.reps || '—'}</span>`;
+        } else if (isCardioRow && e.cardioValue) {
           detail = `<span class="history-ex-detail cardio-val">${e.cardioValue}${e.cardioUnit||'m'}${e.isCardioNewPR?' 🏆':''}</span>`;
         } else {
           detail = `<span class="history-ex-detail">${e.weight?`${e.weight}${e.unit||'kg'} × ${e.reps}`:e.reps?`${e.reps} reps`:'—'}${e.isNewPR?' 🏆':''}</span>`;
@@ -2499,6 +2664,76 @@ async function openSwapOverlay(day, idx, exName) {
 function closeSwapOverlay(e) {
   if (e && e.target !== document.getElementById('swap-overlay')) return;
   document.getElementById('swap-overlay').classList.remove('open');
+}
+// ── OTHER ACTIVITY ───────────────────────────────────────
+function toggleActivityCard(type) {
+  const card = document.getElementById(`activity-${type}`);
+  const wasOpen = card.classList.contains('open');
+  // Close all cards first
+  ['walk','cycle','sport','stretch','class'].forEach(t => {
+    document.getElementById(`activity-${t}`).classList.remove('open');
+  });
+  if (!wasOpen) card.classList.add('open');
+}
+
+function logActivity(type, label, fieldDefs) {
+  // Parse field definitions and collect values
+  const snapshot = [];
+  let hasAnyValue = false;
+
+  for (const def of fieldDefs) {
+    const [id, fieldLabel] = def.split(':');
+    const el = document.getElementById(id);
+    const val = el ? el.value.trim() : '';
+    if (val) {
+      snapshot.push({ name: fieldLabel, value: val });
+      hasAnyValue = true;
+    }
+  }
+
+  if (!hasAnyValue) {
+    showToast('Fill in at least one field before logging', 'error');
+    return;
+  }
+
+  // Build history entry
+  const entry = {
+    date:    new Date().toISOString(),
+    day:     'other',
+    dayName: label,
+    note:    '',
+    venue_id:   null,
+    venue_name: null,
+    snapshot: snapshot.map(f => ({
+      name:   f.name,
+      weight: null,
+      reps:   f.value,
+      unit:   null,
+      isNewPR: false,
+      type:   'other',
+      cardioValue: null,
+      cardioUnit:  null,
+      isCardioNewPR: false
+    }))
+  };
+
+  history.unshift(entry);
+  if (history.length > 120) history = history.slice(0, 120);
+  saveHistory();
+  document.getElementById('check-history').textContent = `${history.length} sessions`;
+
+  // Clear fields
+  for (const def of fieldDefs) {
+    const el = document.getElementById(def.split(':')[0]);
+    if (el) el.value = '';
+  }
+
+  // Close card and flash confirmation
+  document.getElementById(`activity-${type}`).classList.remove('open');
+  const flash = document.getElementById(`flash-${type}`);
+  if (flash) { flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 2000); }
+
+  showToast(`${label} logged!`, 'success');
 }
 </script>
   <div class="venue-picker-overlay" id="venue-picker-overlay" onclick="closeVenuePicker(event)">
