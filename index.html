@@ -409,6 +409,44 @@
   .cardio-adj-val-input:focus { color:var(--edit-accent); text-shadow:none; }
   .history-delete-btn { background:transparent; border:none; color:rgba(255,60,60,0.3); font-size:14px; cursor:pointer; padding:4px 6px; border-radius:4px; transition:all 0.2s; float:right; margin-top:-2px; }
   .history-delete-btn:active { color:#ff4444; background:rgba(255,60,60,0.1); }
+
+  /* ── LIBRARY LINK ── */
+  .lib-link-btn { width:100%; margin-top:8px; padding:8px 12px; background:transparent; border:1px solid var(--edit-border); border-radius:6px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--edit-accent); cursor:pointer; text-align:left; display:flex; align-items:center; justify-content:space-between; transition:all 0.2s; }
+  .lib-link-btn:active { background:var(--edit-dim); }
+  .lib-link-btn.linked { border-color:rgba(57,255,20,0.3); color:var(--neon); }
+  .lib-search-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:300; flex-direction:column; }
+  .lib-search-overlay.open { display:flex; }
+  .lib-search-sheet { background:var(--surface); flex:1; display:flex; flex-direction:column; max-width:480px; margin:0 auto; width:100%; }
+  .lib-search-header { padding:16px; border-bottom:1px solid var(--edit-border); display:flex; align-items:center; gap:12px; }
+  .lib-search-title { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--edit-accent); flex:1; }
+  .lib-search-close { background:transparent; border:none; color:var(--muted); font-family:'DM Mono',monospace; font-size:12px; cursor:pointer; }
+  .lib-search-input { margin:12px 16px; padding:10px 14px; background:var(--surface2); border:1px solid var(--edit-border); border-radius:8px; font-family:'DM Mono',monospace; font-size:13px; color:var(--text); outline:none; width:calc(100% - 32px); box-sizing:border-box; }
+  .lib-search-input:focus { border-color:var(--edit-accent); }
+  .lib-search-results { flex:1; overflow-y:auto; padding:0 16px 16px; }
+  .lib-result-item { padding:12px 14px; border:1px solid var(--border); border-radius:8px; margin-bottom:8px; cursor:pointer; background:var(--surface2); transition:all 0.2s; }
+  .lib-result-item:active { background:var(--edit-dim); border-color:var(--edit-accent); }
+  .lib-result-name { font-family:'DM Mono',monospace; font-size:12px; color:var(--text); font-weight:bold; }
+  .lib-result-meta { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:3px; }
+  .lib-result-muscles { font-family:'DM Mono',monospace; font-size:10px; color:var(--neon); opacity:0.7; margin-top:2px; }
+  .lib-unlink-btn { width:100%; margin-top:4px; padding:5px; background:transparent; border:none; font-family:'DM Mono',monospace; font-size:9px; color:rgba(255,60,60,0.4); cursor:pointer; letter-spacing:1px; }
+  .lib-unlink-btn:active { color:#ff4444; }
+  /* ── SWAP BTN ── */
+  .swap-btn { display:none; width:100%; margin-top:8px; padding:9px 12px; background:transparent; border:1px solid rgba(57,255,20,0.2); border-radius:6px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--neon); cursor:pointer; transition:all 0.2s; }
+  body:not(.edit-mode) .swap-btn { display:block; }
+  .swap-btn:active { background:var(--neon-dim); }
+  .swap-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:300; flex-direction:column; align-items:center; justify-content:flex-end; }
+  .swap-overlay.open { display:flex; }
+  .swap-sheet { background:var(--surface); border-radius:14px 14px 0 0; padding:20px 16px 32px; width:100%; max-width:480px; max-height:80vh; overflow-y:auto; border-top:1px solid var(--edit-border); }
+  .swap-sheet-title { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--neon); margin-bottom:4px; }
+  .swap-sheet-sub { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-bottom:16px; }
+  .swap-result { padding:12px 14px; border:1px solid var(--border); border-radius:8px; margin-bottom:8px; background:var(--surface2); }
+  .swap-result-name { font-family:'DM Mono',monospace; font-size:12px; color:var(--text); font-weight:bold; }
+  .swap-result-meta { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:3px; }
+  .swap-result-muscles { font-family:'DM Mono',monospace; font-size:10px; color:var(--neon); opacity:0.7; margin-top:2px; }
+  .swap-result-score { font-family:'DM Mono',monospace; font-size:9px; color:var(--edit-accent); margin-top:4px; letter-spacing:1px; }
+  .swap-result-instructions { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:6px; display:none; line-height:1.6; }
+  .swap-result.expanded .swap-result-instructions { display:block; }
+  .swap-cancel { width:100%; padding:12px; background:transparent; border:1px solid var(--border); border-radius:8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); cursor:pointer; margin-top:4px; }
 </style>
 </head>
 <body>
@@ -888,6 +926,7 @@ async function onAuthSuccess() {
   buildCards();
   document.getElementById('check-history').textContent = `${history.length} sessions`;
   await initVenueSelectors();
+  await loadExerciseLinks();
   updateProgress();
 }
 
@@ -1325,7 +1364,12 @@ function buildCardHTML(day, i, ex, id) {
           <button class="add-stat-btn" onclick="addStat('${day}',${i},'${id}')">+ Add Field</button>
           <div class="edit-field-group"><span class="edit-field-label">How-To Link (optional)</span><input class="edit-link-input" value="${escHtml(ex.link||'')}" placeholder="https://..." oninput="updateExLink('${day}',${i},this.value)"></div>
           <div class="edit-field-group" style="margin-top:8px"><span class="edit-field-label">Note / Machine Tip (if no link)</span><textarea class="edit-note-input" placeholder="E.g. Cardio — keep moving!" oninput="updateExNote('${day}',${i},this.value)">${escHtml(ex.note||'')}</textarea></div>
+          <div class="edit-field-group" style="margin-top:8px">
+            <span class="edit-field-label">Library Link (for swap suggestions)</span>
+            ${getLibLinkHTML(ex.name, '${day}', ${i}, '${id}')}
+          </div>
         </div>
+        <button class="swap-btn" onclick="event.stopPropagation();openSwapOverlay('${day}',${i},'${escHtml(ex.name)}')">⇄ FIND SWAPS</button>
         ${hintHTML}
         ${cardioAdjHTML}
         <div class="stat-row">${nonEditChips}${adjusters}</div>
@@ -1858,6 +1902,7 @@ async function init() {
   buildCards();
   document.getElementById('check-history').textContent = `${history.length} sessions`;
   await initVenueSelectors();
+  await loadExerciseLinks();
   updateProgress();
 }
 init();
@@ -2278,12 +2323,207 @@ function commitCardio(day, idx, cardId, rawVal) {
   renderSessionList();
   showToast('Session deleted', 'success');
 }
+  // ── EXERCISE LIBRARY LINK ────────────────────────────────
+let exerciseLinks = {};      // exName -> { id, name, force, mechanic, muscles }
+let libSearchDay = null;
+let libSearchIdx = null;
+let libSearchCardId = null;
+let libSearchTimeout = null;
+
+async function loadExerciseLinks() {
+  const saved = await sbGet('exercise_links');
+  exerciseLinks = saved || {};
+}
+
+function getLibLinkHTML(exName, day, idx, cardId) {
+  const linked = exerciseLinks[exName];
+  if (linked) {
+    return `
+      <button class="lib-link-btn linked" onclick="event.stopPropagation();openLibSearch('${day}',${idx},'${cardId}')">
+        <span>🔗 ${linked.name}</span>
+        <span style="font-size:9px;opacity:0.6;">change</span>
+      </button>
+      <button class="lib-unlink-btn" onclick="event.stopPropagation();unlinkExercise('${exName}','${cardId}','${day}',${idx})">✕ remove link</button>`;
+  }
+  return `<button class="lib-link-btn" onclick="event.stopPropagation();openLibSearch('${day}',${idx},'${cardId}')">🔗 Link to exercise library…</button>`;
+}
+
+function openLibSearch(day, idx, cardId) {
+  libSearchDay = day;
+  libSearchIdx = idx;
+  libSearchCardId = cardId;
+  document.getElementById('lib-search-input').value = '';
+  document.getElementById('lib-search-results').innerHTML = `<p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding-top:24px;">Type to search the exercise library</p>`;
+  document.getElementById('lib-search-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('lib-search-input').focus(), 100);
+}
+
+function closeLibSearch() {
+  document.getElementById('lib-search-overlay').classList.remove('open');
+  libSearchDay = null; libSearchIdx = null; libSearchCardId = null;
+}
+
+async function searchLibrary(query) {
+  clearTimeout(libSearchTimeout);
+  const q = query.trim();
+  if (q.length < 2) {
+    document.getElementById('lib-search-results').innerHTML = `<p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding-top:24px;">Type to search the exercise library</p>`;
+    return;
+  }
+  libSearchTimeout = setTimeout(async () => {
+    const results = await sbRestGet(`exercises?select=id,name,force,mechanic,category&name=ilike.*${encodeURIComponent(q)}*&limit=20&order=name`) || [];
+    if (!results.length) {
+      document.getElementById('lib-search-results').innerHTML = `<p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding-top:24px;">No results for "${q}"</p>`;
+      return;
+    }
+    document.getElementById('lib-search-results').innerHTML = results.map(r => `
+      <div class="lib-result-item" onclick="selectLibraryExercise('${r.id}','${r.name.replace(/'/g,"\\'")}','${r.force||''}','${r.mechanic||''}','${r.category||''}')">
+        <div class="lib-result-name">${r.name}</div>
+        <div class="lib-result-meta">${[r.category, r.force, r.mechanic].filter(Boolean).join(' · ')}</div>
+      </div>`).join('');
+  }, 300);
+}
+
+async function selectLibraryExercise(exId, exLibName, force, mechanic, category) {
+  const day = libSearchDay; const idx = parseInt(libSearchIdx);
+  const routineEx = getExercise(day, idx);
+  if (!routineEx) return;
+
+  // Fetch muscles for this exercise
+  const muscles = await sbRestGet(`exercise_muscles?exercise_id=eq.${exId}&select=muscle_id,is_primary,position&order=is_primary.desc,position.asc`) || [];
+  const muscleIds = muscles.filter(m => m.is_primary && m.position === 0).map(m => m.muscle_id);
+
+  exerciseLinks[routineEx.name] = { id: exId, name: exLibName, force, mechanic, category, primaryMuscleIds: muscleIds };
+  await sbSet('exercise_links', exerciseLinks);
+
+  closeLibSearch();
+  // Rebuild card to show linked state
+  const card = document.getElementById(libSearchCardId);
+  if (card) card.innerHTML = buildCardHTML(day, idx, routineEx, libSearchCardId);
+  showToast(`Linked to "${exLibName}"`, 'success');
+}
+
+async function unlinkExercise(exName, cardId, day, idx) {
+  if (!confirm(`Remove library link for "${exName}"?`)) return;
+  delete exerciseLinks[exName];
+  await sbSet('exercise_links', exerciseLinks);
+  const routineEx = getExercise(day, idx);
+  const card = document.getElementById(cardId);
+  if (card) card.innerHTML = buildCardHTML(day, idx, routineEx, cardId);
+  showToast('Link removed', 'success');
+}
+
+// ── SWAP SUGGESTIONS ─────────────────────────────────────
+async function openSwapOverlay(day, idx, exName) {
+  const link = exerciseLinks[exName];
+  document.getElementById('swap-sheet-title').textContent = `SWAPS FOR ${exName.toUpperCase()}`;
+
+  if (!link) {
+    document.getElementById('swap-sheet-sub').textContent = 'Link this exercise to the library first (in Edit Mode)';
+    document.getElementById('swap-results').innerHTML = `<p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding:24px 0;">No library link yet — tap Edit and use "Link to exercise library"</p>`;
+    document.getElementById('swap-overlay').classList.add('open');
+    return;
+  }
+
+  document.getElementById('swap-sheet-sub').textContent = 'Finding similar exercises…';
+  document.getElementById('swap-results').innerHTML = '';
+  document.getElementById('swap-overlay').classList.add('open');
+
+  // Score all exercises against this one
+  const candidates = await sbRestGet(
+    `exercises?select=id,name,force,mechanic,category,instructions&limit=654&order=name`
+  ) || [];
+
+  // Get primary muscle for each candidate
+  const scored = [];
+  for (const c of candidates) {
+    if (c.id === link.id) continue; // skip self
+    let score = 0;
+    const reasons = [];
+
+    // Get first primary muscle of candidate
+    const cMuscles = await sbRestGet(
+      `exercise_muscles?exercise_id=eq.${c.id}&is_primary=eq.true&position=eq.0&select=muscle_id&limit=1`
+    ) || [];
+
+    // Primary muscle match (40pts)
+    if (cMuscles.length && link.primaryMuscleIds?.includes(cMuscles[0].muscle_id)) {
+      score += 40; reasons.push('same primary muscle');
+    } else {
+      continue; // must match primary muscle to surface at all
+    }
+
+    // Force match (25pts)
+    if (link.force && c.force === link.force) { score += 25; reasons.push('same force'); }
+
+    // Mechanic match (20pts)
+    if (link.mechanic && c.mechanic === link.mechanic) { score += 20; reasons.push('same mechanic'); }
+
+    // Category match (10pts)
+    if (link.category && c.category === link.category) { score += 10; }
+
+    // Check curated substitutions (+15 bonus)
+    const curated = await sbRestGet(
+      `exercise_substitutions?user_id=eq.${currentUser.id}&or=(exercise_a_id.eq.${link.id},exercise_b_id.eq.${link.id})&select=exercise_a_id,exercise_b_id`
+    ) || [];
+    const isCurated = curated.some(s => s.exercise_a_id === c.id || s.exercise_b_id === c.id);
+    if (isCurated) { score += 15; reasons.push('curated match'); }
+
+    if (score >= 40) scored.push({ ...c, score, reasons, firstMuscleId: cMuscles[0].muscle_id });
+  }
+
+  scored.sort((a, b) => b.score - a.score);
+  const top = scored.slice(0, 5);
+
+  if (!top.length) {
+    document.getElementById('swap-sheet-sub').textContent = 'No similar exercises found in the library';
+    document.getElementById('swap-results').innerHTML = `<p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding:24px 0;">Try linking to a different library exercise</p>`;
+    return;
+  }
+
+  document.getElementById('swap-sheet-sub').textContent = `Top ${top.length} similar exercises`;
+  document.getElementById('swap-results').innerHTML = top.map(r => `
+    <div class="swap-result" onclick="this.classList.toggle('expanded')">
+      <div class="swap-result-name">${r.name}</div>
+      <div class="swap-result-meta">${[r.category, r.force, r.mechanic].filter(Boolean).join(' · ')}</div>
+      <div class="swap-result-score">${r.reasons.join(' + ')} — ${r.score}pts</div>
+      <div class="swap-result-instructions">${(r.instructions||[]).map((s,i) => `${i+1}. ${s}`).join('<br>')}</div>
+    </div>`).join('');
+}
+
+function closeSwapOverlay(e) {
+  if (e && e.target !== document.getElementById('swap-overlay')) return;
+  document.getElementById('swap-overlay').classList.remove('open');
+}
 </script>
   <div class="venue-picker-overlay" id="venue-picker-overlay" onclick="closeVenuePicker(event)">
   <div class="venue-picker-sheet">
     <div class="venue-picker-title">TRAINING AT</div>
     <div id="venue-picker-options"></div>
     <button class="venue-picker-cancel" onclick="closeVenuePicker()">CANCEL</button>
+  </div>
+</div>
+  <!-- Library link search overlay -->
+<div class="lib-search-overlay" id="lib-search-overlay">
+  <div class="lib-search-sheet">
+    <div class="lib-search-header">
+      <div class="lib-search-title">LINK TO LIBRARY</div>
+      <button class="lib-search-close" onclick="closeLibSearch()">✕ cancel</button>
+    </div>
+    <input class="lib-search-input" id="lib-search-input" type="text" placeholder="Search exercises e.g. lat pulldown..." oninput="searchLibrary(this.value)" />
+    <div class="lib-search-results" id="lib-search-results">
+      <p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding-top:24px;">Type to search the exercise library</p>
+    </div>
+  </div>
+</div>
+
+<!-- Swap suggestions overlay -->
+<div class="swap-overlay" id="swap-overlay" onclick="closeSwapOverlay(event)">
+  <div class="swap-sheet">
+    <div class="swap-sheet-title" id="swap-sheet-title">SWAP SUGGESTIONS</div>
+    <div class="swap-sheet-sub" id="swap-sheet-sub">Exercises with similar muscles and movement</div>
+    <div id="swap-results"></div>
+    <button class="swap-cancel" onclick="closeSwapOverlay()">CANCEL</button>
   </div>
 </div>
 </body>
