@@ -532,9 +532,14 @@
   <button class="tab-btn active" onclick="switchTab('chest')" id="tab-chest">💪 CHEST<span class="tab-check" id="check-chest">0/10</span></button>
   <button class="tab-btn" onclick="switchTab('legs')" id="tab-legs">🦵 LEGS<span class="tab-check" id="check-legs">0/10</span></button>
   <button class="tab-btn" onclick="switchTab('arms')" id="tab-arms">🏋️ ARMS<span class="tab-check" id="check-arms">0/9</span></button>
+<<<<<<< HEAD
+<button class="tab-btn" onclick="switchTab('history')" id="tab-history">📋 LOG<span class="tab-check" id="check-history">0 sessions</span></button>
+  <button class="tab-btn other-only-tab" onclick="switchTab('other')" id="tab-other">➕ OTHER<span class="tab-check" id="check-other"></span></button>  <button class="tab-btn edit-only-tab" onclick="switchTab('venues')" id="tab-venues">📍 VENUES<span class="tab-check" id="check-venues"></span></button>
+=======
 <button class="tab-btn" onclick="switchTab('history')" id="tab-history">📋 LOG<span class="tab-check" id="check-history">0 sessions</span></button>
   <button class="tab-btn other-only-tab" onclick="switchTab('other')" id="tab-other">➕ OTHER<span class="tab-check" id="check-other"></span></button>
     <button class="tab-btn edit-only-tab" onclick="switchTab('venues')" id="tab-venues">📍 VENUES<span class="tab-check" id="check-venues"></span></button>
+>>>>>>> 4702a2f9f6fb77d514f4791649c665406e6f28b3
 </div>
 
 <div class="workout-panel active" id="panel-chest">
@@ -610,7 +615,7 @@
         <div class="activity-card-sub">Distance + duration</div>
       </div>
     </div>
-    <div class="activity-card-fields">
+    <div class="activity-card-fields" onclick="event.stopPropagation()">
       <div class="activity-field-group">
         <label class="activity-field-label">Distance (km)</label>
         <input class="activity-field-input" id="walk-distance" type="number" inputmode="decimal" placeholder="e.g. 6.2" step="0.1" min="0" />
@@ -637,7 +642,7 @@
         <div class="activity-card-sub">Distance + duration</div>
       </div>
     </div>
-    <div class="activity-card-fields">
+    <div class="activity-card-fields" onclick="event.stopPropagation()">
       <div class="activity-field-group">
         <label class="activity-field-label">Distance (km)</label>
         <input class="activity-field-input" id="cycle-distance" type="number" inputmode="decimal" placeholder="e.g. 20" step="0.1" min="0" />
@@ -664,7 +669,7 @@
         <div class="activity-card-sub">Any game or match</div>
       </div>
     </div>
-    <div class="activity-card-fields">
+    <div class="activity-card-fields" onclick="event.stopPropagation()">
       <div class="activity-field-group">
         <label class="activity-field-label">Sport / Activity</label>
         <input class="activity-field-input" id="sport-name" type="text" placeholder="e.g. Backyard cricket, Tennis" />
@@ -691,7 +696,7 @@
         <div class="activity-card-sub">Recovery and flexibility</div>
       </div>
     </div>
-    <div class="activity-card-fields">
+    <div class="activity-card-fields" onclick="event.stopPropagation()">
       <div class="activity-field-group">
         <label class="activity-field-label">Style (optional)</label>
         <input class="activity-field-input" id="stretch-style" type="text" placeholder="e.g. Yin, Hatha, general stretch" />
@@ -718,7 +723,7 @@
         <div class="activity-card-sub">Bodypump, Spin, Pilates etc.</div>
       </div>
     </div>
-    <div class="activity-card-fields">
+    <div class="activity-card-fields" onclick="event.stopPropagation()">
       <div class="activity-field-group">
         <label class="activity-field-label">Class name</label>
         <input class="activity-field-input" id="class-name" type="text" placeholder="e.g. Bodypump, Spin, Pilates" />
