@@ -1800,17 +1800,23 @@ function resetDay(day) {
   document.getElementById('done-banner-'+day).classList.remove('visible'); updateProgress();
 }
 function updateProgress() {
+  if (!plan || !plan.exercises) return;
   let totalDone = 0, totalAll = 0;
   ['chest','legs','arms'].forEach(day => {
     const exes = plan.exercises[day];
+    if (!exes) return;
     const done = exes.filter((_,i) => doneState[`ex-${day}-${i}`]).length;
     document.getElementById('check-'+day).textContent = `${done}/${exes.length}`;
     document.getElementById('tab-'+day).classList.toggle('complete', done===exes.length);
     if (done === exes.length && exes.length > 0) {
       const banner = document.getElementById('done-banner-'+day);
-      if (!banner.classList.contains('visible')) { banner.classList.add('visible'); logSession(day, exes); }
+      if (!banner.classList.contains('visible')) {
+        banner.classList.add('visible');
+        logSession(day, exes);
+      }
     }
-    totalDone += done; totalAll += exes.length;
+    totalDone += done;
+    totalAll += exes.length;
   });
   const pct = totalAll ? Math.round((totalDone/totalAll)*100) : 0;
   document.getElementById('progress-text').textContent = `${totalDone} / ${totalAll}`;
