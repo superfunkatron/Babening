@@ -1288,6 +1288,7 @@ let weights       = {};
 let cardioValues  = {};   // key: `${day}-${idx}`, value: number
 let doneState     = {};
 let openState     = {};
+let activeCard = null;
 let history       = [];
 let prs           = {};
 let editMode      = false;
@@ -1546,84 +1547,134 @@ function buildCardHTML(day, i, ex, id) {
   const curW     = wStat ? getWeight(day, i, wStat.k, wStat.v) : null;
   const isCurPR  = curW ? isCurrentPR(ex.name, curW) : false;
 
-  // Cardio tracking
   const cardioVal    = isCardio ? getCardioValue(day, i, ex.name) : null;
   const cardioMetric = isCardio ? getCardioMetric(ex.name) : null;
   const cardioUnit   = isCardio ? getCardioUnit(ex.name) : null;
   const isCardioPR   = isCardio ? isCurrentCardioPR(ex.name, cardioVal) : false;
 
-  const metaPills = ex.stats.map(s => { const v = s.editable ? getWeight(day, i, s.k, s.v) : s.v; return `<div class="meta-pill"><span class="pill-label">${s.k}</span> ${v}</div>`; }).join('');
-  const volBadge  = getVolumeBadge(day, i, ex);
-  const cardioBadge = isCardio && cardioVal ? `<span class="cardio-badge">${cardioVal}${cardioUnit}</span>` : '';
-  const prBadge   = (isCurPR && !isCardio && wStat) || isCardioPR ? `<span class="pr-badge">🏆 PR</span>` : '';
+  const isPR = (isCurPR && !isCardio && wStat) || isCardioPR;
 
-  const nonEditChips = ex.stats.filter(s => !s.editable).map(s => `<div class="stat-chip"><span class="chip-label">${s.k}</span><span class="chip-val">${s.v}</span></div>`).join('');
-  const adjusters    = ex.stats.filter(s => s.editable).map(s => {
-    const cur = getWeight(day, i, s.k, s.v); const step = getStep(cur);
-   return `<div class="weight-adjuster stat-chip"><span class="chip-label">${s.k} (${s.unit||'kg'})</span><div class="adj-controls"><button class="adj-btn" onclick="adjustWeight('${day}',${i},'${s.k}',${parseFloat(s.v)},-${step},'${id}')">−</button><input type="number" class="adj-val-input" id="adjval-${day}-${i}-${s.k}" value="${cur}" inputmode="decimal" onblur="commitWeight('${day}',${i},'${s.k}',${parseFloat(s.v)},'${id}',this.value)" onfocus="this.select()" /><button class="adj-btn" onclick="adjustWeight('${day}',${i},'${s.k}',${parseFloat(s.v)},${step},'${id}')">+</button></div><div class="saved-flash" id="flash-${day}-${i}-${s.k}">✓ SAVED</div></div>`;
-  }).join('');
+  // Hero value and unit
+  const heroVal  = isCardio ? (cardioVal || 0) : (curW || 0);
+  const heroUnit = isCardio ? (cardioMetric === 'watts' ? 'W' : 'm') : (wStat ? wStat.unit || 'kg' : 'kg');
 
-  // Cardio adjuster block
-  const cardioStep = isCardio ? getCardioStep(cardioVal, cardioMetric) : 0;
-  const cardioAdjHTML = isCardio ? `
-    <div class="cardio-input-wrap" id="cardio-wrap-${id}">
-      <span class="chip-label">${cardioMetric === 'watts' ? 'Avg Watts' : 'Distance'}</span>
-      <div class="cardio-adj-controls">
-        <button class="cardio-adj-btn" onclick="adjustCardio('${day}',${i},'${id}',-${cardioStep})">−</button>
-        <input type="number" class="cardio-adj-val-input" id="cardioval-${id}" value="${cardioVal}" inputmode="numeric" onblur="commitCardio('${day}',${i},'${id}',this.value)" onfocus="this.select()" />
-        <button class="cardio-adj-btn" onclick="adjustCardio('${day}',${i},'${id}',${cardioStep})">+</button>
-      </div>
-      <div class="cardio-adj-unit">${cardioMetric === 'watts' ? 'average watts' : 'metres'}</div>
-      <div class="cardio-saved-flash" id="cardioflash-${id}">✓ SAVED</div>
-    </div>` : '';
+  // Sub line — sets/reps for lift, metric label for cardio
+  const rStat   = ex.stats.find(s => s.k === 'Reps');
+  const setStat = ex.stats.find(s => s.k === 'Sets');
+  const subLine = isCardio
+    ? (cardioMetric === 'watts' ? 'Average watts' : 'Distance in metres')
+    : [setStat ? `${setStat.v} sets` : null, rStat ? `${rStat.v} reps` : null].filter(Boolean).join(' · ');
 
-  const liftHint   = getOverloadHint(day, i, ex);
-  const cardioHint = getCardioHint(day, i, ex);
+  // Last session and suggestion chips
+  const liftHint   = !isCardio ? getOverloadHint(day, i, ex) : null;
+  const cardioHint = isCardio  ? getCardioHint(day, i, ex)   : null;
   const activeHint = liftHint || cardioHint;
-  const hintHTML   = activeHint ? `<div class="overload-hint ${activeHint.type}" id="oload-${id}"><span class="oh-icon">${activeHint.icon}</span><span>${activeHint.text}</span></div>` : '';
+  const lastVal    = activeHint?.lastVal ?? '—';
+  const suggestVal = activeHint?.suggestVal ?? '—';
 
-  const volRow    = !isCardio && wStat ? `<div class="volume-row" id="volrow-${id}"><span class="vol-label">Total Volume</span><span><span class="vol-number" id="volnum-${id}">${calcVolume(day,i,ex)}</span> <span class="vol-unit">kg</span></span></div>` : '';
-  const howToLink = ex.link ? `<a href="${ex.link}" target="_blank" class="how-to-link">📖 How-To Guide ↗</a>` : ex.note ? `<span class="no-link">${ex.note}</span>` : '';
+  // Machine settings (non-editable stats like Seat, Back)
+  const nonEditChips = ex.stats.filter(s => !s.editable).map(s =>
+    `<div class="stat-chip"><span class="chip-label">${s.k}</span><span class="chip-val">${s.v}</span></div>`
+  ).join('');
 
-  const editStatRows = ex.stats.map((s,si) => `<div class="edit-stat-row" id="statrow-${id}-${si}"><input value="${escHtml(s.k)}" placeholder="Label" oninput="updateStatKey('${day}',${i},${si},this.value)"><input value="${escHtml(s.v)}" placeholder="Value" oninput="updateStatVal('${day}',${i},${si},this.value)"><button class="edit-stat-del" onclick="deleteStat('${day}',${i},${si},'${id}')" title="Remove field">x</button></div>`).join('');
+  // Volume row
+  const volRow = !isCardio && wStat
+    ? `<div class="volume-row" id="volrow-${id}"><span class="vol-label">Total Volume</span><span><span class="vol-number" id="volnum-${id}">${calcVolume(day,i,ex)}</span> <span class="vol-unit">kg</span></span></div>`
+    : '';
+
+  // How-to link
+  const howToLink = ex.link
+    ? `<a href="${ex.link}" target="_blank" class="how-to-link">📖 How-To Guide ↗</a>`
+    : ex.note ? `<span class="no-link">${ex.note}</span>` : '';
+
+  // Edit fields
+  const editStatRows = ex.stats.map((s, si) =>
+    `<div class="edit-stat-row" id="statrow-${id}-${si}">
+      <input value="${escHtml(s.k)}" placeholder="Label" oninput="updateStatKey('${day}',${i},${si},this.value)">
+      <input value="${escHtml(s.v)}" placeholder="Value" oninput="updateStatVal('${day}',${i},${si},this.value)">
+      <button class="edit-stat-del" onclick="deleteStat('${day}',${i},${si},'${id}')" title="Remove field">x</button>
+    </div>`
+  ).join('');
+
+  // Adjuster — shown in active state, hidden otherwise
+  const adjHTML = isCardio ? `
+    <div class="hero-input-row" id="adj-${id}" style="display:none">
+      <button class="hero-adj-btn" onclick="event.stopPropagation();adjustCardio('${day}',${i},'${id}',-${getCardioStep(cardioVal, cardioMetric)})">−</button>
+      <input type="number" class="hero-input" id="cardioval-${id}" value="${cardioVal}" inputmode="numeric"
+        onblur="commitCardio('${day}',${i},'${id}',this.value)" onfocus="this.select()" onclick="event.stopPropagation()" />
+      <span class="hero-input-unit">${heroUnit}</span>
+      <button class="hero-adj-btn" onclick="event.stopPropagation();adjustCardio('${day}',${i},'${id}',${getCardioStep(cardioVal, cardioMetric)})">+</button>
+    </div>` : `
+    <div class="hero-input-row" id="adj-${id}" style="display:none">
+      <button class="hero-adj-btn" onclick="event.stopPropagation();adjustWeight('${day}',${i},'${wStat?.k}',${parseFloat(wStat?.v||0)},-${getStep(curW)},'${id}')">−</button>
+      <input type="number" class="hero-input" id="adjval-${day}-${i}-${wStat?.k}" value="${curW}" inputmode="decimal"
+        onblur="commitWeight('${day}',${i},'${wStat?.k}',${parseFloat(wStat?.v||0)},'${id}',this.value)" onfocus="this.select()" onclick="event.stopPropagation()" />
+      <span class="hero-input-unit">${heroUnit}</span>
+      <button class="hero-adj-btn" onclick="event.stopPropagation();adjustWeight('${day}',${i},'${wStat?.k}',${parseFloat(wStat?.v||0)},${getStep(curW)},'${id}')">+</button>
+    </div>`;
 
   return `
-    <div class="card-tap" onclick="onCardTap('${id}','${day}',${i})">
-      <div class="drag-handle" title="Drag to reorder">⠿</div>
-      <div class="check-circle" id="circle-${id}" onclick="event.stopPropagation();toggleDone('${id}')">✓</div>
-      <div class="card-content">
-        <div class="card-type-wrap">
-          <span class="card-type ${isCardio?'type-cardio':'type-lift'}">${isCardio?'▶ Cardio':'◆ Lift'}</span>
-          <button class="type-toggle" onclick="event.stopPropagation();toggleType('${day}',${i},'${id}')">${isCardio?'→ Lift':'→ Cardio'}</button>
-        </div>
-        <div class="card-main">${escHtml(ex.name)}</div>
-        <input class="card-name-input" value="${escHtml(ex.name)}" oninput="updateExName('${day}',${i},this.value,'${id}')" onclick="event.stopPropagation()">
-        <div class="card-meta" id="meta-${id}">${metaPills}${volBadge?`<span class="vol-badge">${volBadge}</span>`:''}${cardioBadge}${prBadge}</div>
-      </div>
-      <div class="card-chevron" id="chev-${id}">▼</div>
-      <button class="delete-card-btn" onclick="event.stopPropagation();deleteExercise('${day}',${i})" title="Remove exercise">x</button>
-    </div>
-    <div class="card-details" id="details-${id}">
-      <div class="details-inner">
-        <div class="edit-fields" id="editfields-${id}">
-          <div class="edit-field-group"><span class="edit-field-label">Exercise Name</span><input class="edit-field-input" value="${escHtml(ex.name)}" oninput="updateExName('${day}',${i},this.value,'${id}')"></div>
-          <span class="edit-section-label">Stats / Fields</span>
-          <div class="edit-stat-list" id="editstats-${id}">${editStatRows}</div>
-          <button class="add-stat-btn" onclick="addStat('${day}',${i},'${id}')">+ Add Field</button>
-          <div class="edit-field-group"><span class="edit-field-label">How-To Link (optional)</span><input class="edit-link-input" value="${escHtml(ex.link||'')}" placeholder="https://..." oninput="updateExLink('${day}',${i},this.value)"></div>
-          <div class="edit-field-group" style="margin-top:8px"><span class="edit-field-label">Note / Machine Tip (if no link)</span><textarea class="edit-note-input" placeholder="E.g. Cardio — keep moving!" oninput="updateExNote('${day}',${i},this.value)">${escHtml(ex.note||'')}</textarea></div>
-          <div class="edit-field-group" style="margin-top:8px">
-            <span class="edit-field-label">Library Link (for swap suggestions)</span>
-           ${getLibLinkHTML(ex.name, day, i, id)}
+    <div class="exercise-card${isCardio ? ' cardio-card' : ''}${isPR ? ' is-pr' : ''}" id="card-${id}">
+      ${isPR ? `<div class="pr-strip">🏆 PERSONAL RECORD</div>` : ''}
+      <div class="card-tap" onclick="onCardTap('${id}','${day}',${i})">
+        <div class="card-header">
+          <div>
+            <div class="card-name">${escHtml(ex.name)}</div>
+            <input class="card-name-input" value="${escHtml(ex.name)}"
+              oninput="updateExName('${day}',${i},this.value,'${id}')" onclick="event.stopPropagation()">
+          </div>
+          <div class="card-type-wrap">
+            <span class="card-tag${isCardio ? ' tag-cardio' : ''}">${isCardio ? '▶ CARDIO' : '◆ LIFT'}</span>
+            <button class="type-toggle" onclick="event.stopPropagation();toggleType('${day}',${i},'${id}')">${isCardio ? '→ Lift' : '→ Cardio'}</button>
+            <button class="delete-card-btn" onclick="event.stopPropagation();deleteExercise('${day}',${i})" title="Remove exercise">x</button>
           </div>
         </div>
-        <button class="swap-btn" onclick="event.stopPropagation();openSwapOverlay('${day}',${i},'${escHtml(ex.name)}')">⇄ FIND SWAPS</button>
-        ${hintHTML}
-        ${cardioAdjHTML}
-        <div class="stat-row">${nonEditChips}${adjusters}</div>
-        ${volRow}
-        <button class="rest-timer-btn" onclick="openTimer()">⏱ Start Rest Timer</button>
-        ${howToLink}
+        <div class="card-hero" id="hero-${id}">
+          <div>
+            <span class="hero-num" id="heronum-${id}">${heroVal}</span><span class="hero-unit">${heroUnit}</span>
+          </div>
+          ${adjHTML}
+          <div class="hero-sub" id="herosub-${id}">${subLine}</div>
+          <div class="saved-flash" id="flash-${day}-${i}-${wStat?.k || 'cardio'}">✓ SAVED</div>
+        </div>
+        <div class="card-chips">
+          <div class="context-chip">
+            <span class="context-chip-val">${lastVal}</span>
+            <span class="context-chip-label">last session</span>
+          </div>
+          <div class="context-chip">
+            <span class="context-chip-val">${suggestVal}</span>
+            <span class="context-chip-label">suggested next</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button class="btn-mark-done" onclick="event.stopPropagation();toggleDone('${id}')">Mark done</button>
+          <button class="btn-icon" onclick="event.stopPropagation();openTimer()">⏱</button>
+          <button class="btn-icon" onclick="event.stopPropagation();document.getElementById('details-${id}').classList.toggle('open')">···</button>
+        </div>
+      </div>
+      <div class="card-details" id="details-${id}">
+        <div class="details-inner">
+          <div class="edit-fields" id="editfields-${id}">
+            <div class="edit-field-group"><span class="edit-field-label">Exercise Name</span>
+              <input class="edit-field-input" value="${escHtml(ex.name)}" oninput="updateExName('${day}',${i},this.value,'${id}')"></div>
+            <span class="edit-section-label">Stats / Fields</span>
+            <div class="edit-stat-list" id="editstats-${id}">${editStatRows}</div>
+            <button class="add-stat-btn" onclick="addStat('${day}',${i},'${id}')">+ Add Field</button>
+            <div class="edit-field-group"><span class="edit-field-label">How-To Link (optional)</span>
+              <input class="edit-link-input" value="${escHtml(ex.link||'')}" placeholder="https://..." oninput="updateExLink('${day}',${i},this.value)"></div>
+            <div class="edit-field-group" style="margin-top:8px"><span class="edit-field-label">Note / Machine Tip (if no link)</span>
+              <textarea class="edit-note-input" placeholder="E.g. Cardio — keep moving!" oninput="updateExNote('${day}',${i},this.value)">${escHtml(ex.note||'')}</textarea></div>
+            <div class="edit-field-group" style="margin-top:8px">
+              <span class="edit-field-label">Library Link (for swap suggestions)</span>
+              ${getLibLinkHTML(ex.name, day, i, id)}
+            </div>
+          </div>
+          ${nonEditChips ? `<div class="stat-row">${nonEditChips}</div>` : ''}
+          ${volRow}
+          <button class="swap-btn" onclick="event.stopPropagation();openSwapOverlay('${day}',${i},'${escHtml(ex.name)}')">⇄ FIND SWAPS</button>
+          ${howToLink}
+        </div>
       </div>
     </div>`;
 }
@@ -1728,15 +1779,38 @@ function deleteExercise(day, idx) {
   updateSubtitle(day); updateProgress();
 }
 
-function onCardTap(id, day, i) { if (editMode) return; toggleCard(id); }
-function toggleCard(id) {
-  const details = document.getElementById('details-' + id); if (!details) return;
-  const isOpen = openState[id]; details.classList.toggle('open', !isOpen); openState[id] = !isOpen;
-  const chev = document.getElementById('chev-' + id); if (chev) chev.textContent = !isOpen ? '▲' : '▼';
-}
-function toggleDone(id) {
+function onCardTap(id, day, i) {
   if (editMode) return;
-  doneState[id] = !doneState[id]; document.getElementById(id).classList.toggle('done', doneState[id]); updateProgress();
+  const wasActive = activeCard === id;
+  // Deactivate previous card
+  if (activeCard && activeCard !== id) {
+    const prevAdj = document.getElementById('adj-' + activeCard);
+    const prevNum = document.getElementById('heronum-' + activeCard);
+    if (prevAdj) prevAdj.style.display = 'none';
+    if (prevNum) prevNum.style.display = '';
+  }
+  // Toggle current card
+  if (wasActive) {
+    const adj = document.getElementById('adj-' + id);
+    const num = document.getElementById('heronum-' + id);
+    if (adj) adj.style.display = 'none';
+    if (num) num.style.display = '';
+    activeCard = null;
+  } else {
+    const adj = document.getElementById('adj-' + id);
+    const num = document.getElementById('heronum-' + id);
+    if (adj) adj.style.display = 'flex';
+    if (num) num.style.display = 'none';
+    activeCard = id;
+  }
+}
+
+function toggleCard(id) {
+  const details = document.getElementById('details-' + id);
+  if (!details) return;
+  const isOpen = openState[id];
+  details.classList.toggle('open', !isOpen);
+  openState[id] = !isOpen;
 }
 function adjustWeight(day, idx, key, defVal, delta, cardId) {
   const cur = getWeight(day, idx, key, defVal); const newVal = Math.max(0.5, Math.round((cur + delta) * 10) / 10);
