@@ -15,7 +15,7 @@
     --surface2: #181818;
     --border: #222;
     --text: #e8e8e8;
-    --muted: #555;
+    --muted: #999;
     --cardio-accent: #ff6b35;
     --gold: #ffd700;
     --gold-dim: rgba(255,215,0,0.12);
@@ -49,7 +49,7 @@
     --surface2: #0f0f0f;
     --border: #181818;
     --text: #777777;
-    --muted: #2e2e2e;
+    --muted: #666;
     --neon: #1d6b0a;
     --neon-dim: rgba(29,107,10,0.08);
     --neon-glow: 0 0 4px rgba(29,107,10,0.25);
@@ -1567,10 +1567,32 @@ function buildCardHTML(day, i, ex, id) {
 
   // Last session and suggestion chips
   const liftHint   = !isCardio ? getOverloadHint(day, i, ex) : null;
-  const cardioHint = isCardio  ? getCardioHint(day, i, ex)   : null;
-  const activeHint = liftHint || cardioHint;
-  const lastVal    = activeHint?.lastVal ?? '—';
-  const suggestVal = activeHint?.suggestVal ?? '—';
+const cardioHint = isCardio  ? getCardioHint(day, i, ex)   : null;
+
+let lastVal = '—';
+let suggestVal = '—';
+
+if (!isCardio && liftHint) {
+  const prevSessions = history.filter(h => h.snapshot.some(s => s.name === ex.name));
+  if (prevSessions.length) {
+    const prevEx = prevSessions[0].snapshot.find(s => s.name === ex.name);
+    if (prevEx?.weight) {
+      lastVal = prevEx.weight + (wStat?.unit || 'kg');
+      suggestVal = (Math.round((prevEx.weight + getStep(prevEx.weight)) * 10) / 10) + (wStat?.unit || 'kg');
+    }
+  }
+} else if (isCardio && cardioHint) {
+  const prevSessions = history.filter(h => h.day === day);
+  if (prevSessions.length) {
+    const prevEx = prevSessions[0].snapshot.find(s => s.name === ex.name);
+    if (prevEx?.cardioValue) {
+      const unit = getCardioUnit(ex.name);
+      const step = getCardioStep(prevEx.cardioValue, getCardioMetric(ex.name));
+      lastVal = prevEx.cardioValue + unit;
+      suggestVal = '+' + step + unit;
+    }
+  }
+}
 
   // Machine settings (non-editable stats like Seat, Back)
   const nonEditChips = ex.stats.filter(s => !s.editable).map(s =>
