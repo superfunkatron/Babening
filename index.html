@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>THE BABENING — Workout Plan</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -126,66 +126,79 @@
   body.edit-mode .day-name-display { display:none; }
   body.edit-mode .day-name-input { display:block; }
 
-  .exercise-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:10px; overflow:hidden; transition:opacity 0.25s, border-color 0.3s; }
-  .exercise-card.cardio-card { border-color:#2a1a10; }
-  .exercise-card.done { opacity:0.38; }
-  .exercise-card.done .card-main { text-decoration:line-through; text-decoration-color:var(--muted); }
-  .exercise-card.is-pr { border-color:rgba(255,215,0,0.45) !important; }
-  body.edit-mode .exercise-card { border-color:rgba(176,106,255,0.2) !important; }
-  body.edit-mode .exercise-card.cardio-card { border-color:rgba(176,106,255,0.3) !important; }
+/* ── EXERCISE CARDS ── */
+.exercise-card { background: var(--surface); border-radius: 12px; margin-bottom: 12px; overflow: hidden; transition: opacity 0.25s, box-shadow 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+.exercise-card.done { opacity: 0.4; }
+.exercise-card.is-pr { box-shadow: 0 0 0 2px rgba(255,215,0,0.6), 0 1px 3px rgba(0,0,0,0.3); }
+.exercise-card.cardio-card { box-shadow: 0 0 0 1px rgba(255,107,53,0.2), 0 1px 3px rgba(0,0,0,0.3); }
+body.edit-mode .exercise-card { box-shadow: 0 0 0 1px rgba(176,106,255,0.3) !important; }
 
-  .card-tap { display:flex; align-items:center; padding:13px 14px; gap:12px; cursor:pointer; -webkit-tap-highlight-color:transparent; user-select:none; }
-  body.edit-mode .card-tap { cursor:default; }
+.pr-strip { background: #ffd700; color: #1a1a1a; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700; text-align: center; padding: 5px; letter-spacing: 0.12em; }
 
-  .check-circle { width:26px; height:26px; border-radius:50%; border:2px solid rgba(57,255,20,0.3); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.2s; font-size:12px; color:transparent; }
-  .exercise-card.cardio-card .check-circle { border-color:rgba(255,107,53,0.4); }
-  .exercise-card.done .check-circle { background:var(--neon); border-color:var(--neon); box-shadow:var(--neon-glow); color:#000; }
-  .exercise-card.cardio-card.done .check-circle { background:var(--cardio-accent); border-color:var(--cardio-accent); box-shadow:0 0 8px rgba(255,107,53,0.6); color:#000; }
-  body.edit-mode .check-circle { display:none; }
+.card-tap { display: flex; align-items: center; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; flex-direction: column; width: 100%; }
+body.edit-mode .card-tap { cursor: default; }
 
-  .drag-handle { display:none; width:20px; flex-shrink:0; color:var(--edit-accent); font-size:16px; cursor:grab; opacity:0.5; align-items:center; justify-content:center; }
-  body.edit-mode .drag-handle { display:flex; }
+.card-header { background: #1a1a1a; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; width: 100%; box-sizing: border-box; }
+body.theme-light .card-header { background: #1a1a1a; }
+body.theme-dim .card-header { background: #111111; }
+.exercise-card.done .card-header { background: #2a2a2a; }
 
-  .card-content { flex:1; min-width:0; }
-  .card-type-wrap { display:flex; align-items:center; gap:6px; margin-bottom:3px; }
-  .card-type { font-family:'DM Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:2px; }
-  .type-lift { color:rgba(57,255,20,0.5); }
-  .type-cardio { color:rgba(255,107,53,0.6); }
-  .type-toggle { display:none; font-family:'DM Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:1px; padding:2px 7px; border-radius:3px; cursor:pointer; border:1px solid var(--edit-border); color:var(--edit-accent); background:var(--edit-dim); }
-  body.edit-mode .type-toggle { display:inline-block; }
-  body.edit-mode .card-type { display:none; }
+.card-name { font-family: 'Barlow', sans-serif; font-size: 20px; font-weight: 700; color: #ffffff; letter-spacing: 0.01em; line-height: 1.2; }
+.card-name-input { display: none; font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 18px; color: var(--edit-accent); background: var(--edit-dim); border: 1px solid var(--edit-border); border-radius: 4px; padding: 4px 8px; outline: none; width: 100%; }
+body.edit-mode .card-name { display: none; }
+body.edit-mode .card-name-input { display: block; }
 
-  .card-main { font-weight:700; font-size:15px; line-height:1.2; color:var(--text); text-transform:uppercase; letter-spacing:0.5px; }
-  .card-name-input { display:none; font-family:'Barlow',sans-serif; font-weight:700; font-size:14px; color:var(--edit-accent); background:var(--edit-dim); border:1px solid var(--edit-border); border-radius:4px; padding:4px 8px; outline:none; width:100%; }
-  body.edit-mode .card-main { display:none; }
-  body.edit-mode .card-name-input { display:block; }
+.card-type-wrap { display: flex; align-items: center; gap: 6px; }
+.card-tag { font-family: 'DM Mono', monospace; font-size: 10px; color: #888; background: #2e2e2e; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.08em; }
+.card-tag.tag-cardio { color: rgba(255,107,53,0.8); background: #2e1a0e; }
+.type-toggle { display: none; font-family: 'DM Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; padding: 2px 7px; border-radius: 3px; cursor: pointer; border: 1px solid var(--edit-border); color: var(--edit-accent); background: var(--edit-dim); }
+body.edit-mode .type-toggle { display: inline-block; }
+body.edit-mode .card-tag { display: none; }
 
-  .card-meta { display:flex; gap:7px; margin-top:6px; flex-wrap:wrap; align-items:center; }
-  .meta-pill { background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-family:'DM Mono',monospace; font-size:10px; color:var(--text); display:flex; align-items:center; gap:4px; }
-  .meta-pill .pill-label { color:var(--muted); font-size:9px; text-transform:uppercase; }
-  .cardio-card .meta-pill { border-color:rgba(255,107,53,0.2); background:rgba(255,107,53,0.05); }
-  .vol-badge { font-family:'DM Mono',monospace; font-size:9px; color:rgba(57,255,20,0.45); padding:2px 6px; border:1px solid rgba(57,255,20,0.15); border-radius:4px; background:rgba(57,255,20,0.05); }
-  .cardio-badge { font-family:'DM Mono',monospace; font-size:9px; color:rgba(255,107,53,0.6); padding:2px 6px; border:1px solid rgba(255,107,53,0.2); border-radius:4px; background:rgba(255,107,53,0.06); }
-  .pr-badge { font-family:'DM Mono',monospace; font-size:9px; color:var(--gold); padding:2px 6px; border:1px solid rgba(255,215,0,0.35); border-radius:4px; background:var(--gold-dim); animation:prPop 0.35s ease; }
-  .card-chevron { color:var(--muted); font-size:11px; flex-shrink:0; }
-  body.edit-mode .card-chevron { display:none; }
+.card-hero { padding: 14px 16px 12px; border-bottom: 1px solid var(--border); width: 100%; box-sizing: border-box; }
+.hero-num { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: var(--text); line-height: 1; }
+.hero-unit { font-size: 18px; color: var(--muted); margin-left: 4px; font-weight: 400; }
+.exercise-card.done .hero-num { color: var(--muted); }
+.hero-sub { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); margin-top: 5px; letter-spacing: 0.02em; }
 
-  .delete-card-btn { display:none; width:28px; height:28px; border-radius:50%; border:1px solid rgba(255,60,60,0.3); background:transparent; color:rgba(255,60,60,0.6); font-size:16px; cursor:pointer; flex-shrink:0; align-items:center; justify-content:center; transition:all 0.2s; }
-  body.edit-mode .delete-card-btn { display:flex; }
-  .delete-card-btn:active { background:rgba(255,60,60,0.15); color:#ff4444; }
+.hero-input-row { display: flex; align-items: center; gap: 8px; }
+.hero-adj-btn { width: 48px; height: 64px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; font-size: 26px; color: var(--text); display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.hero-input { flex: 1; font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--text); background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; text-align: center; padding: 4px 8px; height: 72px; line-height: 1; outline: none; -moz-appearance: textfield; }
+.hero-input::-webkit-outer-spin-button, .hero-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.hero-input-unit { font-size: 18px; color: var(--muted); font-weight: 400; flex-shrink: 0; }
 
-  .card-details { display:none; border-top:1px solid var(--border); }
-  .card-details.open { display:block; animation:fadeUp 0.2s ease; }
-  body.edit-mode .card-details { display:block !important; border-top-color: var(--edit-border); }
-  .details-inner { padding:13px 14px; }
+.card-chips { padding: 10px 16px; display: flex; gap: 8px; border-bottom: 1px solid var(--border); width: 100%; box-sizing: border-box; }
+.context-chip { background: var(--surface2); border-radius: 8px; padding: 8px 12px; flex: 1; text-align: center; }
+.context-chip-val { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); display: block; line-height: 1.1; }
+.context-chip-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); display: block; margin-top: 2px; }
 
-  .edit-fields { display:none; margin-bottom:12px; }
-  body.edit-mode .edit-fields { display:block; }
-  body.edit-mode .stat-row { display:none; }
-  body.edit-mode .overload-hint { display:none; }
-  body.edit-mode .volume-row { display:none; }
-  body.edit-mode .rest-timer-btn { display:none; }
-  body.edit-mode .cardio-input-wrap { display:none; }
+.card-footer { padding: 10px 16px; display: flex; gap: 8px; width: 100%; box-sizing: border-box; }
+.btn-mark-done { flex: 1; background: #1a1a1a; color: #ffffff; border: none; border-radius: 8px; padding: 13px; font-size: 15px; font-weight: 600; font-family: 'Barlow', sans-serif; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+body.theme-light .btn-mark-done { background: #1a1a1a; color: #ffffff; }
+.exercise-card.done .btn-mark-done { background: var(--surface2); color: var(--muted); }
+.btn-icon { background: var(--surface2); color: var(--muted); border: none; border-radius: 8px; padding: 13px 14px; font-size: 15px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+.card-details { display: none; border-top: 1px solid var(--border); width: 100%; box-sizing: border-box; }
+.card-details.open { display: block; animation: fadeUp 0.2s ease; }
+body.edit-mode .card-details { display: block !important; border-top-color: var(--edit-border); }
+.details-inner { padding: 14px 16px; }
+
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.stat-chip { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; text-align: center; }
+.stat-chip .chip-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+.stat-chip .chip-val { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--neon); line-height: 1; }
+.cardio-card .stat-chip .chip-val { color: var(--cardio-accent); }
+
+.check-circle { display: none; }
+body.edit-mode .check-circle { display: none; }
+
+.card-chevron { display: none; }
+.card-content { display: none; }
+.card-meta { display: none; } 
+.meta-pill { display: none; }
+.vol-badge { display: none; }
+.cardio-badge { display: none; }
+.pr-badge { display: none; }
 
   .edit-field-group { margin-bottom:10px; }
   .edit-field-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--edit-accent); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px; }
