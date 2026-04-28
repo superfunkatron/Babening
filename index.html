@@ -1587,7 +1587,7 @@ function buildCardHTML(day, i, ex, id) {
   const isPR = (isCurPR && !isCardio && wStat) || isCardioPR;
 
   // Hero value and unit
-  const heroVal  = isCardio ? (cardioVal || 0) : (curW || 0);
+  const heroVal  = isCardio ? (cardioVal ?? 0) : (curW ?? 0);
   const heroUnit = isCardio ? (cardioMetric === 'watts' ? 'W' : 'm') : (wStat ? wStat.unit || 'kg' : 'kg');
 
   // Sub line — sets/reps for lift, metric label for cardio
@@ -1654,14 +1654,14 @@ if (!isCardio && liftHint) {
   const adjHTML = isCardio ? `
     <div class="hero-input-row" id="adj-${id}" style="display:none">
       <button class="hero-adj-btn" onclick="event.stopPropagation();adjustCardio('${day}',${i},'${id}',-${getCardioStep(cardioVal, cardioMetric)})">−</button>
-      <input type="number" class="hero-input" id="cardioval-${id}" value="${cardioVal}" inputmode="numeric"
+      <input type="number" class="hero-input" id="cardioval-${id}" value="${cardioVal ?? 0}" inputmode="numeric"
         onblur="commitCardio('${day}',${i},'${id}',this.value)" onfocus="this.select()" onclick="event.stopPropagation()" />
       <span class="hero-input-unit">${heroUnit}</span>
       <button class="hero-adj-btn" onclick="event.stopPropagation();adjustCardio('${day}',${i},'${id}',${getCardioStep(cardioVal, cardioMetric)})">+</button>
     </div>` : `
     <div class="hero-input-row" id="adj-${id}" style="display:none">
       <button class="hero-adj-btn" onclick="event.stopPropagation();adjustWeight('${day}',${i},'${wStat?.k}',${parseFloat(wStat?.v||0)},-${getStep(curW)},'${id}')">−</button>
-      <input type="number" class="hero-input" id="adjval-${day}-${i}-${wStat?.k}" value="${curW}" inputmode="decimal"
+      <input type="number" class="hero-input" id="adjval-${day}-${i}-${wStat?.k}" value="${curW ?? 0}" inputmode="decimal"
         onblur="commitWeight('${day}',${i},'${wStat?.k}',${parseFloat(wStat?.v||0)},'${id}',this.value)" onfocus="this.select()" onclick="event.stopPropagation()" />
       <span class="hero-input-unit">${heroUnit}</span>
       <button class="hero-adj-btn" onclick="event.stopPropagation();adjustWeight('${day}',${i},'${wStat?.k}',${parseFloat(wStat?.v||0)},${getStep(curW)},'${id}')">+</button>
