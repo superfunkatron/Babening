@@ -311,10 +311,9 @@ body.edit-mode .check-circle { display: none; }
   .chart-panel.active { display:block; animation:fadeUp 0.25s ease; }
 
   .data-actions { display:flex; gap:8px; margin-bottom:14px; }
-  .data-btn { flex:1; padding:9px; background:var(--surface); border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; border-radius:6px; cursor:pointer; text-align:center; transition:all 0.2s; }
-  .data-btn:hover { border-color:var(--neon); color:var(--neon); }
-  .data-btn.import-btn:hover { border-color:var(--edit-accent); color:var(--edit-accent); }
-  .data-btn:active { opacity:0.7; }
+  .data-btn { flex:1; padding:8px; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; border-radius:8px; cursor:pointer; text-align:center; transition:all 0.2s; }
+  .data-btn:active { background:var(--surface); color:var(--text); }
+  .data-btn.import-btn:active { color:var(--edit-accent); border-color:var(--edit-border); }
 
   .chart-wrap { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:14px; }
   .chart-title { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; color:var(--neon); margin-bottom:10px; }
@@ -335,17 +334,21 @@ body.edit-mode .check-circle { display: none; }
   .pr-type-lift { color:rgba(57,255,20,0.5); border:1px solid rgba(57,255,20,0.15); }
   .pr-type-cardio { color:rgba(255,107,53,0.6); border:1px solid rgba(255,107,53,0.2); }
 
-  .history-entry { background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:10px; overflow:hidden; }
+  .history-entry { background:var(--surface); border:1px solid var(--border); border-radius:12px; margin-bottom:10px; overflow:hidden; }
   .history-entry.has-pr { border-color:rgba(255,215,0,0.22); }
-  .history-entry-header { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; }
-  .history-day-label { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; color:var(--neon); }
-  .history-date { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
-  .history-stats { display:flex; gap:16px; padding:0 14px 12px; }
-  .h-stat { text-align:center; }
-  .h-stat-val { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--text); line-height:1; }
-  .h-stat-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
-  .history-exercises { border-top:1px solid var(--border); }
-  .history-ex-row { display:flex; justify-content:space-between; align-items:center; padding:7px 14px; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .history-entry-header { background:#1a1a1a; display:flex; justify-content:space-between; align-items:center; padding:12px 14px; }
+  body.theme-light .history-entry-header { background:#1a1a1a; }
+  body.theme-dim .history-entry-header { background:#111111; }
+  .history-entry.has-pr .history-entry-header { background:#1a1500; }
+  .history-day-label { font-family:'Barlow',sans-serif; font-size:16px; font-weight:700; letter-spacing:0.02em; color:#ffffff; }
+  .history-date { font-family:'DM Mono',monospace; font-size:10px; color:#888; }
+  .history-stats { display:flex; gap:0; padding:0; border-bottom:1px solid var(--border); }
+  .h-stat { flex:1; text-align:center; padding:10px 8px; border-right:1px solid var(--border); }
+  .h-stat:last-child { border-right:none; }
+  .h-stat-val { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--text); line-height:1; }
+  .h-stat-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+  .history-exercises { }
+  .history-ex-row { display:flex; justify-content:space-between; align-items:center; padding:8px 14px; border-bottom:1px solid var(--border); }
   .history-ex-row:last-child { border-bottom:none; }
   .history-ex-row.is-pr-row .history-ex-name { color:var(--gold); }
   .history-ex-row.is-cardio-row .history-ex-name { color:rgba(255,107,53,0.8); }
