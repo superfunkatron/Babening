@@ -604,7 +604,6 @@ body.edit-mode .check-circle { display: none; }
       </div>
       <button class="help-btn" onclick="openHelp()">?</button>
 <button class="edit-toggle-btn" id="editToggleBtn" onclick="toggleEditMode()">✏ Edit</button>
-      <button class="edit-toggle-btn" id="editToggleBtn" onclick="toggleEditMode()">✏ Edit</button>
       <button class="theme-btn" id="themeBtn" onclick="cycleTheme()" title="Toggle theme">🌙</button>
       <button class="signout-btn" onclick="handleSignOut()" title="Sign out">↩</button>
     </div>
@@ -641,6 +640,11 @@ body.edit-mode .check-circle { display: none; }
 <button class="tab-btn" id="tab-other" onclick="switchTab('other')">
   <span class="tab-icon">＋</span>
   <span class="tab-label">Other</span>
+  <span class="tab-check">&nbsp;</span>
+</button>
+  <button class="tab-btn edit-only-tab" id="tab-venues" onclick="switchTab('venues')">
+  <span class="tab-icon">🏠</span>
+  <span class="tab-label">Venues</span>
   <span class="tab-check">&nbsp;</span>
 </button>
 </div>
