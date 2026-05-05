@@ -302,9 +302,11 @@ body.edit-mode .check-circle { display: none; }
   #panel-history .section-header { color:rgba(57,255,20,0.8); }
   .history-empty { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); text-align:center; padding:40px 20px; letter-spacing:1px; line-height:1.8; }
 
-  .chart-tabs { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
-  .chart-tab { flex:1; min-width:60px; padding:7px 4px; background:var(--surface); border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; border-radius:5px; cursor:pointer; text-align:center; transition:all 0.2s; }
-  .chart-tab.active { background:var(--neon-dim); border-color:var(--neon); color:var(--neon); }
+ .chart-tabs { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+  .chart-tab { flex:1; min-width:60px; padding:8px 4px 6px; background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--muted); font-family:'Barlow',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; cursor:pointer; text-align:center; transition:all 0.2s; }
+  .chart-tab.active { background:#1a1a1a; border-color:#1a1a1a; color:#ffffff; }
+  body.theme-light .chart-tab.active { background:#1a1a1a; border-color:#1a1a1a; color:#ffffff; }
+  body.theme-dim .chart-tab.active { background:#111; border-color:#111; color:#ffffff; }
   .chart-panel { display:none; }
   .chart-panel.active { display:block; animation:fadeUp 0.25s ease; }
 
@@ -929,13 +931,13 @@ body.edit-mode .check-circle { display: none; }
   <div class="search-wrap">
     <input class="search-input" id="exerciseSearch" placeholder="🔍 Search exercises..." oninput="filterHistory(this.value)">
   </div>
-  <div class="chart-tabs">
-    <button class="chart-tab active" onclick="switchHistoryTab('sessions')" id="htab-sessions">Sessions</button>
+<div class="chart-tabs">
+    <button class="chart-tab active" onclick="switchHistoryTab('sessions')" id="htab-sessions">📋 Sessions</button>
     <button class="chart-tab" onclick="switchHistoryTab('prs')" id="htab-prs">🏆 PRs</button>
     <button class="chart-tab" onclick="switchHistoryTab('cardio')" id="htab-cardio">📈 Cardio</button>
     <button id="htab-strength" class="chart-tab" onclick="switchHistoryTab('strength')">💪 Strength</button>
-    <button class="chart-tab" onclick="switchHistoryTab('weekly')" id="htab-weekly">Weekly</button>
-    <button class="chart-tab" onclick="switchHistoryTab('monthly')" id="htab-monthly">Monthly</button>
+    <button class="chart-tab" onclick="switchHistoryTab('weekly')" id="htab-weekly">📊 Weekly</button>
+    <button class="chart-tab" onclick="switchHistoryTab('monthly')" id="htab-monthly">📅 Monthly</button>
   </div>
   <div class="chart-panel active" id="hpanel-sessions"><div id="history-list"></div></div>
   <div class="chart-panel" id="hpanel-prs"><div id="pr-list"></div></div>
