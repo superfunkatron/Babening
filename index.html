@@ -175,7 +175,7 @@ body.edit-mode .card-tag { display: none; }
 
 .hero-input-row { display: flex; align-items: center; gap: 8px; }
 .hero-adj-btn { width: 48px; height: 64px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; font-size: 26px; color: var(--text); display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.hero-input { flex: 1; font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--text); background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; text-align: center; padding: 4px 8px; height: 72px; line-height: 1; outline: none; -moz-appearance: textfield; }
+.hero-input { flex: 1; font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--text); background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; text-align: center; padding: 4px 8px; height: 72px; line-height: 1; outline: none; appearance: textfield; -moz-appearance: textfield; }
 .hero-input::-webkit-outer-spin-button, .hero-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .hero-input-unit { font-size: 18px; color: var(--muted); font-weight: 400; flex-shrink: 0; }
 
@@ -223,6 +223,14 @@ body.edit-mode .check-circle { display: none; }
   .edit-stat-row input:focus { border-color:var(--edit-accent); }
   .edit-stat-del { width:26px; height:26px; border-radius:4px; border:1px solid rgba(255,60,60,0.2); background:transparent; color:rgba(255,60,60,0.5); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
   .edit-stat-del:active { background:rgba(255,60,60,0.1); color:#ff4444; }
+  .delete-card-btn { display:none; width:28px; height:28px; border-radius:5px; border:1px solid rgba(255,60,60,0.2); background:transparent; color:rgba(255,60,60,0.5); cursor:pointer; font-size:13px; flex-shrink:0; font-family:'DM Mono',monospace; }
+  body.edit-mode .delete-card-btn { display:flex; align-items:center; justify-content:center; }
+  .delete-card-btn:active { background:rgba(255,60,60,0.1); color:#ff4444; }
+
+  .reorder-btn { display:none; width:28px; height:28px; border-radius:5px; border:1px solid var(--edit-border); background:transparent; color:var(--edit-accent); cursor:pointer; font-size:16px; flex-shrink:0; font-family:'DM Mono',monospace; }
+  body.edit-mode .reorder-btn { display:flex; align-items:center; justify-content:center; }
+  .reorder-btn:active { background:var(--edit-dim); }
+  .reorder-btn:disabled { opacity:0.2; cursor:default; }
   .add-stat-btn { font-family:'DM Mono',monospace; font-size:10px; color:var(--edit-accent); background:transparent; border:1px dashed var(--edit-border); border-radius:5px; padding:5px 10px; cursor:pointer; width:100%; margin-bottom:8px; }
   .add-stat-btn:active { background:var(--edit-dim); }
   .edit-link-input { width:100%; background:var(--surface2); border:1px solid var(--edit-border); border-radius:6px; padding:7px 10px; font-family:'DM Mono',monospace; font-size:11px; color:var(--text); outline:none; }
@@ -349,7 +357,6 @@ body.edit-mode .check-circle { display: none; }
   .h-stat:last-child { border-right:none; }
   .h-stat-val { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--text); line-height:1; }
   .h-stat-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
-  .history-exercises { }
   .history-ex-row { display:flex; justify-content:space-between; align-items:center; padding:8px 14px; border-bottom:1px solid var(--border); }
   .history-ex-row:last-child { border-bottom:none; }
   .history-ex-row.is-pr-row .history-ex-name { color:var(--gold); }
@@ -1652,7 +1659,9 @@ if (!isCardio && liftHint) {
           <div class="card-type-wrap">
             <span class="card-tag${isCardio ? ' tag-cardio' : ''}">${isCardio ? '▶ CARDIO' : '◆ LIFT'}</span>
             <button class="type-toggle" onclick="event.stopPropagation();toggleType('${day}',${i},'${id}')">${isCardio ? '→ Lift' : '→ Cardio'}</button>
-            <button class="delete-card-btn" onclick="event.stopPropagation();deleteExercise('${day}',${i})" title="Remove exercise">x</button>
+            <button class="reorder-btn" onclick="event.stopPropagation();reorderExercise('${day}',${i},-1)" title="Move up" ${i === 0 ? 'disabled' : ''}>↑</button>
+            <button class="reorder-btn" onclick="event.stopPropagation();reorderExercise('${day}',${i},1)" title="Move down" ${i === plan.exercises[day].length - 1 ? 'disabled' : ''}>↓</button>
+            <button class="delete-card-btn" onclick="event.stopPropagation();deleteExercise('${day}',${i})" title="Remove exercise">✕</button>
           </div>
         </div>
         <div class="card-hero" id="hero-${id}">
@@ -1796,6 +1805,16 @@ function addExercise(day) {
   updateSubtitle(day);
   const details = document.getElementById('details-' + id); if (details) details.classList.add('open');
   card.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+function reorderExercise(day, idx, dir) {
+  const exs = plan.exercises[day];
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= exs.length) return;
+  [exs[idx], exs[newIdx]] = [exs[newIdx], exs[idx]];
+  savePlan();
+  const container = document.getElementById('cards-' + day);
+  container.innerHTML = '';
+  exs.forEach((ex, i) => container.appendChild(createCard(day, i, ex)));
 }
 function deleteExercise(day, idx) {
   if (!confirm(`Remove "${plan.exercises[day][idx].name}"?`)) return;
