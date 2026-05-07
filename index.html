@@ -1941,7 +1941,7 @@ function updateProgress() {
   document.getElementById('progress-bar').style.width = pct + '%';
 }
 
-function logSession(day, exes) {
+async function logSession(day, exes) {
   const last = history[0];
   if (last && last.day===day && new Date(last.date).toDateString()===new Date().toDateString()) return;
   const snapshot = exes.map((ex, idx) => {
