@@ -1116,15 +1116,15 @@ async function handleAuth() {
     body: JSON.stringify({ email, password })
   });
 
-  if (signInRes.ok) {
+ if (signInRes.ok) {
     const data = await signInRes.json();
     const session = buildSession(data);
     saveSession(session);
     accessToken = session.access_token;
     currentUser = session.user;
-    await initVenueSelectors();
-  updateProgress();
-}
+    await onAuthSuccess();
+    return;
+  }
 
   const signInErr = await signInRes.json();
   // If invalid credentials, don't try sign up — just report the error
@@ -2343,7 +2343,7 @@ async function init() {
   // Try to restore session from localStorage
   const session = await getValidSession();
   if (session) {
-    accessToken = session.access_token;e
+    accessToken = session.access_token;
     currentUser = session.user;
   }
 
