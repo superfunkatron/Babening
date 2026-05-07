@@ -1313,19 +1313,29 @@ const CIRC = 502.65;
 //  LOAD / SAVE
 // ============================================================
 async function loadAll() {
-  const [savedPlan, savedWeights, savedHistory, savedPRs, savedCardio] = await Promise.all([
-    sbGet('plan'), sbGet('weights'), sbGet('history'), sbGet('prs'), sbGet('cardio')
+  const [savedPlan, savedWeights, savedPRs, savedCardio, sessionsRes] = await Promise.all([
+    sbGet('plan'), sbGet('weights'), sbGet('prs'), sbGet('cardio'),
+    fetch(`${SB_URL}/rest/v1/sessions?user_id=eq.${currentUser.id}&order=date.desc`, { headers: authHeaders() })
   ]);
-  plan         = savedPlan    || null;
+  plan         = savedPlan  || null;
   weights      = savedWeights || {};
-  prs          = savedPRs     || {};
-  history      = savedHistory || [];
-  cardioValues = savedCardio  || {};
+  prs          = savedPRs   || {};
+  cardioValues = savedCardio || {};
+  const rows   = sessionsRes.ok ? await sessionsRes.json() : [];
+  history      = rows.map(r => ({
+    _id:        r.id,
+    day:        r.day,
+    dayName:    r.day_name,
+    date:       r.date,
+    note:       r.note,
+    venue_id:   r.venue_id,
+    venue_name: r.venue_name,
+    snapshot:   r.snapshot
+  }));
 }
 
 async function savePlan()         { await sbSet('plan',    plan); }
 async function saveWeights()      { await sbSet('weights', weights); }
-async function saveHistory()      { await sbSet('history', history); }
 async function savePRs()          { await sbSet('prs',     prs); }
 async function saveCardioValues() { await sbSet('cardio',  cardioValues); }
 
@@ -1948,19 +1958,36 @@ function logSession(day, exes) {
   });
   const note = pendingNotes[day] || '';
   const sessionVenue = currentDayVenues[day];
-history.unshift({ 
-  date: new Date().toISOString(), 
-  day, 
-  dayName: plan.dayNames[day], 
-  snapshot, 
-  note,
-  venue_id:   sessionVenue?.id   || null,
-  venue_name: sessionVenue?.name || null
-});
-  if (history.length > 120) history = history.slice(0,120);
-  saveHistory(); document.getElementById('check-history').textContent = `${history.length} sessions`;
-}
-
+const entry = {
+    date:       new Date().toISOString(),
+    day,
+    dayName:    plan.dayNames[day],
+    snapshot,
+    note,
+    venue_id:   sessionVenue?.id   || null,
+    venue_name: sessionVenue?.name || null
+  };
+  const res = await fetch(`${SB_URL}/rest/v1/sessions`, {
+    method: 'POST',
+    headers: { ...authHeaders(), 'Prefer': 'return=representation' },
+    body: JSON.stringify({
+      user_id:    currentUser.id,
+      day:        entry.day,
+      day_name:   entry.dayName,
+      date:       entry.date,
+      note:       entry.note || '',
+      venue_id:   entry.venue_id,
+      venue_name: entry.venue_name,
+      snapshot:   entry.snapshot
+    })
+  });
+  if (res.ok) {
+    const [row] = await res.json();
+    history.unshift({ _id: row.id, ...entry });
+  } else {
+    history.unshift(entry);
+  }
+  document.getElementById('check-history').textContent = `${history.length} sessions`;
 function renderSessionList(query='') {
   const list = document.getElementById('history-list');
   if (!history.length) { list.innerHTML = `<div class="history-empty">No sessions logged yet.<br>Complete a full day to log it here.</div>`; return; }
@@ -2779,10 +2806,17 @@ function commitCardio(day, idx, cardId, rawVal) {
   const hintEl = document.getElementById(`oload-${cardId}`);
   if (hintEl && hint) { hintEl.className = `overload-hint ${hint.type}`; hintEl.innerHTML = `<span class="oh-icon">${hint.icon}</span><span>${hint.text}</span>`; }
 }
-  function deleteHistoryEntry(idx) {
+  async function deleteHistoryEntry(idx) {
   if (!confirm('Delete this session from your history? This cannot be undone.')) return;
+  const entry = history[idx];
+  if (entry._id) {
+    const res = await fetch(`${SB_URL}/rest/v1/sessions?id=eq.${entry._id}&user_id=eq.${currentUser.id}`, {
+      method: 'DELETE',
+      headers: authHeaders()
+    });
+    if (!res.ok) { showToast('Delete failed', 'error'); return; }
+  }
   history.splice(idx, 1);
-  saveHistory();
   document.getElementById('check-history').textContent = `${history.length} sessions`;
   renderSessionList();
   showToast('Session deleted', 'success');
@@ -2976,7 +3010,7 @@ function toggleActivityCard(type) {
   if (!wasOpen) card.classList.add('open');
 }
 
-function logActivity(type, label, fieldDefs) {
+async function logActivity(type, label, fieldDefs) {
   // Parse field definitions and collect values
   const snapshot = [];
   let hasAnyValue = false;
@@ -3017,11 +3051,27 @@ function logActivity(type, label, fieldDefs) {
     }))
   };
 
-  history.unshift(entry);
-  if (history.length > 120) history = history.slice(0, 120);
-  saveHistory();
+const res = await fetch(`${SB_URL}/rest/v1/sessions`, {
+    method: 'POST',
+    headers: { ...authHeaders(), 'Prefer': 'return=representation' },
+    body: JSON.stringify({
+      user_id:    currentUser.id,
+      day:        entry.day,
+      day_name:   entry.dayName,
+      date:       entry.date,
+      note:       entry.note || '',
+      venue_id:   entry.venue_id || null,
+      venue_name: entry.venue_name || null,
+      snapshot:   entry.snapshot
+    })
+  });
+  if (res.ok) {
+    const [row] = await res.json();
+    history.unshift({ _id: row.id, ...entry });
+  } else {
+    history.unshift(entry);
+  }
   document.getElementById('check-history').textContent = `${history.length} sessions`;
-
   // Clear fields
   for (const def of fieldDefs) {
     const el = document.getElementById(def.split(':')[0]);
@@ -3404,4 +3454,4 @@ function closeHelp(e) {
   </div>
 </div>
 </body>
-</html>
+</html> 
