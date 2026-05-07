@@ -233,6 +233,8 @@ body.edit-mode .check-circle { display: none; }
   .reorder-btn:disabled { opacity:0.2; cursor:default; }
   .add-stat-btn { font-family:'DM Mono',monospace; font-size:10px; color:var(--edit-accent); background:transparent; border:1px dashed var(--edit-border); border-radius:5px; padding:5px 10px; cursor:pointer; width:100%; margin-bottom:8px; }
   .add-stat-btn:active { background:var(--edit-dim); }
+  .save-venue-btn { width:100%; padding:13px; background:#1a1a1a; border:none; border-radius:8px; font-family:'Barlow',sans-serif; font-size:15px; font-weight:600; color:#ffffff; cursor:pointer; margin-top:4px; letter-spacing:0.05em; }
+.save-venue-btn:active { opacity:0.8; }
   .edit-link-input { width:100%; background:var(--surface2); border:1px solid var(--edit-border); border-radius:6px; padding:7px 10px; font-family:'DM Mono',monospace; font-size:11px; color:var(--text); outline:none; }
   .edit-link-input:focus { border-color:var(--edit-accent); }
   .edit-note-input { width:100%; background:var(--surface2); border:1px solid var(--edit-border); border-radius:6px; padding:7px 10px; font-family:'DM Mono',monospace; font-size:11px; color:var(--text); outline:none; resize:none; height:52px; }
@@ -407,8 +409,10 @@ body.edit-mode .check-circle { display: none; }
   /* ── VENUES TAB ── */
   .edit-only-tab { display:none !important; }
   body.edit-mode .edit-only-tab { display:flex !important; flex-direction:column; align-items:center; }
-  .venue-card { background:var(--surface); border:1px solid var(--edit-border); border-radius:10px; padding:14px; margin-bottom:10px; }
-  .venue-card-name { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--edit-accent); line-height:1; }
+  .venue-card { background:var(--surface); border:1px solid var(--edit-border); border-radius:10px; margin-bottom:10px; overflow:hidden; }
+.venue-card-header { background:#1a1a1a; padding:14px 16px; }
+.venue-card-body { padding:10px 14px 14px; }
+  .venue-card-name { font-family:'Barlow',sans-serif; font-size:20px; font-weight:700; color:#ffffff; line-height:1; }
   .venue-card-meta { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:3px; letter-spacing:0.5px; }
   .venue-card-actions { display:flex; gap:8px; margin-top:10px; }
   .venue-action-btn { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:5px 10px; border-radius:5px; cursor:pointer; border:1px solid var(--edit-border); background:transparent; color:var(--edit-accent); transition:all 0.2s; }
@@ -864,9 +868,8 @@ body.edit-mode .check-circle { display: none; }
   </div>
 </div>
 <div class="workout-panel" id="panel-venues">
-  <div class="section-header">VENUES</div>
-  <div class="section-sub">YOUR GYM PROFILES</div>
-  <p class="hint">Add gyms, tick their equipment, get smart swap suggestions on the go</p>
+  <div class="day-name-display" style="margin-bottom:4px;">Venues</div>
+  <div class="section-sub" style="margin-bottom:16px;">Your gym profiles</div>
 
   <div id="venues-list" style="margin-bottom:16px;"></div>
 
@@ -888,9 +891,8 @@ body.edit-mode .check-circle { display: none; }
       <label class="edit-field-label">Notes (optional)</label>
       <textarea class="edit-note-input" id="venue-notes-input" placeholder="Opening hours, parking, vibe..."></textarea>
     </div>
-    <button class="add-stat-btn" id="save-venue-btn" onclick="saveVenue()" style="border-color:var(--edit-accent);color:var(--edit-accent);margin-top:4px;">+ SAVE GYM</button>
+    <button class="save-venue-btn" id="save-venue-btn" onclick="saveVenue()">Save Gym</button>
   </div>
-
   <div id="venue-equipment-panel" style="display:none;background:var(--surface);border:1px solid var(--edit-border);border-radius:10px;padding:16px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
       <div class="edit-field-label" id="venue-equipment-title" style="font-size:11px;">EQUIPMENT AT THIS GYM</div>
@@ -2460,12 +2462,16 @@ async function loadVenues() {
   }
   list.innerHTML = venues.map(v => `
     <div class="venue-card">
-      <div class="venue-card-name">${v.name}</div>
-      <div class="venue-card-meta">${[v.suburb, v.chain].filter(Boolean).join(' · ') || '&nbsp;'}</div>
-      ${v.notes ? `<div class="venue-card-meta" style="margin-top:4px;font-style:italic;color:var(--muted);">${v.notes}</div>` : ''}
-      <div class="venue-card-actions">
-        <button class="venue-action-btn" onclick="openEquipmentPanel('${v.id}', '${v.name.replace(/'/g, "\\'")}')">🏋️ EQUIPMENT</button>
-        <button class="venue-action-btn venue-delete-btn" onclick="deleteVenue('${v.id}')">✕ DELETE</button>
+      <div class="venue-card-header">
+        <div class="venue-card-name">${v.name}</div>
+        <div class="venue-card-meta">${[v.suburb, v.chain].filter(Boolean).join(' · ') || '&nbsp;'}</div>
+        ${v.notes ? `<div class="venue-card-meta" style="margin-top:4px;font-style:italic;">${v.notes}</div>` : ''}
+      </div>
+      <div class="venue-card-body">
+        <div class="venue-card-actions">
+          <button class="venue-action-btn" onclick="openEquipmentPanel('${v.id}', '${v.name.replace(/'/g, "\\'")}')">🏋️ Equipment</button>
+          <button class="venue-action-btn venue-delete-btn" onclick="deleteVenue('${v.id}')">✕ Delete</button>
+        </div>
       </div>
     </div>
   `).join('');
