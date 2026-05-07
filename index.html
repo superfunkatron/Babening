@@ -1358,35 +1358,6 @@ function isCurrentCardioPR(exName, value) {
 }
 
 // ============================================================
-//  MIGRATION
-// ============================================================
-async function migrateFromLocalStorage() {
-  const existing = await sbGet('plan');
-  if (existing) return;
-  let migrated = false;
-  const lsKeys = [
-    { ls:'babening-plan-v2',    db:'plan' },
-    { ls:'babening-weights-v2', db:'weights' },
-    { ls:'babening-history-v2', db:'history' },
-    { ls:'babening-prs-v2',     db:'prs' },
-    { ls:'babening-history',    db:'history' },
-    { ls:'babening-prs',        db:'prs' },
-    { ls:'babening-weights',    db:'weights' },
-  ];
-  for (const { ls, db } of lsKeys) {
-    try {
-      const raw = localStorage.getItem(ls);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        const already = await sbGet(db);
-        if (!already) { await sbSet(db, parsed); migrated = true; }
-      }
-    } catch(e) {}
-  }
-  if (migrated) showToast('✓ Local data migrated to cloud', 'success');
-}
-
-// ============================================================
 //  EXPORT / IMPORT
 // ============================================================
 function exportData() {
@@ -2372,7 +2343,7 @@ async function init() {
   // Try to restore session from localStorage
   const session = await getValidSession();
   if (session) {
-    accessToken = session.access_token;
+    accessToken = session.access_token;e
     currentUser = session.user;
   }
 
@@ -2383,7 +2354,6 @@ async function init() {
 
   // Valid session found — go straight in
  document.getElementById('auth-overlay').classList.add('hidden');
-  await migrateFromLocalStorage();
   await loadAll();
   await loadExerciseLinks();
   if (!plan) {
