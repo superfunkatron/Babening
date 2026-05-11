@@ -1707,6 +1707,11 @@ function getVolumeBadge(day, i, ex) {
   if (!wStat || !rStat) return null;
   return `${calcVolume(day, i, ex)} kg vol`;
 }
+function toggleDone(id) {
+  doneState[id] = !doneState[id];
+  document.getElementById(id)?.classList.toggle('done', doneState[id]);
+  updateProgress();
+}
 
 // ── Cardio adjuster ───────────────────────────────────────
 function adjustCardio(day, idx, cardId, delta) {
