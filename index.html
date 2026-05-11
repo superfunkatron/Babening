@@ -1630,9 +1630,8 @@ if (!isCardio && liftHint) {
     </div>`;
 
   return `
-    <div class="exercise-card${isCardio ? ' cardio-card' : ''}${isPR ? ' is-pr' : ''}" id="card-${id}">
-      ${isPR ? `<div class="pr-strip">🏆 PERSONAL RECORD</div>` : ''}
-      <div class="card-tap" onclick="onCardTap('${id}','${day}',${i})">
+    ${isPR ? `<div class="pr-strip">🏆 PERSONAL RECORD</div>` : ''}
+    <div class="card-tap" onclick="onCardTap('${id}','${day}',${i})">
         <div class="card-header">
           <div>
             <div class="card-name">${escHtml(ex.name)}</div>
@@ -1693,10 +1692,8 @@ if (!isCardio && liftHint) {
           <button class="swap-btn" onclick="event.stopPropagation();openSwapOverlay('${day}',${i},'${escHtml(ex.name)}')">⇄ FIND SWAPS</button>
           ${howToLink}
         </div>
-      </div>
     </div>`;
 }
-
 function escHtml(str) { return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function getStep(val) { return 1; }
 function calcVolume(day, i, ex) {
