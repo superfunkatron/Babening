@@ -1455,23 +1455,24 @@ function generatePTReport() {
       const venueStr = s.venue_name ? ` — ${s.venue_name}` : '';
       const snap = s.snapshot || [];
 
-      const liftRows = snap.filter(e => !e.cardio).map(e =>
-        `<tr>
-          <td class="ex-name">${e.name}</td>
-          <td class="ex-detail">${e.sets || '—'} × ${e.reps || '—'} @ <strong>${e.weight != null ? e.weight + ' kg' : '—'}</strong>${e.pr ? ' ⭐' : ''}</td>
-        </tr>`
-      ).join('');
+ const liftRows = snap.filter(e => e.type === 'lift').map(e => {
+  const reps = e.reps ? `${e.reps} reps` : '—';
+  const weight = e.weight != null ? ` @ ${e.weight} ${e.unit || 'kg'}` : '';
+  const pr = e.isNewPR ? ' ⭐' : '';
+  return `<tr>
+    <td class="ex-name">${e.name}</td>
+    <td class="ex-detail">${reps}${weight}${pr}</td>
+  </tr>`;
+}).join('');
 
-      const cardioRows = snap.filter(e => e.cardio).map(e => {
-        const metrics = [];
-        if (e.distance != null) metrics.push(`${e.distance} m`);
-        if (e.calories != null) metrics.push(`${e.calories} cal`);
-        if (e.watts != null) metrics.push(`${e.watts} W`);
-        return `<tr>
-          <td class="ex-name">${e.name} <span class="tag cardio-tag">Cardio</span></td>
-          <td class="ex-detail">${metrics.join(' / ') || '—'}</td>
-        </tr>`;
-      }).join('');
+const cardioRows = snap.filter(e => e.type === 'cardio').map(e => {
+  const val = e.cardioValue != null ? `${e.cardioValue} ${e.cardioUnit || ''}`.trim() : '—';
+  const pr = e.isCardioNewPR ? ' ⭐' : '';
+  return `<tr>
+    <td class="ex-name">${e.name} <span class="tag cardio-tag">Cardio</span></td>
+    <td class="ex-detail">${val}${pr}</td>
+  </tr>`;
+}).join('');
 
       const noteRow = s.note ? `<tr class="note-row"><td colspan="2">Note: ${s.note}</td></tr>` : '';
 
