@@ -937,11 +937,12 @@ body.edit-mode .check-circle { display: none; }
     <div class="section-header" style="color:rgba(57,255,20,0.8)">WORKOUT LOG</div>
     <div class="section-sub">Sessions, PRs &amp; Volume Charts</div>
   </div>
-  <div class="data-actions">
-    <button class="data-btn" onclick="exportData()">⬇ Export Backup</button>
-    <button class="data-btn import-btn" onclick="document.getElementById('importFile').click()">⬆ Import Backup</button>
-    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-  </div>
+<div class="data-actions">
+  <button class="data-btn" onclick="exportData()">⬆ Export</button>
+  <button class="data-btn import-btn" onclick="document.getElementById('import-file').click()">⬇ Import</button>
+  <button class="data-btn pt-report-btn" onclick="generatePTReport()">📋 PT Report</button>
+  <input type="file" id="import-file" ...>
+</div>
   <div class="search-wrap">
     <input class="search-input" id="exerciseSearch" placeholder="🔍 Search exercises..." oninput="filterHistory(this.value)">
   </div>
@@ -1378,7 +1379,170 @@ function exportData() {
   a.click();
   showToast('⬇ Backup downloaded', 'success');
 }
+function generatePTReport() {
+  if (!plan) return;
 
+  const exportDate = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
+  const recentSessions = history.slice(0, 5);
+
+  // ── SECTION 1: CURRENT ROUTINE ──
+  const days = ['day1', 'day2', 'day3'];
+  let routineHTML = '';
+  for (const dayKey of days) {
+    const dayPlan = plan[dayKey];
+    if (!dayPlan) continue;
+    const dayName = dayPlan.name || dayKey;
+    const exercises = dayPlan.exercises || [];
+    if (exercises.length === 0) continue;
+
+    let exRows = '';
+    for (const ex of exercises) {
+      const isCardio = ex.cardio === true;
+      const weight = ex.weight != null ? ex.weight : '—';
+      const sets = ex.sets || '—';
+      const reps = ex.reps || '—';
+      const detail = isCardio
+        ? `<span class="tag cardio-tag">Cardio</span>`
+        : `${sets} sets × ${reps} reps @ <strong>${weight} kg</strong>`;
+      exRows += `
+        <tr>
+          <td class="ex-name">${ex.name}</td>
+          <td class="ex-detail">${detail}</td>
+        </tr>`;
+    }
+
+    routineHTML += `
+      <div class="section">
+        <h2>${dayName}</h2>
+        <table>
+          <thead><tr><th>Exercise</th><th>Current Working Weight / Detail</th></tr></thead>
+          <tbody>${exRows}</tbody>
+        </table>
+      </div>`;
+  }
+
+  // ── SECTION 2: PERSONAL BESTS ──
+  const prs = plan.prs || {};
+  const prKeys = Object.keys(prs);
+  let prHTML = '';
+  if (prKeys.length > 0) {
+    const prRows = prKeys.map(name => {
+      const pr = prs[name];
+      const val = typeof pr === 'object' ? (pr.weight || pr.value || JSON.stringify(pr)) : pr;
+      const date = pr.date ? new Date(pr.date).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+      return `<tr>
+        <td class="ex-name">${name}</td>
+        <td class="ex-detail"><strong>${val}</strong>${val && !String(val).includes('kg') ? ' kg' : ''}</td>
+        <td class="date-cell">${date}</td>
+      </tr>`;
+    }).join('');
+    prHTML = `
+      <div class="section">
+        <h2>Personal Bests</h2>
+        <table>
+          <thead><tr><th>Exercise</th><th>Best Weight</th><th>Date</th></tr></thead>
+          <tbody>${prRows}</tbody>
+        </table>
+      </div>`;
+  }
+
+  // ── SECTION 3: RECENT SESSIONS ──
+  let sessionsHTML = '';
+  if (recentSessions.length > 0) {
+    const sessionBlocks = recentSessions.map(s => {
+      const d = new Date(s.date);
+      const dateStr = d.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      const venueStr = s.venue_name ? ` — ${s.venue_name}` : '';
+      const snap = s.snapshot || [];
+
+      const liftRows = snap.filter(e => !e.cardio).map(e =>
+        `<tr>
+          <td class="ex-name">${e.name}</td>
+          <td class="ex-detail">${e.sets || '—'} × ${e.reps || '—'} @ <strong>${e.weight != null ? e.weight + ' kg' : '—'}</strong>${e.pr ? ' ⭐' : ''}</td>
+        </tr>`
+      ).join('');
+
+      const cardioRows = snap.filter(e => e.cardio).map(e => {
+        const metrics = [];
+        if (e.distance != null) metrics.push(`${e.distance} m`);
+        if (e.calories != null) metrics.push(`${e.calories} cal`);
+        if (e.watts != null) metrics.push(`${e.watts} W`);
+        return `<tr>
+          <td class="ex-name">${e.name} <span class="tag cardio-tag">Cardio</span></td>
+          <td class="ex-detail">${metrics.join(' / ') || '—'}</td>
+        </tr>`;
+      }).join('');
+
+      const noteRow = s.note ? `<tr class="note-row"><td colspan="2">Note: ${s.note}</td></tr>` : '';
+
+      return `
+        <div class="session-block">
+          <h3>${s.day_name || s.day}${venueStr}</h3>
+          <p class="session-date">${dateStr}</p>
+          <table>
+            <thead><tr><th>Exercise</th><th>Detail</th></tr></thead>
+            <tbody>${liftRows}${cardioRows}${noteRow}</tbody>
+          </table>
+        </div>`;
+    }).join('');
+
+    sessionsHTML = `
+      <div class="section">
+        <h2>Recent Sessions (Last 5)</h2>
+        ${sessionBlocks}
+      </div>`;
+  }
+
+  // ── ASSEMBLE FULL REPORT ──
+  const reportHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>THE BABENING — PT Report — ${exportDate}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, 'Times New Roman', serif; font-size: 13px; color: #1a1a1a; background: #fff; padding: 32px; max-width: 800px; margin: 0 auto; }
+  .report-header { border-bottom: 3px solid #1a1a1a; padding-bottom: 16px; margin-bottom: 28px; }
+  .report-title { font-family: Arial, Helvetica, sans-serif; font-size: 28px; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; }
+  .report-sub { font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #555; margin-top: 4px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .section { margin-bottom: 32px; }
+  .section h2 { font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid #ccc; padding-bottom: 6px; margin-bottom: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th { background: #1a1a1a; color: #fff; font-family: Arial, Helvetica, sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; padding: 7px 10px; text-align: left; }
+  tbody tr:nth-child(even) { background: #f7f7f7; }
+  tbody td { padding: 7px 10px; border-bottom: 1px solid #e8e8e8; vertical-align: middle; }
+  .ex-name { font-weight: 600; max-width: 50%; }
+  .date-cell { color: #666; font-size: 11px; white-space: nowrap; }
+  .tag { font-family: Arial, Helvetica, sans-serif; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 6px; border-radius: 3px; }
+  .cardio-tag { background: #fff0ea; color: #c04010; border: 1px solid #f0c0a0; }
+  .session-block { margin-bottom: 20px; }
+  .session-block h3 { font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .session-date { font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #777; margin-bottom: 8px; }
+  .note-row td { font-style: italic; color: #555; background: #fafafa; }
+  .footer { margin-top: 40px; padding-top: 12px; border-top: 1px solid #ddd; font-family: Arial, Helvetica, sans-serif; font-size: 10px; color: #aaa; text-align: center; letter-spacing: 0.05em; }
+  @media print {
+    body { padding: 16px; }
+    .section { page-break-inside: avoid; }
+    .session-block { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="report-header">
+  <div class="report-title">THE BABENING — Workout Report</div>
+  <div class="report-sub">Generated ${exportDate} &nbsp;·&nbsp; For review by a personal trainer</div>
+</div>
+${routineHTML}
+${prHTML}
+${sessionsHTML}
+<div class="footer">Generated by THE BABENING &nbsp;·&nbsp; superfunkatron.github.io/Babening</div>
+</body>
+</html>`;
+
+  const blob = new Blob([reportHTML], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+}
 function importData(event) {
   const file = event.target.files[0];
   if (!file) return;
